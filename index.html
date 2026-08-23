@@ -13,13 +13,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 
-  <!-- React & Babel for direct browser rendering -->
+  <!-- React & Babel -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     .pixelated {
@@ -34,6 +31,325 @@
       font-family: 'Dancing Script', cursive;
     }
   </style>
+</head>
+<body class="bg-[#72c153] text-slate-800 selection:bg-yellow-300 min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const ROADMAP_TEMPLATE_IMG = 'https://i.imgur.com/Q1oAPvC.jpeg';
+
+    const SLOT_COORDINATES = [
+      { id: 1, pinTop: '73%', pinLeft: '61%', boxTop: '80%', boxLeft: '50%', width: '38%' },
+      { id: 2, pinTop: '50%', pinLeft: '23%', boxTop: '57%', boxLeft: '12%', width: '38%' },
+      { id: 3, pinTop: '43%', pinLeft: '90%', boxTop: '49%', boxLeft: '71%', width: '27%' },
+      { id: 4, pinTop: '27%', pinLeft: '46%', boxTop: '34%', boxLeft: '34%', width: '38%' },
+      { id: 5, pinTop: '4%',  pinLeft: '90%', boxTop: '10%', boxLeft: '71%', width: '27%' }
+    ];
+
+    const CHAPTERS = [
+      { id: 1, title: 'First Day', desc: 'The spark that started our journey' },
+      { id: 2, title: 'Mutual Understanding', desc: 'Unspoken feelings and late night talks' },
+      { id: 3, title: 'Courting Stage', desc: 'Winning your heart day by day' },
+      { id: 4, title: 'Official', desc: 'Hand in hand into forever' }
+    ];
+
+    const DEFAULT_MEMORIES = [
+      {
+        id: '1',
+        slotIndex: 0,
+        chapterId: 1,
+        date: '06.14.2025',
+        title: 'The First Spark',
+        location: 'Cozy Corner Cafe',
+        description: 'It all started on a warm summer afternoon. What was supposed to be a quick coffee turned into hours of laughter and soft glances.',
+        message: 'I knew from that very first moment that my life was about to change forever.',
+        image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        id: '2',
+        slotIndex: 1,
+        chapterId: 2,
+        date: '07.22.2025',
+        title: 'Late Night Talks',
+        location: 'Under Blanket Fort',
+        description: 'Talking until 3 AM about childhood dreams and favorite songs. Neither of us wanted to say goodbye first.',
+        message: 'Without saying the words out loud yet, we both knew we were falling fast.',
+        image: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        id: '3',
+        slotIndex: 2,
+        chapterId: 2,
+        date: '08.03.2025',
+        title: 'Stargazing Hill',
+        location: 'Pine Crest Lookout',
+        description: 'Wrapped under a shared blanket counting shooting stars while whispering quiet secrets to the midnight sky.',
+        message: 'Being with you made the entire universe feel calm, safe, and beautiful.',
+        image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        id: '4',
+        slotIndex: 3,
+        chapterId: 3,
+        date: '09.18.2025',
+        title: 'Flowers & Letter',
+        location: 'Botanical Garden',
+        description: 'Surprising you with fresh blooms and a handwritten note explaining all the reasons you make my world brighter.',
+        message: 'Every single second spent courting you was the sweetest adventure of my life.',
+        image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        id: '5',
+        slotIndex: 4,
+        chapterId: 4,
+        date: '12.25.2025',
+        title: 'Making It Official!',
+        location: 'Holiday Light Square',
+        description: 'Under the glowing fairy lights, asking the big question. You smiled, hugged me close, and softly said YES!',
+        message: 'The day my heart officially found its forever home right next to yours.',
+        image: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&w=800&q=80'
+      }
+    ];
+
+    const LOVE_NOTES = [
+      "You are my favorite thought every morning and my sweetest dream every night.",
+      "In a world full of temporary things, you are my forever.",
+      "Every love story is beautiful, but ours is my absolute favorite.",
+      "I loved you yesterday, I love you still, I always have, I always will.",
+      "Home is not a place anymore. It is wherever you are."
+    ];
+
+    function App() {
+      const [currentPage, setCurrentPage] = useState('landing');
+      const [memories, setMemories] = useState(() => {
+        const saved = localStorage.getItem('pixel_romance_data_v4');
+        return saved ? JSON.parse(saved) : DEFAULT_MEMORIES;
+      });
+      const [selectedChapterFilter, setSelectedChapterFilter] = useState('all');
+      const [selectedMemory, setSelectedMemory] = useState(DEFAULT_MEMORIES[0]);
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      const [showSecretLetter, setShowSecretLetter] = useState(false);
+      const [noteIndex, setNoteIndex] = useState(0);
+
+      useEffect(() => {
+        localStorage.setItem('pixel_romance_data_v4', JSON.stringify(memories));
+      }, [memories]);
+
+      const filteredMemories = selectedChapterFilter === 'all'
+        ? memories
+        : memories.filter(m => m.chapterId === Number(selectedChapterFilter));
+
+      return (
+        <div className="min-h-screen bg-[#72c153] w-full">
+          {/* LANDING PAGE (Desktop Wide & Clean) */}
+          {currentPage === 'landing' && (
+            <div className="min-h-screen flex items-center justify-center p-6 sm:p-12">
+              <div className="max-w-3xl w-full bg-slate-900 text-white p-8 sm:p-12 rounded-3xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-8 text-center">
+                <div className="inline-block bg-amber-400 text-slate-900 text-xs sm:text-sm font-bold px-4 py-2 border-2 border-black font-pixel">
+                  ROMANTIC QUEST
+                </div>
+                
+                <h1 className="text-4xl sm:text-6xl text-amber-300 font-pixel tracking-wider leading-tight">
+                  ROAD<br/><span className="text-rose-400">MAP</span>
+                </h1>
+
+                <p className="text-sm sm:text-base text-slate-200 font-bold max-w-xl mx-auto leading-relaxed">
+                  A widescreen journey through our favorite memories, dates, and milestones.
+                </p>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
+                  {CHAPTERS.map(ch => (
+                    <div key={ch.id} className="bg-white text-slate-900 p-3 border-2 border-black">
+                      <div className="text-[10px] font-pixel text-rose-600">CH. {ch.id}</div>
+                      <div className="text-xs font-bold mt-1 line-clamp-1">{ch.title}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage('journey')}
+                  className="w-full sm:w-auto px-10 py-5 bg-[#51a331] hover:bg-[#5fbd3b] text-white font-pixel text-sm sm:text-base border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+                >
+                  START YOUR JOURNEY &gt;
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ROADMAP DASHBOARD (Desktop Wide Multi-Column Layout) */}
+          {currentPage === 'journey' && (
+            <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+              {/* Header Bar */}
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-wrap items-center justify-between gap-4">
+                <button
+                  onClick={() => setCurrentPage('landing')}
+                  className="bg-slate-900 text-white px-4 py-2 border-2 border-black font-pixel text-xs hover:bg-slate-800"
+                >
+                  &lt; HOME
+                </button>
+
+                {/* Chapter Filters */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setSelectedChapterFilter('all')}
+                    className={`px-3 py-2 text-[10px] font-pixel border-2 border-black ${selectedChapterFilter === 'all' ? 'bg-amber-300 text-black font-bold' : 'bg-slate-100 text-slate-700'}`}
+                  >
+                    ALL CHAPTERS
+                  </button>
+                  {CHAPTERS.map(ch => (
+                    <button
+                      key={ch.id}
+                      onClick={() => setSelectedChapterFilter(ch.id)}
+                      className={`px-3 py-2 text-[10px] font-pixel border-2 border-black ${selectedChapterFilter === ch.id ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-700'}`}
+                    >
+                      CH.{ch.id}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Main Content Grid: Roadmap Map on Left / Active Memory Details on Right */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                {/* Left Column: Enlarged Responsive Roadmap */}
+                <div className="lg:col-span-7 bg-[#72c153] border-4 border-black p-4 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="relative w-full aspect-[9/16] max-h-[820px] mx-auto rounded-xl overflow-hidden border-2 border-black">
+                    <img
+                      src={ROADMAP_TEMPLATE_IMG}
+                      alt="Pixel Roadmap"
+                      className="w-full h-full object-cover pixelated"
+                    />
+
+                    {filteredMemories.map(mem => {
+                      const slot = SLOT_COORDINATES[mem.slotIndex % SLOT_COORDINATES.length];
+                      const isSelected = selectedMemory && selectedMemory.id === mem.id;
+
+                      return (
+                        <React.Fragment key={mem.id}>
+                          {/* Red Map Pin */}
+                          <button
+                            onClick={() => {
+                              setSelectedMemory(mem);
+                              setShowSecretLetter(false);
+                            }}
+                            className={`absolute z-20 hover:scale-125 transition-transform ${isSelected ? 'scale-125' : ''}`}
+                            style={{
+                              top: slot.pinTop,
+                              left: slot.pinLeft,
+                              transform: 'translate(-50%, -100%)'
+                            }}
+                            title={mem.title}
+                          >
+                            <div className="w-8 h-10 sm:w-10 sm:h-12 bg-rose-600 border-2 border-black rounded-t-full rounded-b-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] flex items-center justify-center">
+                              <div className="w-3 h-3 bg-white rounded-full border border-black"></div>
+                            </div>
+                          </button>
+
+                          {/* Overlaid Label Card */}
+                          <div
+                            onClick={() => {
+                              setSelectedMemory(mem);
+                              setShowSecretLetter(false);
+                            }}
+                            className={`absolute z-20 cursor-pointer p-1 rounded flex flex-col justify-center transition-all ${isSelected ? 'ring-2 ring-amber-400 bg-white/40' : 'hover:bg-white/20'}`}
+                            style={{
+                              top: slot.boxTop,
+                              left: slot.boxLeft,
+                              width: slot.width,
+                              height: '8.5%',
+                              transform: 'translate(0, -50%)'
+                            }}
+                          >
+                            <span className="text-[8px] sm:text-[10px] font-extrabold text-rose-600 font-pixel block line-clamp-1">
+                              {mem.date}
+                            </span>
+                            <span className="text-[10px] sm:text-xs font-extrabold text-slate-900 leading-tight block line-clamp-1">
+                              {mem.title}
+                            </span>
+                          </div>
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Column: Desktop Memory Viewer & Love Notes */}
+                <div className="lg:col-span-5 space-y-6">
+                  {/* Selected Memory Detailed Card */}
+                  {selectedMemory && (
+                    <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-4">
+                      <div className="flex items-center justify-between border-b-2 border-black pb-3">
+                        <span className="text-[10px] font-pixel text-rose-600 uppercase">
+                          Chapter {selectedMemory.chapterId} Milestone
+                        </span>
+                        <span className="text-xs font-bold bg-amber-300 px-2 py-1 border border-black">
+                          {selectedMemory.date}
+                        </span>
+                      </div>
+
+                      <img
+                        src={selectedMemory.image}
+                        alt={selectedMemory.title}
+                        className="w-full h-56 object-cover border-2 border-black"
+                      />
+
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-900">{selectedMemory.title}</h3>
+                        <p className="text-xs font-bold text-slate-600 mt-1">📍 {selectedMemory.location}</p>
+                      </div>
+
+                      <p className="text-sm bg-slate-100 p-4 border-2 border-black leading-relaxed font-medium">
+                        {selectedMemory.description}
+                      </p>
+
+                      <div>
+                        {!showSecretLetter ? (
+                          <button
+                            onClick={() => setShowSecretLetter(true)}
+                            className="w-full py-3 bg-rose-100 hover:bg-rose-200 text-rose-800 border-2 border-black font-pixel text-[10px]"
+                          >
+                            🎁 REVEAL SECRET LOVE MESSAGE
+                          </button>
+                        ) : (
+                          <div className="bg-amber-100 border-2 border-black p-4">
+                            <div className="text-[10px] font-pixel text-amber-800 mb-1">A MESSAGE FOR YOU:</div>
+                            <p className="text-2xl text-slate-900 font-romantic leading-snug">
+                              "{selectedMemory.message}"
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Love Notes Box */}
+                  <div className="bg-amber-200 border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-3 text-center">
+                    <div className="text-xs font-pixel text-slate-900">DAILY LOVE NOTE 💌</div>
+                    <p className="text-2xl text-slate-900 font-romantic italic py-2">
+                      "{LOVE_NOTES[noteIndex]}"
+                    </p>
+                    <button
+                      onClick={() => setNoteIndex((prev) => (prev + 1) % LOVE_NOTES.length)}
+                      className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-900 border-2 border-black font-pixel text-[9px]"
+                    >
+                      DRAW NEXT NOTE
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
 </head>
 <body class="bg-[#72c153] text-slate-800 selection:bg-yellow-300">
   <div id="root"></div>
