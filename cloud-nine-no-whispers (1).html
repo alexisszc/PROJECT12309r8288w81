@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Cloud Nine | Dreamscape Journal</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@300;400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            babyPink: '#FAD2E1',
+            softAqua: '#BEE1E6',
+            lightAqua: '#A0E7E5',
+            pureWhite: '#FFFFFF',
+            slateBlue: '#2B3A4A',
+          },
+          fontFamily: {
+            hand: ['Caveat', 'cursive'],
+            sans: ['Nunito', 'sans-serif'],
+            display: ['Quicksand', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --baby-pink: #FAD2E1;
+      --soft-aqua: #BEE1E6;
+      --light-aqua: #A0E7E5;
+      --pure-white: #FFFFFF;
+      --slate-blue: #2B3A4A;
+    }
+
+    * {
+      user-select: none;
+      -webkit-user-select: none;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--slate-blue);
+      background-color: #FAD2E1;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Glassmorphic Surfaces */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.52);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 12px 35px 0 rgba(160, 231, 229, 0.28), inset 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 24px rgba(160, 231, 229, 0.35);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .glass-pill:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 12px 28px rgba(250, 210, 225, 0.6);
+    }
+
+    .glass-bubble-her {
+      background: rgba(250, 210, 225, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 15px rgba(250, 210, 225, 0.4);
+    }
+
+    .glass-bubble-you {
+      background: rgba(190, 225, 230, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 15px rgba(160, 231, 229, 0.4);
+    }
+
+    /* Polaroid Scrapbook Elements */
+    .polaroid-frame {
+      background: white;
+      padding: 12px 12px 28px 12px;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(43, 58, 74, 0.12), 0 2px 10px rgba(160, 231, 229, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .polaroid-frame:hover {
+      transform: translateY(-10px) scale(1.03) rotate(0deg) !important;
+      box-shadow: 0 20px 45px rgba(160, 231, 229, 0.6), 0 0 25px rgba(255, 255, 255, 0.8);
+      z-index: 20;
+    }
+
+    /* Ambient Pulsing & Drifting */
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7)); }
+      50% { filter: drop-shadow(0 0 22px rgba(160, 231, 229, 0.9)); }
+    }
+
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(0.8deg); }
+    }
+
+    @keyframes heartBurst {
+      0% { transform: translateY(0) scale(0.6); opacity: 1; }
+      100% { transform: translateY(-80px) scale(1.4); opacity: 0; }
+    }
+
+    .glow-pulse { animation: pulseGlow 4s infinite ease-in-out; }
+    .float-slow { animation: floatGentle 6s infinite ease-in-out; }
+
+    .heart-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      animation: heartBurst 1.2s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+    }
+
+    /* Cloud Transition Portal */
+    #cloudPortal {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.98) 0%, rgba(250, 210, 225, 0.95) 45%, rgba(190, 225, 230, 0.9) 100%);
+    }
+
+    #cloudPortal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Stage Atmospheric Themes */
+    .theme-stage-1 {
+      background: linear-gradient(180deg, #FCE4EC 0%, #FAD2E1 30%, #F3E8EE 70%, #E8F0FE 100%);
+    }
+    .theme-stage-2 {
+      background: linear-gradient(180deg, #E0F7FA 0%, #BEE1E6 35%, #D4F0F0 70%, #FAD2E1 100%);
+    }
+    .theme-stage-3 {
+      background: linear-gradient(180deg, #FAD2E1 0%, #E2E4F6 40%, #BEE1E6 75%, #A0E7E5 100%);
+    }
+    .theme-stage-4 {
+      background: linear-gradient(180deg, #FFF8E7 0%, #FAD2E1 35%, #A0E7E5 75%, #FFFFFF 100%);
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(160, 231, 229, 0.6); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(250, 210, 225, 0.9); }
+  </style>
+</head>
+<body class="relative select-none text-slateBlue">
+
+  <!-- Audio Synth Helpers -->
+  <script>
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('btnSound');
+      if (btn) btn.innerText = soundEnabled ? '🎵' : '🔇';
+    }
+
+    function playTone(freq = 520, duration = 0.8, type = 'sine') {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.3, audioCtx.currentTime + duration * 0.5);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playDreamChime() {
+      const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+      notes.forEach((n, idx) => setTimeout(() => playTone(n, 1.2), idx * 75));
+    }
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- MAIN MAP VIEW (CANVAS & HUD)                        -->
+  <!-- ==================================================== -->
+  <div id="mainMapView" class="relative w-full h-full transition-opacity duration-500 opacity-100">
+    <!-- Interactive Canvas -->
+    <canvas id="worldCanvas" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-0"></canvas>
+
+    <!-- Top HUD Navigation -->
+    <header class="absolute top-4 left-4 right-4 md:left-8 md:right-8 z-30 flex items-center justify-between pointer-events-none">
+      <div class="glass-panel rounded-full px-5 py-2.5 flex items-center space-x-3 pointer-events-auto glow-pulse">
+        <div class="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-lg shadow-inner">
+          ☁️
+        </div>
+        <div>
+          <h1 class="text-sm md:text-base font-bold text-slateBlue leading-tight tracking-wide font-display">Cloud Nine</h1>
+          <p class="text-[10px] md:text-xs text-slateBlue/70 font-semibold tracking-wider uppercase">Dreamscape Journal</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Badges -->
+      <div class="flex items-center space-x-2 pointer-events-auto">
+        <button id="btnSound" onclick="toggleAudio()" class="glass-pill w-10 h-10 rounded-full flex items-center justify-center text-sm" title="Toggle Celestial Sound">
+          🎵
+        </button>
+        <button onclick="openWishModal()" class="glass-pill px-4 py-2 rounded-full bg-babyPink/60 text-xs font-bold text-slateBlue flex items-center space-x-1">
+          <span>✨</span>
+          <span class="hidden sm:inline">Send Wish</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Bottom Stage Bar -->
+    <div class="absolute bottom-6 left-4 md:left-8 z-30 pointer-events-auto glass-panel p-2 rounded-2xl flex items-center space-x-1.5 shadow-lg">
+      <div class="text-[11px] font-bold px-2 py-1 text-slateBlue/70 tracking-wide uppercase hidden sm:block">Sky Stages:</div>
+      <button onclick="enterStage(1)" class="px-3 py-1.5 rounded-xl bg-white/70 hover:bg-white text-xs font-bold text-slateBlue transition shadow-sm flex items-center space-x-1">
+        <span class="w-2 h-2 rounded-full bg-pink-400"></span>
+        <span>01 Spark</span>
+      </button>
+      <button onclick="enterStage(2)" class="px-3 py-1.5 rounded-xl bg-white/70 hover:bg-white text-xs font-bold text-slateBlue transition shadow-sm flex items-center space-x-1">
+        <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+        <span>02 Stroll</span>
+      </button>
+      <button onclick="enterStage(3)" class="px-3 py-1.5 rounded-xl bg-white/70 hover:bg-white text-xs font-bold text-slateBlue transition shadow-sm flex items-center space-x-1">
+        <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+        <span>03 Haven</span>
+      </button>
+      <button onclick="enterStage(4)" class="px-3 py-1.5 rounded-xl bg-white/70 hover:bg-white text-xs font-bold text-slateBlue transition shadow-sm flex items-center space-x-1">
+        <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+        <span>04 Horizon</span>
+      </button>
+    </div>
+
+    <!-- Instruction Helper (Bottom Right) -->
+    <div class="hidden md:flex absolute bottom-6 right-8 z-30 pointer-events-none glass-panel px-4 py-2 rounded-full items-center space-x-3 text-xs font-medium text-slateBlue/80">
+      <span>☁️ Tap any cloud island to enter its memories</span>
+      <span>•</span>
+      <span>✨ Drag canvas to explore</span>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- DEDICATED CLOUD MEMORY PAGE                          -->
+  <!-- ==================================================== -->
+  <div id="memoryPageView" class="fixed inset-0 z-40 overflow-y-auto overflow-x-hidden transition-opacity duration-700 opacity-0 pointer-events-none">
+    
+    <!-- Stage Atmospheric Overlay Background -->
+    <div id="stageAtmosphere" class="fixed inset-0 pointer-events-none -z-10 theme-stage-1 transition-all duration-1000"></div>
+
+    <!-- Drifting Ambient Cloud Sprites -->
+    <div class="fixed top-12 left-0 w-80 h-36 bg-white/40 rounded-full blur-2xl pointer-events-none -z-10 animate-pulse"></div>
+    <div class="fixed top-1/2 right-0 w-96 h-44 bg-babyPink/50 rounded-full blur-3xl pointer-events-none -z-10"></div>
+    <div class="fixed bottom-10 left-10 w-96 h-44 bg-lightAqua/40 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+    <!-- Floating Top Bar -->
+    <header class="sticky top-4 z-50 px-4 md:px-12 max-w-6xl mx-auto flex items-center justify-between">
+      <!-- Back to Clouds Button -->
+      <button onclick="exitMemoryPage()" class="glass-pill px-5 py-2.5 rounded-full flex items-center space-x-2 text-xs md:text-sm font-bold text-slateBlue">
+        <span class="text-base">☁️</span>
+        <span>Back to the Clouds</span>
+      </button>
+
+      <!-- Stage Indicator Badge -->
+      <div class="glass-panel px-4 py-2 rounded-full flex items-center space-x-2">
+        <span id="pageStageBadge" class="text-xs font-bold text-slateBlue uppercase tracking-wider">Chapter 01</span>
+        <span class="text-slateBlue/40">•</span>
+        <span id="pageStageDate" class="text-xs text-slateBlue/70 font-semibold">Oct 14, 2024</span>
+      </div>
+    </header>
+
+    <!-- Main Memory Page Body -->
+    <main class="max-w-5xl mx-auto px-4 md:px-8 pt-10 pb-28 relative">
+      
+      <!-- Stage Header Hero -->
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <div class="inline-flex items-center space-x-2 glass-panel px-4 py-1.5 rounded-full mb-3 glow-pulse">
+          <span class="text-base" id="pageStageIcon">☕</span>
+          <span class="text-xs uppercase tracking-widest font-bold text-slateBlue" id="pageStageThemeTag">Memories Inside the Mist</span>
+        </div>
+        <h2 id="pageStageTitle" class="text-3xl md:text-5xl font-bold font-display text-slateBlue tracking-tight">The First Spark</h2>
+        <p id="pageStageSubtitle" class="font-hand text-2xl md:text-3xl text-pink-600 mt-2">“Inside this cloud are the moments that started it all...”</p>
+        <p id="pageStageNarrative" class="text-xs md:text-sm text-slateBlue/80 font-light mt-3 leading-relaxed glass-panel p-4 rounded-2xl">
+          That chilly evening when a simple conversation turned into something unforgettable.
+        </p>
+      </div>
+
+      <!-- Tab Switcher (Scrapbook / Timeline) -->
+      <div class="flex justify-center mb-10">
+        <div class="glass-panel p-1.5 rounded-2xl inline-flex space-x-2">
+          <button id="tabBtnScrapbook" onclick="switchTab('scrapbook')" class="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-slateBlue">
+            📸 Scrapbook Gallery
+          </button>
+          <button id="tabBtnTimeline" onclick="switchTab('timeline')" class="px-5 py-2 rounded-xl text-xs font-bold transition text-slateBlue/70 hover:text-slateBlue">
+            ✨ Dream Timeline
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- SECTION 1: FLOATING SCRAPBOOK GALLERY        -->
+      <!-- ============================================ -->
+      <div id="sectionScrapbook" class="transition-opacity duration-300">
+        <div class="text-center mb-6">
+          <p class="text-xs uppercase tracking-wider text-slateBlue/60 font-bold">Tap any photo to enter expanded view & hear memories</p>
+        </div>
+
+        <div id="scrapbookGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-start justify-items-center">
+          <!-- Dynamically populated polaroids -->
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- SECTION 2: VERTICAL DREAMSCAPE TIMELINE      -->
+      <!-- ============================================ -->
+      <div id="sectionTimeline" class="hidden transition-opacity duration-300 max-w-2xl mx-auto relative pt-4">
+        
+        <!-- Vertical Glowing Cloud Path -->
+        <div class="absolute top-0 bottom-0 left-6 md:left-1/2 -translate-x-1/2 w-1 bg-gradient-to-b from-babyPink via-lightAqua to-softAqua rounded-full shadow-[0_0_12px_rgba(160,231,229,0.8)]"></div>
+
+        <!-- Dynamic Timeline Items -->
+        <div id="timelineList" class="space-y-12 relative">
+          <!-- Dynamically populated nodes -->
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Footer in Memory Page -->
+    <footer class="text-center py-10 text-xs font-medium text-slateBlue/60">
+      <p>☁️ Floating peacefully inside our private memory cloud ☁️</p>
+    </footer>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- LIGHTBOX / EXPANDED PHOTO DIALOG                    -->
+  <!-- ==================================================== -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateBlue/30 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div id="lightboxCard" class="glass-panel max-w-lg w-full rounded-3xl p-6 md:p-8 relative transform scale-90 transition-all duration-300 shadow-2xl">
+      <button onclick="closeLightbox()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-slateBlue text-xs font-bold flex items-center justify-center shadow-sm">
+        ✕
+      </button>
+
+      <!-- Lightbox Photo Canvas Art -->
+      <div id="lightboxMediaContainer" class="w-full h-64 rounded-2xl overflow-hidden mb-4 border border-white/80 shadow-inner flex items-center justify-center relative">
+        <!-- Visual inserted dynamically -->
+      </div>
+
+      <div class="flex items-center justify-between">
+        <span id="lightboxTag" class="text-xs font-bold px-3 py-1 rounded-full bg-babyPink text-slateBlue uppercase tracking-wider border border-white">Memory #01</span>
+        <span id="lightboxDate" class="text-xs font-semibold text-slateBlue/70">Oct 14, 2024</span>
+      </div>
+
+      <h3 id="lightboxTitle" class="text-2xl font-bold text-slateBlue mt-2 font-display">Moment Title</h3>
+      <p id="lightboxQuote" class="font-hand text-2xl text-pink-600 mt-1">“Caption quote goes here”</p>
+      
+      <p id="lightboxFullText" class="text-xs md:text-sm text-slateBlue/80 font-light mt-3 leading-relaxed">
+        Full detail and private notes regarding this memory.
+      </p>
+
+      <div class="mt-6 flex justify-between items-center pt-4 border-t border-white/60">
+        <button onclick="navigateLightbox(-1)" class="glass-pill px-4 py-2 rounded-xl text-xs font-bold text-slateBlue flex items-center space-x-1">
+          <span>←</span>
+          <span>Previous</span>
+        </button>
+        <button onclick="spawnHeartEffect(window.innerWidth/2, window.innerHeight/2); playTone(880)" class="text-xl hover:scale-125 transition transform">
+          💗
+        </button>
+        <button onclick="navigateLightbox(1)" class="glass-pill px-4 py-2 rounded-xl text-xs font-bold text-slateBlue flex items-center space-x-1">
+          <span>Next</span>
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- SEND WISH MODAL                                      -->
+  <!-- ==================================================== -->
+  <div id="wishModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateBlue/20 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel max-w-sm w-full rounded-3xl p-6 relative shadow-2xl">
+      <button onclick="closeWishModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-xs font-bold text-slateBlue flex items-center justify-center">
+        ✕
+      </button>
+
+      <div class="text-center">
+        <span class="text-3xl">🏮</span>
+        <h3 class="text-xl font-bold text-slateBlue font-display mt-2">Release a Sky Wish</h3>
+        <p class="text-xs text-slateBlue/70 mt-1">Send a glowing wish lantern up into the canvas dreamscape.</p>
+      </div>
+
+      <form onsubmit="launchLantern(event)" class="mt-4 space-y-3">
+        <input id="wishInput" type="text" placeholder="Type your wish or romantic note..." class="w-full bg-white/70 border border-white px-3.5 py-2.5 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink" required />
+        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-babyPink to-lightAqua text-slateBlue text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition">
+          Release to Sky 🎈
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Fullscreen Cloud Dive Portal -->
+  <div id="cloudPortal"></div>
+
+  <!-- ==================================================== -->
+  <!-- STAGE MEMORY DATABASE                                -->
+  <!-- ==================================================== -->
+  <script>
+    const STAGE_DATA = {
+      1: {
+        id: 1,
+        title: "The First Spark",
+        date: "Oct 14, 2024",
+        badge: "Chapter 01 : The Genesis",
+        themeTag: "Softer Pink Clouds : The Beginning",
+        themeClass: "theme-stage-1",
+        icon: "🌱",
+        subtitle: "“The exact moment conversations stopped feeling like strangers and started feeling like home.”",
+        narrative: "That chilly October evening when a simple exchange blossomed into late night voice notes. We realized hours had passed in what felt like a couple of heartbeats.",
+        photos: [
+          {
+            id: 101,
+            title: "The First Midnight Call",
+            date: "Oct 14, 2024",
+            tag: "Memory #01",
+            tilt: "-2deg",
+            quote: "“I still remember how nervous I was when my phone rang.”",
+            desc: "We talked about everything from favorite comfort meals to childhood dreams. The sky outside had never looked so peaceful.",
+            gradient: "from-pink-200 via-rose-100 to-pink-300",
+            icon: "📞"
+          },
+          {
+            id: 102,
+            title: "Rainy Cafe Corner",
+            date: "Oct 28, 2024",
+            tag: "Memory #02",
+            tilt: "2deg",
+            quote: "“You ordered warm vanilla latte and made me laugh instantly.”",
+            desc: "Sitting across from each other while drops of rain tapped against the glass window. Time completely stood still.",
+            gradient: "from-pink-100 via-purple-100 to-rose-200",
+            icon: "☕"
+          },
+          {
+            id: 103,
+            title: "Late Night Voice Notes",
+            date: "Nov 05, 2024",
+            tag: "Memory #03",
+            tilt: "-1.5deg",
+            quote: "“Listening to you laugh about your silly workday mishaps.”",
+            desc: "You sent a 4-minute voice note giggling at your own joke. I saved it immediately to listen whenever I need a smile.",
+            gradient: "from-rose-200 via-pink-200 to-amber-100",
+            icon: "🎙️"
+          },
+          {
+            id: 104,
+            title: "First Candid Smile",
+            date: "Nov 12, 2024",
+            tag: "Memory #04",
+            tilt: "2.5deg",
+            quote: "“Caught you smiling when you thought I was looking away.”",
+            desc: "You looked up under the fairy lights, eyes glowing with gentle warmth. That was the moment everything changed for good.",
+            gradient: "from-pink-200 via-pink-300 to-rose-100",
+            icon: "✨"
+          }
+        ],
+        timeline: [
+          {
+            date: "Oct 14, 2024",
+            title: "The First Spark",
+            msg: "The very first message exchanged in our chat log. A simple 'hello' that turned into hours of endless conversation.",
+            joke: "Inside joke: The debate over whether pineapple on pizza is acceptable.",
+            icon: "💬"
+          },
+          {
+            date: "Oct 28, 2024",
+            title: "The First Rainy Date",
+            msg: "Sharing an umbrella while rushing across the wet street to reach the cozy bakery corner.",
+            joke: "Inside joke: We ended up with both shoes completely soaked and couldn't stop laughing.",
+            icon: "☔"
+          },
+          {
+            date: "Nov 15, 2024",
+            title: "Secret Playlist Creation",
+            msg: "The day we started our collaborative playlist with only 5 songs that felt like pastel sunsets.",
+            joke: "Inside joke: That one acoustic indie song on repeat 42 times.",
+            icon: "🎵"
+          }
+        ]
+      },
+
+      2: {
+        id: 2,
+        title: "The Starlit Stroll",
+        date: "Dec 22, 2024",
+        badge: "Chapter 02 : Getting Closer",
+        themeTag: "Soft Aqua Mist : Growing Familiar",
+        themeClass: "theme-stage-2",
+        icon: "❄️",
+        subtitle: "“Walking through misty winter air, discovering the world feels warmer with our fingers intertwined.”",
+        narrative: "Our steps found the same rhythm under glowing city lights. Shared earphones, warm drinks, and discovering that nowhere is too far when we walk together.",
+        photos: [
+          {
+            id: 201,
+            title: "One Earphone Each",
+            date: "Dec 22, 2024",
+            tag: "Memory #05",
+            tilt: "2deg",
+            quote: "“The wire was too short, so we had to walk really close.”",
+            desc: "Listening to our favorite acoustic guitar tracks while frosty breath rose into the cold night sky.",
+            gradient: "from-teal-100 via-cyan-100 to-blue-200",
+            icon: "🎧"
+          },
+          {
+            id: 202,
+            title: "Warm Matcha in the Cold",
+            date: "Jan 03, 2025",
+            tag: "Memory #06",
+            tilt: "-2deg",
+            quote: "“Holding hands to keep warm because you forgot your gloves.”",
+            desc: "We stood beside the street vendor sipping hot matcha latte, your hands tucked safely into my jacket pocket.",
+            gradient: "from-teal-200 via-emerald-100 to-cyan-200",
+            icon: "🍵"
+          },
+          {
+            id: 203,
+            title: "Starlit Bridge Crossing",
+            date: "Jan 18, 2025",
+            tag: "Memory #07",
+            tilt: "1.5deg",
+            quote: "“Looking over the water reflection and making quiet wishes.”",
+            desc: "The city lights danced across the water like constellations. You leaned your head against my shoulder.",
+            gradient: "from-blue-200 via-cyan-200 to-teal-100",
+            icon: "🌉"
+          },
+          {
+            id: 204,
+            title: "The Sleepy Train Ride",
+            date: "Feb 02, 2025",
+            tag: "Memory #08",
+            tilt: "-2.5deg",
+            quote: "“You fell asleep within two minutes of the train leaving.”",
+            desc: "The gentle rocking of the carriage, soft rhythmic tracks, and your quiet peaceful breathing.",
+            gradient: "from-cyan-100 via-teal-200 to-sky-200",
+            icon: "🚆"
+          }
+        ],
+        timeline: [
+          {
+            date: "Dec 22, 2024",
+            title: "Winter Festival Stroll",
+            msg: "Braving the chilly winter breeze to see the illuminated glowing trees at the city plaza.",
+            joke: "Inside joke: You claiming you weren't cold while shivering uncontrollably.",
+            icon: "🎄"
+          },
+          {
+            date: "Jan 10, 2025",
+            title: "Cooking Mishap Night",
+            msg: "Attempting to make pasta from scratch and accidentally setting the kitchen timer for 50 minutes instead of 15.",
+            joke: "Inside joke: Crispy spaghetti that turned into an emergency pizza night.",
+            icon: "🍝"
+          },
+          {
+            date: "Feb 02, 2025",
+            title: "Midnight Bridge Wish",
+            msg: "Whispering our three biggest wishes under the full moon over the river.",
+            joke: "Inside joke: Both of us wishing for the exact same dessert spot to stay open late.",
+            icon: "🌕"
+          }
+        ]
+      },
+
+      3: {
+        id: 3,
+        title: "The Cloud Haven",
+        date: "Mar 18, 2025",
+        badge: "Chapter 03 : The Sanctuary",
+        themeTag: "Pink & Aqua Symphony : Deepening Bond",
+        themeClass: "theme-stage-3",
+        icon: "🫧",
+        subtitle: "“The day vulnerability stopped being scary and became our safe sanctuary.”",
+        narrative: "Unspoken thoughts found words, secrets were embraced with gentleness, and every worry dissolved into soft cotton-candy comfort.",
+        photos: [
+          {
+            id: 301,
+            title: "Under the Soft Blankets",
+            date: "Mar 18, 2025",
+            tag: "Memory #09",
+            tilt: "-2deg",
+            quote: "“Talking about our deepest fears without any hesitation.”",
+            desc: "Surrounded by fluffy pillows, tea cups, and a feeling that no matter what happens, we are safe here.",
+            gradient: "from-pink-200 via-teal-100 to-purple-200",
+            icon: "🧸"
+          },
+          {
+            id: 302,
+            title: "Spring Blossoms Picnic",
+            date: "Apr 04, 2025",
+            tag: "Memory #10",
+            tilt: "2deg",
+            quote: "“Pink petals kept falling straight into our sandwich basket.”",
+            desc: "Laying on the green grass watching clouds drift by, guessing their shapes for hours without checking our watches.",
+            gradient: "from-rose-100 via-pink-200 to-teal-100",
+            icon: "🌸"
+          },
+          {
+            id: 303,
+            title: "Our Secret Bookmark",
+            date: "Apr 20, 2025",
+            tag: "Memory #11",
+            tilt: "-1.5deg",
+            quote: "“You tucked a little hand-drawn cloud note inside my book.”",
+            desc: "A small folded note with the words: 'I am so glad our skies crossed paths.' Kept safely forever.",
+            gradient: "from-teal-100 via-pink-100 to-cyan-200",
+            icon: "📖"
+          },
+          {
+            id: 304,
+            title: "Sunset Balcony Glow",
+            date: "May 08, 2025",
+            tag: "Memory #12",
+            tilt: "2.5deg",
+            quote: "“The entire sky turned pastel pink and baby blue just for us.”",
+            desc: "Standing shoulder to shoulder watching daylight surrender to twilight. A quiet peace that filled our chest.",
+            gradient: "from-pink-300 via-rose-200 to-teal-200",
+            icon: "🌇"
+          }
+        ],
+        timeline: [
+          {
+            date: "Mar 18, 2025",
+            title: "The Sanctuary Talk",
+            msg: "Opening up about past insecurities and realizing we both felt complete acceptance.",
+            joke: "Inside joke: We ended up with tissues and half eaten ice cream pints at 2 AM.",
+            icon: "🍨"
+          },
+          {
+            date: "Apr 14, 2025",
+            title: "Plant Parent Milestone",
+            msg: "Adopting our first tiny succulent named 'Cloudy' and building a little glass terrarium.",
+            joke: "Inside joke: Checking on Cloudy three times a day to make sure it grew 0.1mm.",
+            icon: "🪴"
+          },
+          {
+            date: "May 08, 2025",
+            title: "Pastel Sunset Toast",
+            msg: "Watching the gradient sky shift colors while toasting with sparkling cider in small glass jars.",
+            joke: "Inside joke: Spilling half the cider on the balcony rug.",
+            icon: "🥂"
+          }
+        ]
+      },
+
+      4: {
+        id: 4,
+        title: "Ever After Skies",
+        date: "Present & Beyond",
+        badge: "Chapter 04 : Official & Boundless",
+        themeTag: "Radiant Golden Glow : Limitless Horizons",
+        themeClass: "theme-stage-4",
+        icon: "🌅",
+        subtitle: "“Looking out into boundless horizons: the chapter where two paths become one forever.”",
+        narrative: "All the unwritten chapters, future adventures, cozy Sunday mornings, and infinite memories still waiting for us to paint across the sky.",
+        photos: [
+          {
+            id: 401,
+            title: "The Official Promise",
+            date: "Present Day",
+            tag: "Memory #13",
+            tilt: "2deg",
+            quote: "“You said 'Yes', and all the clouds turned to gold.”",
+            desc: "A moment sealed in our hearts. The beginning of forever, surrounded by everything we dreamed of.",
+            gradient: "from-amber-100 via-pink-200 to-teal-100",
+            icon: "💍"
+          },
+          {
+            id: 402,
+            title: "Sleepy Sunday Mornings",
+            date: "Evergreen",
+            tag: "Memory #14",
+            tilt: "-2deg",
+            quote: "“Pancakes with too much syrup and zero hurry to be anywhere.”",
+            desc: "Sunlight filtering through sheer white curtains, warm blankets, and our favorite slow songs playing in the background.",
+            gradient: "from-yellow-100 via-rose-100 to-pink-200",
+            icon: "🥞"
+          },
+          {
+            id: 403,
+            title: "Our Dream Home Blueprint",
+            date: "Future Vision",
+            tag: "Memory #15",
+            tilt: "1.5deg",
+            quote: "“A big window overlooking trees and a tiny garden for flowers.”",
+            desc: "Sketching imaginary floor plans on napkin corners and picking out future wall paint colors.",
+            gradient: "from-teal-100 via-pink-200 to-amber-200",
+            icon: "🏡"
+          },
+          {
+            id: 404,
+            title: "To Infinity & Cloud Nine",
+            date: "Forever",
+            tag: "Memory #16",
+            tilt: "-2.5deg",
+            quote: "“Holding hands through every chapter, every sky, every lifetime.”",
+            desc: "A journal with infinite empty pages left, all waiting to be filled by you and me.",
+            gradient: "from-pink-300 via-amber-100 to-teal-200",
+            icon: "🚀"
+          }
+        ],
+        timeline: [
+          {
+            date: "Present Day",
+            title: "The Official Beginning",
+            msg: "The promise to keep floating together through sunshine, rain, and golden skies.",
+            joke: "Inside joke: We celebrated with double chocolate cake for dinner.",
+            icon: "🎂"
+          },
+          {
+            date: "Next Season",
+            title: "Our First Flight Together",
+            msg: "Planning our dream trip to the beach where the sea meets the sky in shades of turquoise.",
+            joke: "Inside joke: Overpacking three huge suitcases for a 4-day weekend.",
+            icon: "✈️"
+          },
+          {
+            date: "Always",
+            title: "Eternal Dreamscape",
+            msg: "Writing new memories into this digital cloud journal every single day.",
+            joke: "Inside joke: Cloud Nine is now officially our home address.",
+            icon: "☁️"
+          }
+        ]
+      }
+    };
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- CANVAS MAP ENGINE & STAGE TRANSITIONS                -->
+  <!-- ==================================================== -->
+  <script>
+    const canvas = document.getElementById('worldCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = 0;
+    let height = 0;
+    const WORLD_WIDTH = 2600;
+    const WORLD_HEIGHT = 1600;
+
+    const camera = {
+      x: 450,
+      y: 850,
+      targetX: 450,
+      targetY: 850,
+      zoom: 1,
+      targetZoom: 1
+    };
+
+    let isDragging = false;
+    let lastPointer = { x: 0, y: 0 };
+    let hoverIsland = null;
+    let isTransitioning = false;
+
+    // Stage positions on the map
+    const stageNodes = [
+      { id: 1, x: 450, y: 850, radius: 95, colorTheme: '#FAD2E1', icon: '🌱' },
+      { id: 2, x: 1050, y: 500, radius: 105, colorTheme: '#BEE1E6', icon: '🎧' },
+      { id: 3, x: 1650, y: 950, radius: 110, colorTheme: '#A0E7E5', icon: '🫧' },
+      { id: 4, x: 2200, y: 600, radius: 115, colorTheme: '#FAD2E1', icon: '🌅' }
+    ];
+
+    const backgroundClouds = [];
+    const sparkleStars = [];
+    const lanterns = [];
+    const ripples = [];
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Spawn Background Clouds
+    for (let i = 0; i < 26; i++) {
+      backgroundClouds.push({
+        x: Math.random() * WORLD_WIDTH,
+        y: Math.random() * WORLD_HEIGHT,
+        scale: Math.random() * 1.2 + 0.6,
+        speed: Math.random() * 0.25 + 0.08,
+        puffs: [
+          { x: 0, y: 0, r: 40 + Math.random() * 20 },
+          { x: 30, y: -10, r: 45 + Math.random() * 25 },
+          { x: 65, y: 5, r: 35 + Math.random() * 20 },
+          { x: -30, y: 10, r: 30 + Math.random() * 15 }
+        ],
+        alpha: Math.random() * 0.35 + 0.25
+      });
+    }
+
+    // Spawn Stars
+    for (let i = 0; i < 90; i++) {
+      sparkleStars.push({
+        x: Math.random() * WORLD_WIDTH,
+        y: Math.random() * WORLD_HEIGHT,
+        size: Math.random() * 2.5 + 1,
+        alpha: Math.random(),
+        speed: Math.random() * 0.02 + 0.01,
+        isHeart: Math.random() > 0.65
+      });
+    }
+
+    function screenToWorld(sx, sy) {
+      return {
+        x: (sx - width / 2) / camera.zoom + camera.x,
+        y: (sy - height / 2) / camera.zoom + camera.y
+      };
+    }
+
+    // Interaction Handling
+    window.addEventListener('mousedown', (e) => {
+      if (e.target !== canvas || isTransitioning) return;
+      isDragging = true;
+      lastPointer = { x: e.clientX, y: e.clientY };
+      initAudio();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isTransitioning) return;
+      const worldPos = screenToWorld(e.clientX, e.clientY);
+
+      if (isDragging) {
+        const dx = (e.clientX - lastPointer.x) / camera.zoom;
+        const dy = (e.clientY - lastPointer.y) / camera.zoom;
+        camera.targetX -= dx;
+        camera.targetY -= dy;
+        lastPointer = { x: e.clientX, y: e.clientY };
+      }
+
+      hoverIsland = null;
+      for (const s of stageNodes) {
+        const dist = Math.hypot(worldPos.x - s.x, worldPos.y - s.y);
+        if (dist < s.radius) {
+          hoverIsland = s;
+          break;
+        }
+      }
+      canvas.style.cursor = hoverIsland ? 'pointer' : (isDragging ? 'grabbing' : 'grab');
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    // Touch Support
+    window.addEventListener('touchstart', (e) => {
+      if (e.target !== canvas || isTransitioning) return;
+      if (e.touches.length === 1) {
+        isDragging = true;
+        lastPointer = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        initAudio();
+      }
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging || isTransitioning || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const dx = (t.clientX - lastPointer.x) / camera.zoom;
+      const dy = (t.clientY - lastPointer.y) / camera.zoom;
+      camera.targetX -= dx;
+      camera.targetY -= dy;
+      lastPointer = { x: t.clientX, y: t.clientY };
+    });
+
+    window.addEventListener('touchend', () => { isDragging = false; });
+
+    // Stage Click -> Dive Into Memory Cloud
+    canvas.addEventListener('click', (e) => {
+      if (isTransitioning) return;
+      const worldPos = screenToWorld(e.clientX, e.clientY);
+      let clickedStage = null;
+
+      for (const s of stageNodes) {
+        const dist = Math.hypot(worldPos.x - s.x, worldPos.y - s.y);
+        if (dist < s.radius) {
+          clickedStage = s;
+          break;
+        }
+      }
+
+      if (clickedStage) {
+        enterStage(clickedStage.id);
+      } else {
+        ripples.push({ x: worldPos.x, y: worldPos.y, radius: 5, alpha: 0.8 });
+        playTone(600, 0.4);
+      }
+    });
+
+    // Main Canvas Render Loop
+    function render(timestamp) {
+      const time = timestamp || 0;
+
+      camera.x += (camera.targetX - camera.x) * 0.08;
+      camera.y += (camera.targetY - camera.y) * 0.08;
+      camera.zoom += (camera.targetZoom - camera.zoom) * 0.08;
+
+      camera.targetX = Math.max(200, Math.min(WORLD_WIDTH - 200, camera.targetX));
+      camera.targetY = Math.max(200, Math.min(WORLD_HEIGHT - 200, camera.targetY));
+
+      // Sky gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+      skyGrad.addColorStop(0, '#FAD2E1');
+      skyGrad.addColorStop(0.45, '#E4ECFD');
+      skyGrad.addColorStop(0.8, '#BEE1E6');
+      skyGrad.addColorStop(1, '#A0E7E5');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.save();
+      ctx.translate(width / 2, height / 2);
+      ctx.scale(camera.zoom, camera.zoom);
+      ctx.translate(-camera.x, -camera.y);
+
+      // Background Clouds
+      backgroundClouds.forEach(c => {
+        c.x += c.speed;
+        if (c.x > WORLD_WIDTH + 150) c.x = -150;
+        ctx.fillStyle = `rgba(255, 255, 255, ${c.alpha})`;
+        ctx.beginPath();
+        c.puffs.forEach(p => {
+          ctx.arc(c.x + p.x * c.scale, c.y + p.y * c.scale, p.r * c.scale, 0, Math.PI * 2);
+        });
+        ctx.fill();
+      });
+
+      // Ribbon Connector Path
+      ctx.beginPath();
+      ctx.moveTo(stageNodes[0].x, stageNodes[0].y);
+      for (let i = 0; i < stageNodes.length - 1; i++) {
+        const p1 = stageNodes[i];
+        const p2 = stageNodes[i + 1];
+        const cx = (p1.x + p2.x) / 2;
+        const cy = (p1.y + p2.y) / 2 + (i % 2 === 0 ? -120 : 120);
+        ctx.quadraticCurveTo(cx, cy, p2.x, p2.y);
+      }
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.lineWidth = 6;
+      ctx.setLineDash([14, 14]);
+      ctx.lineDashOffset = -time * 0.02;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Star Sparkles
+      sparkleStars.forEach(s => {
+        s.alpha += s.speed;
+        const currentAlpha = (Math.sin(s.alpha) + 1) / 2;
+        ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha * 0.8})`;
+        if (s.isHeart) {
+          ctx.font = `${10 * s.size}px sans-serif`;
+          ctx.fillText('✨', s.x, s.y);
+        } else {
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      // Ripples
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const r = ripples[i];
+        r.radius += 1.4;
+        r.alpha -= 0.015;
+        if (r.alpha <= 0) { ripples.splice(i, 1); continue; }
+        ctx.strokeStyle = `rgba(255, 255, 255, ${r.alpha})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Stage Islands
+      stageNodes.forEach((s, idx) => {
+        const data = STAGE_DATA[s.id];
+        const floatY = Math.sin(time * 0.0015 + idx * 1.5) * 10;
+        const posX = s.x;
+        const posY = s.y + floatY;
+        const isHovered = hoverIsland && hoverIsland.id === s.id;
+
+        // Glowing Aura
+        const aura = ctx.createRadialGradient(posX, posY, s.radius * 0.4, posX, posY, s.radius * 1.5);
+        aura.addColorStop(0, isHovered ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.45)');
+        aura.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = aura;
+        ctx.beginPath();
+        ctx.arc(posX, posY, s.radius * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Cloud body
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.shadowColor = s.colorTheme;
+        ctx.shadowBlur = isHovered ? 35 : 18;
+
+        ctx.beginPath();
+        ctx.arc(posX - 40, posY + 10, s.radius * 0.65, 0, Math.PI * 2);
+        ctx.arc(posX + 40, posY + 10, s.radius * 0.65, 0, Math.PI * 2);
+        ctx.arc(posX, posY - 20, s.radius * 0.75, 0, Math.PI * 2);
+        ctx.arc(posX - 25, posY - 15, s.radius * 0.6, 0, Math.PI * 2);
+        ctx.arc(posX + 25, posY - 15, s.radius * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Suspended Glass Card
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        const cardW = 126;
+        const cardH = 68;
+        ctx.beginPath();
+        ctx.roundRect(posX - cardW / 2, posY - cardH / 2 + 6, cardW, cardH, 20);
+        ctx.fill();
+        ctx.stroke();
+
+        // Badge
+        ctx.fillStyle = s.colorTheme;
+        ctx.beginPath();
+        ctx.arc(posX, posY - cardH / 2 + 6, 16, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#2B3A4A';
+        ctx.font = 'bold 11px Quicksand, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`0${s.id}`, posX, posY - cardH / 2 + 10);
+
+        // Titles
+        ctx.font = 'bold 13px Quicksand, sans-serif';
+        ctx.fillText(data.title, posX, posY + 15);
+
+        ctx.font = '500 10px Nunito, sans-serif';
+        ctx.fillStyle = 'rgba(43, 58, 74, 0.75)';
+        ctx.fillText(data.date, posX, posY + 28);
+
+        // Floating Icon
+        ctx.font = '22px sans-serif';
+        ctx.fillText(data.icon, posX, posY - 40);
+      });
+
+      // Wish Lanterns
+      for (let i = lanterns.length - 1; i >= 0; i--) {
+        const l = lanterns[i];
+        l.y -= l.speedY;
+        l.wobble += 0.03;
+        const curX = l.x + Math.sin(l.wobble) * 20;
+
+        ctx.fillStyle = 'rgba(255, 220, 180, 0.45)';
+        ctx.beginPath();
+        ctx.arc(curX, l.y, 25, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.font = '24px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🏮', curX, l.y);
+
+        ctx.font = 'bold 10px Quicksand, sans-serif';
+        ctx.fillStyle = '#2B3A4A';
+        ctx.fillText(l.text, curX, l.y + 20);
+
+        if (l.y < -300) lanterns.splice(i, 1);
+      }
+
+      ctx.restore();
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- CLOUD STAGE MEMORY PAGE TRANSITION CONTROLLER        -->
+  <!-- ==================================================== -->
+  <script>
+    let currentStageId = 1;
+    let currentPhotoIndex = 0;
+    let currentStagePhotos = [];
+
+    // Enter Dedicated Cloud Stage Page
+    function enterStage(stageId) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      currentStageId = stageId;
+      const stage = STAGE_DATA[stageId];
+      if (!stage) return;
+
+      playDreamChime();
+
+      // Fly camera directly onto cloud island
+      const node = stageNodes.find(s => s.id === stageId);
+      if (node) {
+        camera.targetX = node.x;
+        camera.targetY = node.y;
+        camera.targetZoom = 1.4;
+      }
+
+      // Activate Cloud Portal Expanding Zoom
+      const portal = document.getElementById('cloudPortal');
+      portal.classList.add('active');
+
+      setTimeout(() => {
+        // Populate Stage Content
+        populateStageMemoryPage(stage);
+
+        // Hide Main View, Show Stage Memory View
+        document.getElementById('mainMapView').classList.add('opacity-0', 'pointer-events-none');
+        const memoryView = document.getElementById('memoryPageView');
+        memoryView.classList.remove('opacity-0', 'pointer-events-none');
+        memoryView.classList.add('opacity-100');
+        memoryView.scrollTop = 0;
+
+        // Fade Portal Out
+        setTimeout(() => {
+          portal.classList.remove('active');
+          isTransitioning = false;
+        }, 300);
+
+      }, 600);
+    }
+
+    // Exit Memory Page -> Return to Clouds
+    function exitMemoryPage() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      playDreamChime();
+
+      const portal = document.getElementById('cloudPortal');
+      portal.classList.add('active');
+
+      setTimeout(() => {
+        // Reset Views
+        document.getElementById('memoryPageView').classList.add('opacity-0', 'pointer-events-none');
+        document.getElementById('memoryPageView').classList.remove('opacity-100');
+
+        document.getElementById('mainMapView').classList.remove('opacity-0', 'pointer-events-none');
+        document.getElementById('mainMapView').classList.add('opacity-100');
+
+        camera.targetZoom = 1.0;
+
+        setTimeout(() => {
+          portal.classList.remove('active');
+          isTransitioning = false;
+        }, 300);
+      }, 500);
+    }
+
+    // Populate Dynamic Elements of Memory Page
+    function populateStageMemoryPage(stage) {
+      // Header info
+      document.getElementById('pageStageBadge').innerText = stage.badge;
+      document.getElementById('pageStageDate').innerText = stage.date;
+      document.getElementById('pageStageIcon').innerText = stage.icon;
+      document.getElementById('pageStageThemeTag').innerText = stage.themeTag;
+      document.getElementById('pageStageTitle').innerText = stage.title;
+      document.getElementById('pageStageSubtitle').innerText = stage.subtitle;
+      document.getElementById('pageStageNarrative').innerText = stage.narrative;
+
+      // Update atmosphere gradient class
+      const atmo = document.getElementById('stageAtmosphere');
+      atmo.className = `fixed inset-0 pointer-events-none -z-10 transition-all duration-1000 ${stage.themeClass}`;
+
+      currentStagePhotos = stage.photos;
+
+      // Populate Scrapbook Grid
+      const grid = document.getElementById('scrapbookGrid');
+      grid.innerHTML = '';
+      stage.photos.forEach((photo, idx) => {
+        const card = document.createElement('div');
+        card.className = 'polaroid-frame w-full max-w-[280px]';
+        card.style.transform = `rotate(${photo.tilt})`;
+        card.onclick = () => openLightbox(idx);
+
+        card.innerHTML = `
+          <div class="w-full h-56 rounded-xl bg-gradient-to-tr ${photo.gradient} flex flex-col items-center justify-center p-4 border border-white/70 shadow-inner relative overflow-hidden">
+            <span class="text-6xl mb-2 filter drop-shadow">${photo.icon}</span>
+            <div class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-white/70 text-[9px] font-bold text-slateBlue uppercase tracking-wider">
+              ${photo.tag}
+            </div>
+          </div>
+          <p class="font-hand text-xl text-slateBlue mt-3 px-1 leading-snug">${photo.quote}</p>
+          <div class="flex items-center justify-between mt-2 pt-2 border-t border-slateBlue/10 text-[11px] text-slateBlue/60 font-semibold">
+            <span>${photo.date}</span>
+            <span class="text-pink-500 font-bold">✨ Tap to open</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Populate Vertical Timeline
+      const timeline = document.getElementById('timelineList');
+      timeline.innerHTML = '';
+      stage.timeline.forEach((node, idx) => {
+        const item = document.createElement('div');
+        const isLeft = idx % 2 === 0;
+
+        item.innerHTML = `
+          <div class="flex flex-col md:flex-row items-start ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} relative pl-12 md:pl-0">
+            <!-- Central Glowing Star Icon -->
+            <div class="absolute left-3 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-2 border-lightAqua shadow-md flex items-center justify-center text-sm z-10">
+              ${node.icon}
+            </div>
+
+            <!-- Content Glass Card -->
+            <div class="w-full md:w-5/12 ${isLeft ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'}">
+              <div class="glass-panel p-5 rounded-2xl">
+                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-babyPink text-slateBlue uppercase tracking-wider">${node.date}</span>
+                <h4 class="text-lg font-bold text-slateBlue font-display mt-2">${node.title}</h4>
+                <p class="text-xs text-slateBlue/80 font-light mt-1.5 leading-relaxed">${node.msg}</p>
+                <div class="mt-3 inline-block px-3 py-1 rounded-xl bg-white/60 border border-white text-[11px] text-teal-800 font-medium">
+                  ${node.joke}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        timeline.appendChild(item);
+      });
+
+      // Default to scrapbook view
+      switchTab('scrapbook');
+    }
+
+    // Switch between Scrapbook & Timeline tabs
+    function switchTab(tab) {
+      const btnScrap = document.getElementById('tabBtnScrapbook');
+      const btnTime = document.getElementById('tabBtnTimeline');
+      const secScrap = document.getElementById('sectionScrapbook');
+      const secTime = document.getElementById('sectionTimeline');
+
+      if (tab === 'scrapbook') {
+        btnScrap.className = 'px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-slateBlue';
+        btnTime.className = 'px-5 py-2 rounded-xl text-xs font-bold transition text-slateBlue/70 hover:text-slateBlue';
+        secScrap.classList.remove('hidden');
+        secTime.classList.add('hidden');
+      } else {
+        btnTime.className = 'px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-slateBlue';
+        btnScrap.className = 'px-5 py-2 rounded-xl text-xs font-bold transition text-slateBlue/70 hover:text-slateBlue';
+        secTime.classList.remove('hidden');
+        secScrap.classList.add('hidden');
+      }
+      playTone(720, 0.2);
+    }
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- LIGHTBOX / EXPANDED PHOTO DIALOG LOGIC              -->
+  <!-- ==================================================== -->
+  <script>
+    function openLightbox(photoIndex) {
+      currentPhotoIndex = photoIndex;
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo) return;
+
+      document.getElementById('lightboxMediaContainer').className = `w-full h-64 rounded-2xl overflow-hidden mb-4 border border-white/80 shadow-inner flex items-center justify-center relative bg-gradient-to-tr ${photo.gradient}`;
+      document.getElementById('lightboxMediaContainer').innerHTML = `<span class="text-8xl filter drop-shadow-lg">${photo.icon}</span>`;
+
+      document.getElementById('lightboxTag').innerText = photo.tag;
+      document.getElementById('lightboxDate').innerText = photo.date;
+      document.getElementById('lightboxTitle').innerText = photo.title;
+      document.getElementById('lightboxQuote').innerText = photo.quote;
+      document.getElementById('lightboxFullText').innerText = photo.desc;
+
+      const modal = document.getElementById('lightboxModal');
+      const card = document.getElementById('lightboxCard');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      card.classList.remove('scale-90');
+      card.classList.add('scale-100');
+
+      playTone(850, 0.4);
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightboxModal');
+      const card = document.getElementById('lightboxCard');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      card.classList.remove('scale-100');
+      card.classList.add('scale-90');
+    }
+
+    function navigateLightbox(dir) {
+      let newIndex = currentPhotoIndex + dir;
+      if (newIndex < 0) newIndex = currentStagePhotos.length - 1;
+      if (newIndex >= currentStagePhotos.length) newIndex = 0;
+      openLightbox(newIndex);
+    }
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- INTERACTIVE DETAILS: FLOATING HEARTS & DRAWERS       -->
+  <!-- ==================================================== -->
+  <script>
+    // Spawn floating heart effect on click
+    function spawnHeartEffect(x, y) {
+      const heart = document.createElement('div');
+      heart.className = 'heart-particle text-2xl';
+      heart.style.left = `${x - 12}px`;
+      heart.style.top = `${y - 12}px`;
+      const icons = ['💗', '✨', '🌸', '☁️', '🫧'];
+      heart.innerText = icons[Math.floor(Math.random() * icons.length)];
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 1200);
+    }
+
+    window.addEventListener('click', (e) => {
+      // Spawn hearts when clicking inside memory page
+      const memoryView = document.getElementById('memoryPageView');
+      if (memoryView && !memoryView.classList.contains('pointer-events-none')) {
+        spawnHeartEffect(e.clientX, e.clientY);
+      }
+    });
+
+    // Wish Handlers
+    function openWishModal() {
+      document.getElementById('wishModal').classList.remove('opacity-0', 'pointer-events-none');
+      playTone(700, 0.3);
+    }
+
+    function closeWishModal() {
+      document.getElementById('wishModal').classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function launchLantern(e) {
+      e.preventDefault();
+      const input = document.getElementById('wishInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      lanterns.push({
+        x: camera.x + (Math.random() - 0.5) * 200,
+        y: camera.y + 200,
+        text: text,
+        speedY: Math.random() * 0.8 + 0.6,
+        wobble: Math.random() * Math.PI,
+        alpha: 1
+      });
+
+      playDreamChime();
+      input.value = '';
+      closeWishModal();
+    }
+
+  </script>
+</body>
+</html>
