@@ -8,7 +8,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@300;400;600;700;800&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,9 +21,7 @@
             softAqua: '#BEE1E6',
             lightAqua: '#A0E7E5',
             pureWhite: '#FFFFFF',
-            slateDeep: '#1E293B',
-            plumDeep: '#2D1F2D',
-            plumMuted: '#4A3B4C',
+            slateBlue: '#2B3A4A',
             cloudLavender: '#E4DCF1',
             starGold: '#FFF1C5'
           },
@@ -43,9 +41,8 @@
       --soft-aqua: #BEE1E6;
       --light-aqua: #A0E7E5;
       --pure-white: #FFFFFF;
-      --slate-deep: #1E293B;
-      --plum-deep: #2D1F2D;
-      --plum-muted: #4A3B4C;
+      --slate-blue: #2B3A4A;
+      --cloud-lavender: #E4DCF1;
     }
 
     * {
@@ -57,8 +54,8 @@
 
     body {
       font-family: 'Nunito', sans-serif;
-      color: var(--slate-deep);
-      background-color: #FCE7F0;
+      color: var(--slate-blue);
+      background-color: #FAD2E1;
       overflow: hidden;
       width: 100vw;
       height: 100vh;
@@ -66,148 +63,75 @@
       padding: 0;
     }
 
-    /* Glassmorphic Surfaces with Depth */
+    /* Glassmorphic Surfaces */
     .glass-panel {
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 16px 36px rgba(160, 231, 229, 0.28), 0 2px 10px rgba(45, 31, 45, 0.04), inset 0 0 20px rgba(255, 255, 255, 0.7);
-    }
-
-    .glass-dock {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.65);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 12px 30px rgba(45, 31, 45, 0.12), 0 0 18px rgba(250, 210, 225, 0.45);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 14px 35px rgba(160, 231, 229, 0.25), inset 0 0 24px rgba(255, 255, 255, 0.65);
     }
 
     .glass-pill {
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1.5px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 6px 18px rgba(160, 231, 229, 0.25);
+      box-shadow: 0 8px 24px rgba(160, 231, 229, 0.3);
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .glass-pill:hover {
       background: rgba(255, 255, 255, 0.98);
       transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 10px 24px rgba(250, 210, 225, 0.6);
+      box-shadow: 0 12px 28px rgba(250, 210, 225, 0.6);
     }
 
-    /* Tactile Polaroid Cards with Heavy Paper Grain Texture */
+    /* Polaroid Scrapbook Elements */
     .polaroid-frame {
-      background-color: #FCFBF7;
-      background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 0);
-      background-size: 8px 8px;
-      padding: 14px 14px 26px 14px;
+      background: white;
+      padding: 12px 12px 24px 12px;
       border-radius: 20px;
-      box-shadow: 0 14px 28px rgba(45, 31, 45, 0.09), 0 3px 10px rgba(160, 231, 229, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
-      transition: transform 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.25), box-shadow 0.38s ease;
+      box-shadow: 0 14px 32px rgba(43, 58, 74, 0.1), 0 2px 10px rgba(160, 231, 229, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
       cursor: pointer;
     }
 
-    .polaroid-frame:hover, .polaroid-frame:active {
-      transform: translateY(-6px) rotate(0deg) scale(1.025) !important;
-      box-shadow: 0 24px 44px rgba(45, 31, 45, 0.14), 0 0 28px rgba(250, 210, 225, 0.8), inset 0 0 0 1px #FFFFFF;
-      z-index: 30;
+    .polaroid-frame:hover {
+      transform: translateY(-8px) scale(1.03) rotate(0deg) !important;
+      box-shadow: 0 22px 48px rgba(160, 231, 229, 0.55), 0 0 25px rgba(255, 255, 255, 0.9);
+      z-index: 20;
     }
 
-    /* Washi Tape Strip Accents centered at the top */
-    .washi-tape {
-      position: absolute;
-      top: -9px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-1.2deg);
-      width: 68px;
-      height: 18px;
-      background: rgba(255, 232, 240, 0.88);
-      backdrop-filter: blur(4px);
-      border-left: 2.5px dashed rgba(244, 114, 182, 0.45);
-      border-right: 2.5px dashed rgba(244, 114, 182, 0.45);
-      box-shadow: 0 2px 6px rgba(45, 31, 45, 0.08);
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .washi-tape-mint {
-      background: rgba(220, 252, 245, 0.88);
-      border-left-color: rgba(45, 212, 191, 0.45);
-      border-right-color: rgba(45, 212, 191, 0.45);
-    }
-
-    .washi-tape-lavender {
-      background: rgba(243, 232, 255, 0.88);
-      border-left-color: rgba(192, 132, 252, 0.45);
-      border-right-color: rgba(192, 132, 252, 0.45);
-    }
-
-    .washi-tape-gold {
-      background: rgba(254, 249, 195, 0.88);
-      border-left-color: rgba(250, 204, 21, 0.45);
-      border-right-color: rgba(250, 204, 21, 0.45);
-    }
-
-    /* Staggered Timeline Fade-Up Animations */
-    @keyframes timelineFadeUp {
-      0% { opacity: 0; transform: translateY(22px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    .timeline-node-animate {
-      animation: timelineFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    /* Checkpoint Pulsing Glow */
-    @keyframes checkpointPulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 10px rgba(250, 210, 225, 0.9), 0 0 0 4px rgba(255, 255, 255, 0.9); }
-      50% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 22px rgba(160, 231, 229, 0.95), 0 0 0 6px rgba(255, 255, 255, 1); }
-    }
-
-    .checkpoint-glow {
-      animation: checkpointPulse 2.8s infinite ease-in-out;
-    }
-
-    /* Spinning Vinyl Record Player */
-    @keyframes spinVinyl {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .vinyl-disc {
-      background: radial-gradient(circle, #F472B6 24%, #1E1B24 26%, #282531 40%, #1E1B24 50%, #282531 65%, #1E1B24 75%, #282531 90%);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), inset 0 0 4px rgba(255, 255, 255, 0.4);
-    }
-
-    .vinyl-spinning {
-      animation: spinVinyl 3.5s linear infinite;
-    }
-
-    /* Sparkle & Heart Particle Burst */
-    @keyframes burstFloat {
-      0% { transform: translate(0, 0) scale(0.4) rotate(0deg); opacity: 1; }
-      100% { transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot)); opacity: 0; }
-    }
-
-    .particle-burst {
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      animation: burstFloat 0.95s forwards cubic-bezier(0.12, 0.8, 0.32, 1);
-    }
-
-    /* Ambient Pulsing & Cloud Portal */
+    /* Ambient Pulsing and Drifting */
     @keyframes pulseGlow {
-      0%, 100% { filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8)); }
-      50% { filter: drop-shadow(0 0 20px rgba(160, 231, 229, 0.95)); }
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7)); }
+      50% { filter: drop-shadow(0 0 22px rgba(160, 231, 229, 0.95)); }
+    }
+
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(0.6deg); }
+    }
+
+    @keyframes heartBurst {
+      0% { transform: translateY(0) scale(0.6); opacity: 1; }
+      100% { transform: translateY(-85px) scale(1.35); opacity: 0; }
     }
 
     .glow-pulse { animation: pulseGlow 4s infinite ease-in-out; }
+    .float-slow { animation: floatGentle 6s infinite ease-in-out; }
 
+    .heart-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      animation: heartBurst 1.2s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+    }
+
+    /* Cloud Transition Portal */
     #cloudPortal {
       position: fixed;
       inset: 0;
@@ -239,26 +163,26 @@
 
     /* Stage Atmospheric Themes */
     .theme-stage-1 {
-      background: linear-gradient(180deg, #FDE8F0 0%, #FAD2E1 30%, #F5ECF2 70%, #EAF0FD 100%);
+      background: linear-gradient(180deg, #FCE4EC 0%, #FAD2E1 30%, #F3E8EE 70%, #E8F0FE 100%);
     }
     .theme-stage-2 {
-      background: linear-gradient(180deg, #E6FAF8 0%, #BEE1E6 35%, #DCF3F3 70%, #FCE8F0 100%);
+      background: linear-gradient(180deg, #E0F7FA 0%, #BEE1E6 35%, #D4F0F0 70%, #FAD2E1 100%);
     }
     .theme-stage-3 {
-      background: linear-gradient(180deg, #FCE8F0 0%, #E7E8F7 40%, #BEE1E6 75%, #A0E7E5 100%);
+      background: linear-gradient(180deg, #FAD2E1 0%, #E2E4F6 40%, #BEE1E6 75%, #A0E7E5 100%);
     }
     .theme-stage-4 {
-      background: linear-gradient(180deg, #FFF9EA 0%, #FCE4EE 35%, #B4ECE9 75%, #FFFFFF 100%);
+      background: linear-gradient(180deg, #FFF8E7 0%, #FAD2E1 35%, #A0E7E5 75%, #FFFFFF 100%);
     }
 
     /* Custom Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: rgba(160, 231, 229, 0.8); border-radius: 10px; }
+    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(160, 231, 229, 0.7); border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(250, 210, 225, 0.95); }
   </style>
 </head>
-<body class="relative select-none text-slateDeep antialiased">
+<body class="relative select-none text-slateBlue">
 
   <!-- ==================================================== -->
   <!-- AUDIO SYNTHESIZER & CELESTIAL MUSIC ENGINE           -->
@@ -278,18 +202,8 @@
 
     function toggleAudio() {
       soundEnabled = !soundEnabled;
-      const vinyl = document.getElementById('vinylDiscElement');
-      const soundStatus = document.getElementById('soundStatusIndicator');
-      
-      if (vinyl) {
-        if (soundEnabled) {
-          vinyl.classList.add('vinyl-spinning');
-          if (soundStatus) soundStatus.innerText = 'Audio: ON';
-        } else {
-          vinyl.classList.remove('vinyl-spinning');
-          if (soundStatus) soundStatus.innerText = 'Audio: OFF';
-        }
-      }
+      const btn = document.getElementById('btnSound');
+      if (btn) btn.innerText = soundEnabled ? '🎵' : '🔇';
     }
 
     function playTone(freq = 520, duration = 0.8, type = 'sine') {
@@ -331,64 +245,49 @@
     <!-- Top HUD Navigation -->
     <header class="absolute top-4 left-4 right-4 md:left-8 md:right-8 z-30 flex items-center justify-between gap-3 pointer-events-none">
       <div class="glass-panel rounded-full px-4 md:px-5 py-2 flex items-center space-x-3 pointer-events-auto glow-pulse">
-        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-lg shadow-sm border border-pink-100">
+        <div class="w-8 h-8 rounded-full bg-white/95 flex items-center justify-center text-lg shadow-inner">
           ☁️
         </div>
         <div>
-          <h1 class="text-xs md:text-sm font-bold text-plumDeep leading-tight tracking-wide font-display">Cloud Nine</h1>
-          <p class="text-[9px] md:text-[10px] text-plumMuted font-bold tracking-wider uppercase">Dreamscape Journal</p>
+          <h1 class="text-xs md:text-sm font-bold text-slateBlue leading-tight tracking-wide font-display">Cloud Nine</h1>
+          <p class="text-[9px] md:text-[10px] text-slateBlue/70 font-semibold tracking-wider uppercase">Dreamscape Journal</p>
         </div>
       </div>
 
-      <!-- Quick Sound Toggle: Vinyl Record -->
+      <!-- Quick Sound Toggle -->
       <div class="flex items-center space-x-2 pointer-events-auto">
-        <button onclick="toggleAudio(); triggerBurst(event)" class="glass-dock px-3 py-1.5 rounded-full flex items-center space-x-2 transition hover:scale-105" title="Toggle Celestial Sound">
-          <div id="vinylDiscElement" class="vinyl-disc vinyl-spinning w-7 h-7 rounded-full flex items-center justify-center relative">
-            <span class="w-2 h-2 rounded-full bg-white shadow-inner"></span>
-          </div>
-          <span id="soundStatusIndicator" class="text-[11px] font-bold text-plumDeep hidden sm:inline">Audio: ON</span>
+        <button id="btnSound" onclick="toggleAudio()" class="glass-pill w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center text-sm" title="Toggle Sound">
+          🎵
         </button>
       </div>
     </header>
 
-    <!-- Milestone Header Pill (Top Center Floating) -->
-    <div class="absolute top-16 md:top-20 left-1/2 -translate-x-1/2 z-20 pointer-events-auto hidden md:block">
-      <div class="glass-panel px-5 py-2 rounded-full flex items-center space-x-2.5 text-xs font-bold text-plumDeep shadow-md">
-        <span class="text-pink-500">✨</span>
-        <span id="floatingMilestoneText">First Spark: Friday, May 1, 2026 • Forever on Cloud Nine</span>
-      </div>
-    </div>
-
-    <!-- Redesigned Bottom Chapter Dock (Frosted Floating Dock) -->
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto glass-dock px-3 py-2 rounded-2xl flex items-center gap-2 shadow-2xl max-w-[94vw] overflow-x-auto">
-      <div class="text-[10px] font-bold px-2 py-1 text-plumMuted tracking-wider uppercase hidden lg:block">Chapters:</div>
-      
-      <button onclick="enterStage(1); triggerBurst(event)" class="dock-btn px-3 py-2 rounded-xl bg-white/80 hover:bg-white text-xs font-bold text-plumDeep transition shadow-sm flex items-center space-x-1.5 hover:scale-105 active:scale-95">
-        <span class="text-sm">🌸</span>
-        <span class="whitespace-nowrap">01 First Glimpse</span>
+    <!-- Bottom Stage Navigator Bar -->
+    <div class="absolute bottom-6 left-4 md:left-8 z-30 pointer-events-auto glass-panel p-2 rounded-2xl flex flex-wrap items-center gap-1.5 shadow-lg max-w-[95vw] overflow-x-auto">
+      <div class="text-[10px] font-bold px-2 py-1 text-slateBlue/70 tracking-wide uppercase hidden lg:block">Sky Stages:</div>
+      <button onclick="enterStage(1)" class="px-3 py-1.5 rounded-xl bg-white/75 hover:bg-white text-xs font-bold text-slateBlue transition shadow-sm flex items-center space-x-1.5">
+        <span class="w-2 h-2 rounded-full bg-pink-400"></span>
+        <span>01 First Glimpse</span>
       </button>
-
-      <button onclick="enterStage(2); triggerBurst(event)" class="dock-btn px-3 py-2 rounded-xl bg-white/80 hover:bg-white text-xs font-bold text-plumDeep transition shadow-sm flex items-center space-x-1.5 hover:scale-105 active:scale-95">
-        <span class="text-sm">🌱</span>
-        <span class="whitespace-nowrap">02 Drifting Closer</span>
+      <button onclick="enterStage(2)" class="px-3 py-1.5 rounded-xl bg-white/75 hover:bg-white text-xs font-bold text-slateBlue transition shadow-sm flex items-center space-x-1.5">
+        <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+        <span>02 Drifting Closer</span>
       </button>
-
-      <button onclick="enterStage(3); triggerBurst(event)" class="dock-btn px-3 py-2 rounded-xl bg-white/80 hover:bg-white text-xs font-bold text-plumDeep transition shadow-sm flex items-center space-x-1.5 hover:scale-105 active:scale-95">
-        <span class="text-sm">💐</span>
-        <span class="whitespace-nowrap">03 Hearts Aligned</span>
+      <button onclick="enterStage(3)" class="px-3 py-1.5 rounded-xl bg-white/75 hover:bg-white text-xs font-bold text-slateBlue transition shadow-sm flex items-center space-x-1.5">
+        <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+        <span>03 Hearts Aligned</span>
       </button>
-
-      <button onclick="enterStage(4); triggerBurst(event)" class="dock-btn px-3 py-2 rounded-xl bg-white/80 hover:bg-white text-xs font-bold text-plumDeep transition shadow-sm flex items-center space-x-1.5 hover:scale-105 active:scale-95">
-        <span class="text-sm">💍</span>
-        <span class="whitespace-nowrap">04 Forever Sky</span>
+      <button onclick="enterStage(4)" class="px-3 py-1.5 rounded-xl bg-white/75 hover:bg-white text-xs font-bold text-slateBlue transition shadow-sm flex items-center space-x-1.5">
+        <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+        <span>04 Our Forever Sky</span>
       </button>
     </div>
 
     <!-- Instruction Helper (Bottom Right) -->
-    <div class="hidden xl:flex absolute bottom-7 right-8 z-30 pointer-events-none glass-panel px-4 py-2 rounded-full items-center space-x-3 text-xs font-bold text-plumMuted shadow-md">
-      <span>☁️ Tap any cloud to dive in</span>
+    <div class="hidden md:flex absolute bottom-6 right-8 z-30 pointer-events-none glass-panel px-4 py-2 rounded-full items-center space-x-3 text-xs font-medium text-slateBlue/80 shadow-md">
+      <span>☁️ Tap any cloud to dive into memories</span>
       <span>•</span>
-      <span>🖱️ Drag to explore the sky</span>
+      <span>🖱️ Drag sky to explore</span>
     </div>
   </div>
 
@@ -408,20 +307,20 @@
     <!-- Floating Top Bar -->
     <header class="sticky top-4 z-50 px-4 md:px-10 max-w-6xl mx-auto flex items-center justify-between gap-2">
       <!-- Back to Clouds Button -->
-      <button onclick="exitMemoryPage(); triggerBurst(event)" class="glass-pill px-4 md:px-5 py-2.5 rounded-full flex items-center space-x-2 text-xs md:text-sm font-bold text-plumDeep">
+      <button onclick="exitMemoryPage()" class="glass-pill px-4 md:px-5 py-2.5 rounded-full flex items-center space-x-2 text-xs md:text-sm font-bold text-slateBlue">
         <span class="text-base">☁️</span>
         <span>Back to Clouds</span>
       </button>
 
       <!-- Stage Indicator Badge -->
       <div class="glass-panel px-4 py-2 rounded-full flex items-center space-x-2">
-        <span id="pageStageBadge" class="text-[11px] md:text-xs font-bold text-plumDeep uppercase tracking-wider">Chapter 01 : First Glimpse</span>
-        <span class="text-plumMuted/40 hidden sm:inline">•</span>
-        <span id="pageStageDate" class="text-[11px] md:text-xs text-plumMuted font-bold hidden sm:inline">Friday, May 1, 2026</span>
+        <span id="pageStageBadge" class="text-[11px] md:text-xs font-bold text-slateBlue uppercase tracking-wider">Chapter 01 : First Glimpse</span>
+        <span class="text-slateBlue/40 hidden sm:inline">•</span>
+        <span id="pageStageDate" class="text-[11px] md:text-xs text-slateBlue/70 font-semibold hidden sm:inline">May 1, 2026</span>
       </div>
 
       <!-- Add Memory Quick Button -->
-      <button onclick="openAddMemoryModal(); triggerBurst(event)" class="glass-pill px-3.5 md:px-4 py-2.5 rounded-full bg-pink-100/90 text-xs font-bold text-pink-700 flex items-center space-x-1">
+      <button onclick="openAddMemoryModal()" class="glass-pill px-3.5 md:px-4 py-2.5 rounded-full bg-pink-100/80 text-xs font-bold text-pink-700 flex items-center space-x-1">
         <span>➕</span>
         <span class="hidden md:inline">Add Memory</span>
       </button>
@@ -433,11 +332,11 @@
       <!-- Stage Header Hero -->
       <div class="text-center max-w-2xl mx-auto mb-10">
         <div class="inline-flex items-center space-x-2 glass-panel px-4 py-1.5 rounded-full mb-3 glow-pulse">
-          <span class="text-xs uppercase tracking-widest font-bold text-plumDeep" id="pageStageThemeTag">Memories Inside the Mist</span>
+          <span class="text-xs uppercase tracking-widest font-bold text-slateBlue" id="pageStageThemeTag">Memories Inside the Mist</span>
         </div>
-        <h2 id="pageStageTitle" class="text-3xl md:text-5xl font-bold font-display text-plumDeep tracking-tight">First Glimpse</h2>
-        <p id="pageStageSubtitle" class="font-hand text-2xl md:text-3xl text-pink-600 mt-2 font-bold">“Inside this cloud are the moments that started it all...”</p>
-        <p id="pageStageNarrative" class="text-sm md:text-base text-plumDeep font-medium mt-3 leading-relaxed glass-panel p-4 md:p-5 rounded-2xl shadow-sm">
+        <h2 id="pageStageTitle" class="text-3xl md:text-5xl font-bold font-display text-slateBlue tracking-tight">First Glimpse</h2>
+        <p id="pageStageSubtitle" class="font-hand text-2xl md:text-3xl text-pink-600 mt-2">“Inside this cloud are the moments that started it all...”</p>
+        <p id="pageStageNarrative" class="text-xs md:text-sm text-slateBlue/85 font-light mt-3 leading-relaxed glass-panel p-4 rounded-2xl shadow-sm">
           That Friday evening at 10:28 PM when a simple hello turned into something unforgettable.
         </p>
       </div>
@@ -445,10 +344,10 @@
       <!-- Tab Switcher (Scrapbook / Timeline) -->
       <div class="flex justify-center mb-8">
         <div class="glass-panel p-1.5 rounded-2xl inline-flex space-x-1.5 shadow-sm">
-          <button id="tabBtnScrapbook" onclick="switchTab('scrapbook'); triggerBurst(event)" class="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-plumDeep">
+          <button id="tabBtnScrapbook" onclick="switchTab('scrapbook')" class="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-slateBlue">
             📸 Scrapbook
           </button>
-          <button id="tabBtnTimeline" onclick="switchTab('timeline'); triggerBurst(event)" class="px-5 py-2 rounded-xl text-xs font-bold transition text-plumMuted hover:text-plumDeep">
+          <button id="tabBtnTimeline" onclick="switchTab('timeline')" class="px-5 py-2 rounded-xl text-xs font-bold transition text-slateBlue/70 hover:text-slateBlue">
             ✨ Dream Timeline
           </button>
         </div>
@@ -459,23 +358,23 @@
       <!-- ============================================ -->
       <div id="sectionScrapbook" class="transition-opacity duration-300">
         <div class="text-center mb-6">
-          <p class="text-[11px] uppercase tracking-wider text-plumMuted font-bold">Tap any polaroid to open voice keepsakes</p>
+          <p class="text-[11px] uppercase tracking-wider text-slateBlue/60 font-bold">Tap any polaroid to open voice keepsakes</p>
         </div>
 
-        <div id="scrapbookGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-start justify-items-center">
-          <!-- Dynamically populated polaroids with washi tape -->
+        <div id="scrapbookGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 items-start justify-items-center">
+          <!-- Dynamically populated polaroids -->
         </div>
       </div>
 
       <!-- ============================================ -->
-      <!-- SECTION 2: CONSTELLATION DREAM TIMELINE      -->
+      <!-- SECTION 2: VERTICAL DREAMSCAPE TIMELINE      -->
       <!-- ============================================ -->
-      <div id="sectionTimeline" class="hidden transition-opacity duration-300 max-w-3xl mx-auto relative pt-4 pb-8">
-        <!-- Glowing Constellation Trail Line with Star Dots -->
-        <div class="absolute top-4 bottom-4 left-6 md:left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-pink-400 via-teal-300 to-purple-400 shadow-[0_0_12px_rgba(160,231,229,0.9)] opacity-80"></div>
+      <div id="sectionTimeline" class="hidden transition-opacity duration-300 max-w-2xl mx-auto relative pt-4">
+        <!-- Vertical Glowing Cloud Path -->
+        <div class="absolute top-0 bottom-0 left-6 md:left-1/2 -translate-x-1/2 w-1 bg-gradient-to-b from-babyPink via-lightAqua to-softAqua rounded-full shadow-[0_0_12px_rgba(160,231,229,0.8)]"></div>
 
-        <!-- Dynamic Timeline Staggered Items -->
-        <div id="timelineList" class="space-y-12 relative">
+        <!-- Dynamic Timeline Items -->
+        <div id="timelineList" class="space-y-10 relative">
           <!-- Dynamically populated nodes -->
         </div>
       </div>
@@ -483,7 +382,7 @@
     </main>
 
     <!-- Footer in Memory Page -->
-    <footer class="text-center py-10 text-xs font-bold text-plumMuted/80">
+    <footer class="text-center py-10 text-xs font-medium text-slateBlue/60">
       <p>☁️ Floating peacefully inside our private memory cloud ☁️</p>
     </footer>
   </div>
@@ -491,48 +390,48 @@
   <!-- ==================================================== -->
   <!-- LIGHTBOX / EXPANDED PHOTO DIALOG WITH VOICE PLAYER   -->
   <!-- ==================================================== -->
-  <div id="lightboxModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateDeep/35 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+  <div id="lightboxModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateBlue/30 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
     <div id="lightboxCard" class="glass-panel max-w-lg w-full rounded-3xl p-6 md:p-8 relative transform scale-90 transition-all duration-300 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <button onclick="closeLightbox()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white hover:bg-slate-50 text-plumDeep text-xs font-bold flex items-center justify-center shadow-md z-10 border border-white">
+      <button onclick="closeLightbox()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-slateBlue text-xs font-bold flex items-center justify-center shadow-sm z-10">
         ✕
       </button>
 
       <!-- Lightbox Photo Canvas / Image Container -->
-      <div id="lightboxMediaContainer" class="w-full h-56 rounded-2xl overflow-hidden mb-4 border border-white shadow-inner flex items-center justify-center relative bg-gradient-to-tr from-pink-200 to-teal-100">
+      <div id="lightboxMediaContainer" class="w-full h-56 rounded-2xl overflow-hidden mb-4 border border-white/80 shadow-inner flex items-center justify-center relative bg-gradient-to-tr from-pink-200 to-teal-100">
         <!-- Visual inserted dynamically -->
       </div>
 
       <div class="flex items-center justify-between">
-        <span id="lightboxTag" class="text-[10px] font-bold px-3 py-1 rounded-full bg-babyPink text-plumDeep uppercase tracking-wider border border-white">Memory #01</span>
-        <span id="lightboxDate" class="text-xs font-hand text-pink-700 font-bold text-base">Friday, May 1, 2026</span>
+        <span id="lightboxTag" class="text-[10px] font-bold px-3 py-1 rounded-full bg-babyPink text-slateBlue uppercase tracking-wider border border-white">Memory #01</span>
+        <span id="lightboxDate" class="text-xs font-semibold text-slateBlue/70">May 1, 2026</span>
       </div>
 
-      <h3 id="lightboxTitle" class="text-xl md:text-2xl font-bold text-plumDeep mt-2 font-display">Moment Title</h3>
-      <p id="lightboxQuote" class="font-hand text-2xl md:text-3xl text-pink-600 mt-1 font-bold">“Caption quote goes here”</p>
+      <h3 id="lightboxTitle" class="text-xl md:text-2xl font-bold text-slateBlue mt-2 font-display">Moment Title</h3>
+      <p id="lightboxQuote" class="font-hand text-xl md:text-2xl text-pink-600 mt-1">“Caption quote goes here”</p>
       
-      <p id="lightboxFullText" class="text-sm text-slateDeep font-normal mt-3 leading-relaxed">
+      <p id="lightboxFullText" class="text-xs md:text-sm text-slateBlue/85 font-light mt-3 leading-relaxed">
         Full detail and private notes regarding this memory.
       </p>
 
       <!-- ============================================ -->
       <!-- REAL VOICE KEEPSAKE & PLAYER CONTAINER       -->
       <!-- ============================================ -->
-      <div class="mt-5 pt-3 border-t border-white/70 space-y-2.5">
+      <div class="mt-5 pt-3 border-t border-white/60 space-y-2.5">
         <div class="flex items-center justify-between">
-          <span class="text-[11px] font-bold text-plumDeep uppercase tracking-wider flex items-center space-x-1.5">
+          <span class="text-[11px] font-bold text-slateBlue/75 uppercase tracking-wider flex items-center space-x-1.5">
             <span>🎙️</span>
             <span>Voice Keepsake</span>
           </span>
-          <button onclick="openRecordVoiceModal(); triggerBurst(event)" class="glass-pill px-3 py-1 rounded-xl text-[11px] font-bold text-pink-700 bg-babyPink/50 hover:bg-babyPink transition flex items-center space-x-1">
+          <button onclick="openRecordVoiceModal()" class="glass-pill px-3 py-1 rounded-xl text-[11px] font-bold text-pink-700 bg-babyPink/50 hover:bg-babyPink transition flex items-center space-x-1">
             <span>🎤</span>
-            <span id="btnRecordLabel">Record / Attach Audio</span>
+            <span id="btnRecordLabel">Record / Change Audio</span>
           </button>
         </div>
 
         <!-- Glassmorphic Audio Player Card -->
-        <div class="p-3.5 rounded-2xl bg-white/90 border border-white flex flex-col gap-2.5 shadow-sm">
+        <div class="p-3.5 rounded-2xl bg-white/85 border border-white flex flex-col gap-2.5 shadow-sm">
           <div class="flex items-center justify-between">
-            <button id="btnPlayVoice" onclick="toggleVoicePlayback(); triggerBurst(event)" class="px-4 py-2 rounded-xl bg-gradient-to-r from-pink-300 via-rose-200 to-teal-200 hover:opacity-95 text-plumDeep font-bold text-xs flex items-center space-x-2 shadow-sm transition active:scale-95">
+            <button id="btnPlayVoice" onclick="toggleVoicePlayback()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-pink-300 via-rose-200 to-teal-200 hover:opacity-95 text-slateBlue font-bold text-xs flex items-center space-x-2 shadow-sm transition active:scale-95">
               <span id="playIcon">▶</span>
               <span id="playText">Play Voice Note</span>
             </button>
@@ -546,26 +445,26 @@
               <span class="audio-bar w-1 bg-pink-400 rounded-full"></span>
             </div>
 
-            <span id="audioTimeDisplay" class="text-[11px] font-bold text-plumMuted">0:00 / 0:00</span>
+            <span id="audioTimeDisplay" class="text-[11px] font-semibold text-slateBlue/70">0:00 / 0:00</span>
           </div>
 
           <!-- Scrub / Progress Bar -->
-          <div class="w-full bg-slateDeep/10 h-2 rounded-full overflow-hidden cursor-pointer relative" id="audioProgressContainer" onclick="seekVoiceAudio(event)">
+          <div class="w-full bg-slateBlue/10 h-2 rounded-full overflow-hidden cursor-pointer relative" id="audioProgressContainer" onclick="seekVoiceAudio(event)">
             <div id="audioProgressBar" class="h-full bg-gradient-to-r from-pink-400 to-teal-400 w-0 transition-all duration-100"></div>
           </div>
         </div>
       </div>
 
       <!-- Navigation & Heart Button -->
-      <div class="mt-5 flex justify-between items-center pt-4 border-t border-white/70">
-        <button onclick="navigateLightbox(-1); triggerBurst(event)" class="glass-pill px-4 py-2 rounded-xl text-xs font-bold text-plumDeep flex items-center space-x-1">
+      <div class="mt-5 flex justify-between items-center pt-4 border-t border-white/60">
+        <button onclick="navigateLightbox(-1)" class="glass-pill px-4 py-2 rounded-xl text-xs font-bold text-slateBlue flex items-center space-x-1">
           <span>←</span>
           <span>Previous</span>
         </button>
-        <button onclick="triggerBurst(event); playHeartChime()" class="text-3xl hover:scale-125 active:scale-90 transition transform" title="Send a Heart">
+        <button onclick="spawnHeartEffect(window.innerWidth/2, window.innerHeight/2); playHeartChime()" class="text-2xl hover:scale-125 transition transform" title="Send a Heart">
           💗
         </button>
-        <button onclick="navigateLightbox(1); triggerBurst(event)" class="glass-pill px-4 py-2 rounded-xl text-xs font-bold text-plumDeep flex items-center space-x-1">
+        <button onclick="navigateLightbox(1)" class="glass-pill px-4 py-2 rounded-xl text-xs font-bold text-slateBlue flex items-center space-x-1">
           <span>Next</span>
           <span>→</span>
         </button>
@@ -576,33 +475,33 @@
   <!-- ==================================================== -->
   <!-- AUDIO RECORDER & UPLOADER MODAL                      -->
   <!-- ==================================================== -->
-  <div id="recordVoiceModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateDeep/35 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+  <div id="recordVoiceModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateBlue/30 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
     <div class="glass-panel max-w-md w-full rounded-3xl p-6 relative shadow-2xl">
-      <button onclick="closeRecordVoiceModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white hover:bg-slate-50 text-xs font-bold text-plumDeep flex items-center justify-center border border-white">
+      <button onclick="closeRecordVoiceModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-xs font-bold text-slateBlue flex items-center justify-center">
         ✕
       </button>
 
       <div class="text-center mb-4">
         <span class="text-3xl">🎙️</span>
-        <h3 class="text-lg font-bold text-plumDeep font-display mt-1">Record Your Voice Note</h3>
-        <p class="text-[11px] text-plumMuted font-bold">Record your actual voice message for this memory.</p>
+        <h3 class="text-lg font-bold text-slateBlue font-display mt-1">Record Your Voice Note</h3>
+        <p class="text-[11px] text-slateBlue/70">Record your actual voice message for this memory.</p>
       </div>
 
       <!-- Live Mic Recording Area -->
-      <div class="p-4 rounded-2xl bg-white/90 border border-white text-center space-y-3 shadow-inner">
-        <div id="recordStatusIndicator" class="flex items-center justify-center space-x-2 text-xs font-bold text-plumMuted">
+      <div class="p-4 rounded-2xl bg-white/80 border border-white text-center space-y-3 shadow-inner">
+        <div id="recordStatusIndicator" class="flex items-center justify-center space-x-2 text-xs font-bold text-slateBlue/70">
           <span id="recordDot" class="w-3 h-3 rounded-full bg-slate-300"></span>
           <span id="recordStatusText">Ready to record</span>
         </div>
 
-        <div id="recordTimer" class="font-display font-bold text-2xl text-plumDeep">0:00</div>
+        <div id="recordTimer" class="font-display font-bold text-2xl text-slateBlue">0:00</div>
 
         <div class="flex justify-center items-center space-x-3">
           <button id="btnStartRecord" onclick="startMicRecording()" class="px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs shadow-md transition flex items-center space-x-1.5">
             <span>●</span>
             <span>Start Recording</span>
           </button>
-          <button id="btnStopRecord" onclick="stopMicRecording()" class="hidden px-4 py-2 rounded-xl bg-plumDeep text-white font-bold text-xs shadow-md transition flex items-center space-x-1.5">
+          <button id="btnStopRecord" onclick="stopMicRecording()" class="hidden px-4 py-2 rounded-xl bg-slateBlue text-white font-bold text-xs shadow-md transition flex items-center space-x-1.5">
             <span>■</span>
             <span>Stop</span>
           </button>
@@ -613,22 +512,22 @@
       </div>
 
       <!-- Or Upload / Paste Audio Link -->
-      <div class="mt-4 pt-3 border-t border-white/70 space-y-2.5">
-        <div class="text-[11px] font-bold text-plumDeep">Or attach an audio file / link:</div>
+      <div class="mt-4 pt-3 border-t border-white/60 space-y-2.5">
+        <div class="text-[11px] font-bold text-slateBlue/80">Or attach an audio file / link:</div>
         
-        <input id="customAudioUrlInput" type="text" placeholder="Paste .mp3 audio URL (e.g. voice.mp3)" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-plumDeep focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" />
+        <input id="customAudioUrlInput" type="text" placeholder="Paste .mp3 audio URL (e.g. voice.mp3)" class="w-full bg-white/80 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink" />
         
         <div class="flex items-center justify-between gap-2">
-          <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-plumDeep font-bold text-[11px] border border-white shadow-sm flex items-center space-x-1">
+          <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white text-slateBlue font-bold text-[11px] border border-white shadow-sm flex items-center space-x-1">
             <span>📁</span>
             <span>Upload .mp3 / .m4a</span>
             <input type="file" id="audioFileInput" accept="audio/*" class="hidden" onchange="handleAudioFileUpload(event)" />
           </label>
-          <span id="audioFileNameDisplay" class="text-[10px] text-plumMuted font-bold truncate max-w-[150px]">No file selected</span>
+          <span id="audioFileNameDisplay" class="text-[10px] text-slateBlue/60 truncate max-w-[150px]">No file selected</span>
         </div>
       </div>
 
-      <button onclick="applyVoiceToMemory(); triggerBurst(event)" class="w-full mt-5 py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-plumDeep text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center justify-center space-x-1">
+      <button onclick="applyVoiceToMemory()" class="w-full mt-5 py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-slateBlue text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center justify-center space-x-1">
         <span>Save Voice to This Memory</span>
         <span>✨</span>
       </button>
@@ -638,31 +537,31 @@
   <!-- ==================================================== -->
   <!-- ADD NEW CUSTOM MEMORY MODAL                          -->
   <!-- ==================================================== -->
-  <div id="addMemoryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateDeep/30 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+  <div id="addMemoryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateBlue/25 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
     <div class="glass-panel max-w-md w-full rounded-3xl p-6 relative shadow-2xl">
-      <button onclick="closeAddMemoryModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white hover:bg-slate-50 text-xs font-bold text-plumDeep flex items-center justify-center border border-white">
+      <button onclick="closeAddMemoryModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-xs font-bold text-slateBlue flex items-center justify-center">
         ✕
       </button>
 
       <div class="text-center mb-4">
         <span class="text-3xl">🌸</span>
-        <h3 class="text-xl font-bold text-plumDeep font-display mt-1">Add Memory to Cloud</h3>
-        <p class="text-[11px] text-plumMuted font-bold">Save a new keepsake into this sky chapter.</p>
+        <h3 class="text-xl font-bold text-slateBlue font-display mt-1">Add Memory to Cloud</h3>
+        <p class="text-[11px] text-slateBlue/70">Save a new keepsake into this sky chapter.</p>
       </div>
 
       <form onsubmit="saveCustomMemory(event)" class="space-y-3">
         <div>
-          <label class="block text-[11px] font-bold text-plumDeep mb-1">Memory Title</label>
-          <input id="newMemTitle" type="text" placeholder="e.g. Late Night Dessert and Silly Jokes" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-plumDeep focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+          <label class="block text-[11px] font-bold text-slateBlue/80 mb-1">Memory Title</label>
+          <input id="newMemTitle" type="text" placeholder="e.g. Late Night Dessert & Silly Jokes" class="w-full bg-white/80 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink" required />
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[11px] font-bold text-plumDeep mb-1">Date / Time</label>
-            <input id="newMemDate" type="text" placeholder="e.g. June 15, 2026 • 11:11 PM" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-plumDeep focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+            <label class="block text-[11px] font-bold text-slateBlue/80 mb-1">Date / Time</label>
+            <input id="newMemDate" type="text" placeholder="e.g. June 15, 2026 • 11:11 PM" class="w-full bg-white/80 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink" required />
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-plumDeep mb-1">Stamp Icon</label>
-            <select id="newMemIcon" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-plumDeep focus:outline-none focus:ring-2 focus:ring-babyPink font-medium">
+            <label class="block text-[11px] font-bold text-slateBlue/80 mb-1">Stamp Icon</label>
+            <select id="newMemIcon" class="w-full bg-white/80 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink">
               <option value="💌">💌 Love Letter</option>
               <option value="🌸">🌸 Flower Bloom</option>
               <option value="🌙">🌙 Midnight Moon</option>
@@ -675,14 +574,14 @@
           </div>
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-plumDeep mb-1">Heartfelt Quote (Script)</label>
-          <input id="newMemQuote" type="text" placeholder="“The exact words we said that made us smile...”" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-plumDeep focus:outline-none focus:ring-2 focus:ring-babyPink font-hand text-base" required />
+          <label class="block text-[11px] font-bold text-slateBlue/80 mb-1">Heartfelt Quote</label>
+          <input id="newMemQuote" type="text" placeholder="“The exact words we said that made us smile...”" class="w-full bg-white/80 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink" required />
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-plumDeep mb-1">Full Notes and Thoughts</label>
-          <textarea id="newMemDesc" rows="2" placeholder="Write down every soft detail..." class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-plumDeep focus:outline-none focus:ring-2 focus:ring-babyPink resize-none font-medium" required></textarea>
+          <label class="block text-[11px] font-bold text-slateBlue/80 mb-1">Full Notes & Thoughts</label>
+          <textarea id="newMemDesc" rows="2" placeholder="Write down every soft detail..." class="w-full bg-white/80 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink resize-none" required></textarea>
         </div>
-        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-plumDeep text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center justify-center space-x-1">
+        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-slateBlue text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center justify-center space-x-1">
           <span>Preserve in Stardust</span>
           <span>✨</span>
         </button>
@@ -713,7 +612,7 @@
             title: "The First Hello",
             date: "Friday, May 1, 2026 • 10:28 PM",
             tag: "Memory #01",
-            washiType: "washi-tape",
+            tilt: "-2deg",
             quote: "“10:28 PM on a Friday night : The moment everything shifted.”",
             desc: "The timestamp that started our entire story. Neither of us expected that one message to turn into our favorite safe haven.",
             gradient: "from-pink-200 via-rose-100 to-pink-300",
@@ -725,7 +624,7 @@
             title: "First Midnight Chat",
             date: "May 2, 2026 • 1:15 AM",
             tag: "Memory #02",
-            washiType: "washi-tape-mint",
+            tilt: "2deg",
             quote: "“Realizing we had been talking for hours without looking at the clock.”",
             desc: "We stayed up past midnight sharing comfort stories, favorite songs, and feeling like we had known each other forever.",
             gradient: "from-pink-100 via-purple-100 to-rose-200",
@@ -737,7 +636,7 @@
             title: "First Shared Smile",
             date: "May 3, 2026",
             tag: "Memory #03",
-            washiType: "washi-tape-lavender",
+            tilt: "-1.5deg",
             quote: "“That funny joke that made both of us smile at our screens.”",
             desc: "The gentle warmth of waking up to messages that made the day feel softer and brighter.",
             gradient: "from-rose-200 via-pink-200 to-amber-100",
@@ -749,7 +648,7 @@
             title: "The Quiet Spark",
             date: "May 5, 2026",
             tag: "Memory #04",
-            washiType: "washi-tape-gold",
+            tilt: "2.5deg",
             quote: "“Knowing in my heart this was something truly special.”",
             desc: "The quiet realization that our story was just beginning to unfold into something beautiful.",
             gradient: "from-pink-200 via-pink-300 to-rose-100",
@@ -797,7 +696,7 @@
             title: "Daily Voice Notes",
             date: "May 15, 2026",
             tag: "Memory #05",
-            washiType: "washi-tape-mint",
+            tilt: "2deg",
             quote: "“Hearing your laugh through my earphones made any bad day vanish.”",
             desc: "Sharing random moments from work, lunch updates, and voice notes that felt like personal podcasts just for two.",
             gradient: "from-teal-100 via-cyan-100 to-blue-200",
@@ -809,7 +708,7 @@
             title: "Sweet Anticipation",
             date: "May 24, 2026",
             tag: "Memory #06",
-            washiType: "washi-tape",
+            tilt: "-2deg",
             quote: "“The unspoken certainty that we both felt the exact same way.”",
             desc: "Late evening calls where we did not even need to explain ourselves, everything felt completely natural.",
             gradient: "from-teal-200 via-emerald-100 to-cyan-200",
@@ -821,7 +720,7 @@
             title: "Shared Sunset Walks",
             date: "May 30, 2026",
             tag: "Memory #07",
-            washiType: "washi-tape-gold",
+            tilt: "1.5deg",
             quote: "“Looking at the pastel sky and sending each other photos of the same sunset.”",
             desc: "Even when miles apart, looking up at the sky and feeling like we were side by side.",
             gradient: "from-blue-200 via-cyan-200 to-teal-100",
@@ -833,7 +732,7 @@
             title: "Threshold of Something More",
             date: "Thursday, June 4, 2026 • 9:22 PM",
             tag: "Memory #08",
-            washiType: "washi-tape-lavender",
+            tilt: "-2.5deg",
             quote: "“Thursday, June 4, 2026 9:22 PM : The chapter where we stepped into courtship.”",
             desc: "The milestone night marking the transition from mutual understanding to full, intentional devotion.",
             gradient: "from-cyan-100 via-teal-200 to-sky-200",
@@ -881,7 +780,7 @@
             title: "Courtship Begins",
             date: "Thursday, June 4, 2026 • 9:22 PM",
             tag: "Memory #09",
-            washiType: "washi-tape",
+            tilt: "-2deg",
             quote: "“Making the promise to pursue your heart with all my care.”",
             desc: "The beginning of courtship. A dedicated promise to show up, listen deeply, and protect what we have.",
             gradient: "from-pink-200 via-teal-100 to-purple-200",
@@ -893,7 +792,7 @@
             title: "Heartfelt Talks and Deep Trust",
             date: "June 25, 2026",
             tag: "Memory #10",
-            washiType: "washi-tape-mint",
+            tilt: "2deg",
             quote: "“Talking about our worries and finding peace in each other's words.”",
             desc: "Vulnerability became effortless. We built a sanctuary where neither of us ever had to hide who we are.",
             gradient: "from-rose-100 via-pink-200 to-teal-100",
@@ -905,7 +804,7 @@
             title: "Sweet Midsummer Date",
             date: "July 18, 2026",
             tag: "Memory #11",
-            washiType: "washi-tape-lavender",
+            tilt: "-1.5deg",
             quote: "“Holding hands across the table, lost in the sweetest conversation.”",
             desc: "Sharing warm drinks and sweet dessert, knowing with every passing day that we belonged together.",
             gradient: "from-teal-100 via-pink-100 to-cyan-200",
@@ -917,7 +816,7 @@
             title: "Eve of Our Answer",
             date: "Friday, August 7, 2026 • 9:08 PM",
             tag: "Memory #12",
-            washiType: "washi-tape-gold",
+            tilt: "2.5deg",
             quote: "“Friday, August 7, 2026 9:08 PM : The answer we had both been waiting for.”",
             desc: "The moment courtship culminated in our most cherished milestone, opening the door to forever.",
             gradient: "from-pink-300 via-rose-200 to-teal-200",
@@ -965,7 +864,7 @@
             title: "Officially Ours",
             date: "Friday, August 7, 2026 • 9:08 PM",
             tag: "Memory #13",
-            washiType: "washi-tape-gold",
+            tilt: "2deg",
             quote: "“9:08 PM : You said yes, and the clouds turned to gold.”",
             desc: "The exact moment we officially became partners. A memory etched into our hearts for all eternity.",
             gradient: "from-amber-100 via-pink-200 to-teal-100",
@@ -977,7 +876,7 @@
             title: "First Official Morning",
             date: "August 8, 2026",
             tag: "Memory #14",
-            washiType: "washi-tape",
+            tilt: "-2deg",
             quote: "“Waking up with the biggest smile knowing you are officially mine.”",
             desc: "The morning after, greeting each other with newfound joy and excitement for everything ahead.",
             gradient: "from-yellow-100 via-rose-100 to-pink-200",
@@ -989,7 +888,7 @@
             title: "Building Our Future",
             date: "August 2026 & Beyond",
             tag: "Memory #15",
-            washiType: "washi-tape-mint",
+            tilt: "1.5deg",
             quote: "“Dreaming of all the places we will visit and memories we will create.”",
             desc: "Planning adventures, cozy weekend mornings, and filling this sky journal with endless chapters.",
             gradient: "from-teal-100 via-pink-200 to-amber-200",
@@ -1001,7 +900,7 @@
             title: "To Infinity and Cloud Nine",
             date: "Forever & Always",
             tag: "Memory #16",
-            washiType: "washi-tape-lavender",
+            tilt: "-2.5deg",
             quote: "“Holding your hand through every chapter, every sky, every lifetime.”",
             desc: "Our promise to always float together on Cloud Nine, no matter where life leads us.",
             gradient: "from-pink-300 via-amber-100 to-teal-200",
@@ -1037,7 +936,7 @@
   </script>
 
   <!-- ==================================================== -->
-  <!-- CANVAS MAP ENGINE WITH FLOATING HALO & DOCK EFFECTS  -->
+  <!-- CANVAS MAP ENGINE                                    -->
   <!-- ==================================================== -->
   <script>
     const canvas = document.getElementById('worldCanvas');
@@ -1071,7 +970,6 @@
         y: 850, 
         radius: 110, 
         colorTheme: '#FAD2E1', 
-        floatSpeed: 0.0018,
         imageSrc: 'https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/refs/heads/main/16092-removebg-preview.png',
         textOffsetY: 0
       },
@@ -1081,7 +979,6 @@
         y: 500, 
         radius: 115, 
         colorTheme: '#BEE1E6', 
-        floatSpeed: 0.0013,
         imageSrc: 'https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/refs/heads/main/16093-removebg-preview.png',
         textOffsetY: 0
       },
@@ -1091,7 +988,6 @@
         y: 950, 
         radius: 120, 
         colorTheme: '#A0E7E5', 
-        floatSpeed: 0.0021,
         imageSrc: 'https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/refs/heads/main/16094-removebg-preview.png',
         textOffsetY: 24
       },
@@ -1101,7 +997,6 @@
         y: 600, 
         radius: 125, 
         colorTheme: '#FAD2E1', 
-        floatSpeed: 0.0016,
         imageSrc: 'https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/refs/heads/main/16095-removebg-preview.png',
         textOffsetY: 26
       }
@@ -1272,7 +1167,6 @@
       }
 
       if (clickedStage) {
-        triggerBurst(e);
         enterStage(clickedStage.id);
       } else {
         ripples.push({ x: worldPos.x, y: worldPos.y, radius: 5, alpha: 0.85 });
@@ -1318,7 +1212,7 @@
         ctx.fill();
       });
 
-      // Ribbon Connector Path with Constellation glow
+      // Ribbon Connector Path
       ctx.beginPath();
       ctx.moveTo(stageNodes[0].x, stageNodes[0].y);
       for (let i = 0; i < stageNodes.length - 1; i++) {
@@ -1328,18 +1222,18 @@
         const cy = (p1.y + p2.y) / 2 + (i % 2 === 0 ? -120 : 120);
         ctx.quadraticCurveTo(cx, cy, p2.x, p2.y);
       }
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
       ctx.lineWidth = 6;
-      ctx.setLineDash([12, 14]);
-      ctx.lineDashOffset = -time * 0.022;
+      ctx.setLineDash([14, 14]);
+      ctx.lineDashOffset = -time * 0.02;
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Star Sparkles
+      // Stars
       sparkleStars.forEach(s => {
         s.alpha += s.speed;
         const currentAlpha = (Math.sin(s.alpha) + 1) / 2;
-        ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha * 0.88})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha * 0.85})`;
         if (s.isHeart) {
           ctx.font = `${10 * s.size}px sans-serif`;
           ctx.fillText('✨', s.x, s.y);
@@ -1384,37 +1278,29 @@
         ctx.stroke();
       }
 
-      // Cloud Islands with Varying Floating Heights & Halo Glow
+      // Cloud Islands
       stageNodes.forEach((s, idx) => {
         const data = STAGE_DATA[s.id];
-        const floatY = Math.sin(time * (s.floatSpeed || 0.0016) + idx * 1.5) * 8;
+        const floatY = Math.sin(time * 0.0015 + idx * 1.5) * 10;
         const posX = s.x;
         const posY = s.y + floatY;
         const isHovered = hoverIsland && hoverIsland.id === s.id;
 
-        // Golden Stardust Halo around Chapter 4 / Active Node
-        const haloAura = ctx.createRadialGradient(posX, posY, s.radius * 0.4, posX, posY, s.radius * 1.65);
-        if (s.id === 4) {
-          haloAura.addColorStop(0, 'rgba(255, 241, 197, 0.9)');
-          haloAura.addColorStop(0.6, 'rgba(250, 210, 225, 0.45)');
-          haloAura.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        } else {
-          haloAura.addColorStop(0, isHovered ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.6)');
-          haloAura.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        }
-        ctx.fillStyle = haloAura;
+        const aura = ctx.createRadialGradient(posX, posY, s.radius * 0.4, posX, posY, s.radius * 1.6);
+        aura.addColorStop(0, isHovered ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.55)');
+        aura.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = aura;
         ctx.beginPath();
-        ctx.arc(posX, posY, s.radius * 1.65, 0, Math.PI * 2);
+        ctx.arc(posX, posY, s.radius * 1.6, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw Cloud Image Asset
         if (s.imgElement && s.imgElement.complete && s.imgElement.naturalWidth > 0) {
           const naturalAspect = s.imgElement.naturalWidth / s.imgElement.naturalHeight;
           const imgW = s.radius * 3.4;
           const imgH = imgW / naturalAspect;
           
           ctx.shadowColor = s.colorTheme;
-          ctx.shadowBlur = isHovered ? 36 : 18;
+          ctx.shadowBlur = isHovered ? 34 : 16;
 
           ctx.drawImage(
             s.imgElement,
@@ -1426,7 +1312,7 @@
 
           ctx.shadowBlur = 0;
         } else {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
           ctx.shadowColor = s.colorTheme;
           ctx.shadowBlur = isHovered ? 35 : 18;
           ctx.beginPath();
@@ -1435,24 +1321,23 @@
           ctx.shadowBlur = 0;
         }
 
-        // Crisp Typography on Cloud Belly
         ctx.save();
         ctx.textAlign = 'center';
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.98)';
-        ctx.shadowBlur = 8;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+        ctx.shadowBlur = 10;
 
         const baseOffsetY = s.textOffsetY;
 
-        ctx.fillStyle = '#6B3E60';
+        ctx.fillStyle = '#6B4F68';
         ctx.font = 'bold 11px Quicksand, sans-serif';
         ctx.fillText(`STAGE 0${s.id}`, posX, posY + baseOffsetY - 6);
 
-        ctx.fillStyle = '#1E293B';
+        ctx.fillStyle = '#2B3A4A';
         ctx.font = 'bold 15px Quicksand, sans-serif';
         ctx.fillText(data.title, posX, posY + baseOffsetY + 13);
 
-        ctx.fillStyle = '#334155';
-        ctx.font = '700 10.5px Nunito, sans-serif';
+        ctx.fillStyle = 'rgba(43, 58, 74, 0.9)';
+        ctx.font = '600 10.5px Nunito, sans-serif';
         ctx.fillText(data.date, posX, posY + baseOffsetY + 30);
 
         ctx.restore();
@@ -1484,34 +1369,6 @@
     let recordSeconds = 0;
     let currentRecordedBlobUrl = null;
     let uploadedFileBlobUrl = null;
-
-    // Tactile Sparkle and Heart Particle Burst
-    function triggerBurst(e) {
-      const x = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : window.innerWidth / 2);
-      const y = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : window.innerHeight / 2);
-      const icons = ['✨', '💖', '🌸', '💫', '🤍', '⭐', '🕊️'];
-      
-      for (let i = 0; i < 7; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle-burst text-lg md:text-xl select-none';
-        p.innerText = icons[Math.floor(Math.random() * icons.length)];
-        p.style.left = `${x}px`;
-        p.style.top = `${y}px`;
-        
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 40 + Math.random() * 55;
-        const dx = `${Math.cos(angle) * dist}px`;
-        const dy = `${Math.sin(angle) * dist - 25}px`;
-        const rot = `${(Math.random() * 120 - 60)}deg`;
-
-        p.style.setProperty('--dx', dx);
-        p.style.setProperty('--dy', dy);
-        p.style.setProperty('--rot', rot);
-
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 950);
-      }
-    }
 
     function enterStage(stageId) {
       if (isTransitioning) return;
@@ -1586,31 +1443,26 @@
       currentStagePhotos = stage.photos;
       renderScrapbookGrid();
 
-      // Render Staggered Timeline Items
       const timeline = document.getElementById('timelineList');
       timeline.innerHTML = '';
       stage.timeline.forEach((node, idx) => {
         const item = document.createElement('div');
+        item.className = 'relative flex items-start space-x-4 pl-12 md:pl-0 md:flex-row md:items-center md:justify-between';
+        
         const isEven = idx % 2 === 0;
-        const delay = `${idx * 0.15}s`;
-
-        item.className = 'timeline-node-animate relative flex items-start space-x-4 pl-12 md:pl-0 md:flex-row md:items-center md:justify-between';
-        item.style.animationDelay = delay;
-
+        
         item.innerHTML = `
-          <div class="md:w-[46%] ${isEven ? 'md:text-right md:pr-8' : 'md:text-left md:pl-8 md:order-last'}">
-            <div class="glass-panel p-5 md:p-6 rounded-3xl shadow-sm hover:scale-[1.02] transition">
-              <span class="text-xs font-hand text-pink-600 font-bold text-sm tracking-wide">${node.date}</span>
-              <h4 class="text-base font-bold font-display text-plumDeep mt-0.5">${node.title}</h4>
-              <p class="text-xs md:text-sm text-slateDeep font-normal mt-1 leading-relaxed">${node.msg}</p>
-              <div class="mt-2.5 text-xs font-hand text-teal-800 bg-teal-50/80 px-3.5 py-1 rounded-xl inline-block border border-teal-100">
+          <div class="md:w-[46%] ${isEven ? 'md:text-right md:pr-6' : 'md:text-left md:pl-6 md:order-last'}">
+            <div class="glass-panel p-4 md:p-5 rounded-3xl shadow-sm hover:scale-[1.02] transition">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-pink-500">${node.date}</span>
+              <h4 class="text-base font-bold text-slateBlue mt-0.5">${node.title}</h4>
+              <p class="text-xs text-slateBlue/85 mt-1 leading-relaxed font-light">${node.msg}</p>
+              <div class="mt-2 text-[11px] font-hand text-teal-700 bg-white/60 px-3 py-1 rounded-xl inline-block">
                 ${node.joke}
               </div>
             </div>
           </div>
-          
-          <!-- Pulsing Star / Heart Checkpoint -->
-          <div class="checkpoint-glow absolute left-6 md:left-1/2 top-6 md:top-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center text-sm z-20 border border-pink-200">
+          <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-sm z-10 border border-babyPink">
             ${node.icon || '✨'}
           </div>
           <div class="hidden md:block md:w-[46%]"></div>
@@ -1624,36 +1476,23 @@
       grid.innerHTML = '';
 
       currentStagePhotos.forEach((photo, idx) => {
-        // Natural random tilts between -2deg and +3deg
-        const randomTilt = ((idx % 2 === 0 ? -1 : 1) * (1.2 + (idx * 0.7) % 2.2)).toFixed(1) + 'deg';
         const card = document.createElement('div');
         card.className = 'polaroid-frame w-72 max-w-full';
-        card.style.transform = `rotate(${randomTilt})`;
-        card.onclick = (e) => {
-          triggerBurst(e);
-          openLightbox(idx);
-        };
-
-        const washiClass = photo.washiType || (idx % 3 === 0 ? 'washi-tape-mint' : (idx % 2 === 0 ? 'washi-tape-lavender' : 'washi-tape'));
+        card.style.transform = `rotate(${photo.tilt || '0deg'})`;
+        card.onclick = () => openLightbox(idx);
 
         card.innerHTML = `
-          <!-- Centered Decorative Washi Tape -->
-          <div class="washi-tape ${washiClass}"></div>
-
-          <!-- Photo Inner Frame -->
-          <div class="w-full h-44 rounded-xl bg-gradient-to-br ${photo.gradient || 'from-pink-100 to-teal-100'} flex flex-col items-center justify-center p-3 relative overflow-hidden shadow-inner border border-white/60">
-            <span class="text-4xl filter drop-shadow-sm mb-2 transform hover:scale-125 transition">${photo.icon || '🌸'}</span>
-            <span class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-white/90 text-plumDeep tracking-wider border border-white">
+          <div class="w-full h-44 rounded-xl bg-gradient-to-br ${photo.gradient || 'from-pink-100 to-teal-100'} flex flex-col items-center justify-center p-3 relative overflow-hidden shadow-inner">
+            <span class="text-4xl filter drop-shadow-md mb-2 transform hover:scale-125 transition">${photo.icon || '🌸'}</span>
+            <span class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-white/85 text-slateBlue tracking-wider border border-white">
               ${photo.tag}
             </span>
             <div class="absolute top-2 right-2 text-xs opacity-60">✨</div>
           </div>
-
-          <!-- Description / Handwritten Quote -->
-          <div class="mt-3.5 text-center px-1">
-            <p class="font-display text-base text-plumDeep font-bold">${photo.title}</p>
-            <p class="text-sm font-hand text-pink-600 font-bold -mt-0.5 leading-tight">${photo.quote}</p>
-            <span class="inline-block mt-2 text-[10px] font-bold text-plumMuted">${photo.date}</span>
+          <div class="mt-3 text-center px-1">
+            <p class="font-hand text-xl text-slateBlue font-bold">${photo.title}</p>
+            <p class="text-[11px] text-pink-600 font-hand -mt-1 leading-tight">${photo.quote}</p>
+            <span class="inline-block mt-2 text-[10px] font-semibold text-slateBlue/60">${photo.date}</span>
           </div>
         `;
 
@@ -1671,15 +1510,15 @@
 
       [tabScrap, tabTime].forEach(t => t.classList.add('hidden'));
       [btnScrap, btnTime].forEach(b => {
-        b.className = 'px-5 py-2 rounded-xl text-xs font-bold transition text-plumMuted hover:text-plumDeep';
+        b.className = 'px-5 py-2 rounded-xl text-xs font-bold transition text-slateBlue/70 hover:text-slateBlue';
       });
 
       if (tabName === 'scrapbook') {
         tabScrap.classList.remove('hidden');
-        btnScrap.className = 'px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-plumDeep';
+        btnScrap.className = 'px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-slateBlue';
       } else if (tabName === 'timeline') {
         tabTime.classList.remove('hidden');
-        btnTime.className = 'px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-plumDeep';
+        btnTime.className = 'px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-white text-slateBlue';
       }
     }
 
@@ -1694,10 +1533,10 @@
       playTone(680, 0.3);
 
       const media = document.getElementById('lightboxMediaContainer');
-      media.className = `w-full h-56 rounded-2xl overflow-hidden mb-4 border border-white shadow-inner flex flex-col items-center justify-center relative bg-gradient-to-tr ${photo.gradient || 'from-pink-200 to-teal-100'}`;
+      media.className = `w-full h-56 rounded-2xl overflow-hidden mb-4 border border-white/80 shadow-inner flex flex-col items-center justify-center relative bg-gradient-to-tr ${photo.gradient || 'from-pink-200 to-teal-100'}`;
       media.innerHTML = `
         <span class="text-6xl mb-2 animate-bounce">${photo.icon || '🌸'}</span>
-        <span class="text-xs font-bold text-plumDeep px-3 py-1 bg-white/85 rounded-full shadow-sm">${photo.title}</span>
+        <span class="text-xs font-bold text-slateBlue/80 px-3 py-1 bg-white/70 rounded-full">${photo.title}</span>
       `;
 
       document.getElementById('lightboxTag').innerText = photo.tag;
@@ -1829,7 +1668,7 @@
     }
 
     // ============================================
-    // VOICE RECORDER & ATTACHER LOGIC
+    // VOICE RECORDER & UPLOADER LOGIC
     // ============================================
     function openRecordVoiceModal() {
       playTone(550, 0.2);
@@ -1893,6 +1732,123 @@
         document.getElementById('btnStopRecord').classList.remove('hidden');
 
         recordTimerInterval = setInterval(() => {
+          recordSeconds++;
+          document.getElementById('recordTimer').innerText = formatTime(recordSeconds);
+        }, 1000);
+
+      } catch (err) {
+        document.getElementById('recordStatusText').innerText = 'Microphone permission required';
+      }
+    }
+
+    function stopMicRecording() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+      clearInterval(recordTimerInterval);
+      document.getElementById('recordStatusText').innerText = 'Recording saved in preview!';
+      document.getElementById('recordDot').className = 'w-3 h-3 rounded-full bg-teal-400';
+      document.getElementById('btnStartRecord').classList.remove('hidden');
+      document.getElementById('btnStopRecord').classList.add('hidden');
+    }
+
+    function handleAudioFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      uploadedFileBlobUrl = URL.createObjectURL(file);
+      document.getElementById('audioFileNameDisplay').innerText = file.name;
+      
+      const preview = document.getElementById('recordedAudioPreview');
+      preview.src = uploadedFileBlobUrl;
+      preview.classList.remove('hidden');
+      preview.load();
+    }
+
+    function applyVoiceToMemory() {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo) return;
+
+      const urlInput = document.getElementById('customAudioUrlInput').value.trim();
+
+      if (currentRecordedBlobUrl) {
+        photo.audioSrc = currentRecordedBlobUrl;
+      } else if (uploadedFileBlobUrl) {
+        photo.audioSrc = uploadedFileBlobUrl;
+      } else if (urlInput) {
+        photo.audioSrc = urlInput;
+      }
+
+      initVoicePlayerForPhoto(photo);
+      closeRecordVoiceModal();
+      playHeartChime();
+      spawnHeartEffect(window.innerWidth / 2, window.innerHeight / 2);
+    }
+
+    function spawnHeartEffect(x, y) {
+      const heart = document.createElement('div');
+      heart.className = 'heart-particle text-2xl';
+      heart.innerText = ['💗', '💖', '✨', '🌸', '🕊️'][Math.floor(Math.random() * 5)];
+      heart.style.left = `${x - 12}px`;
+      heart.style.top = `${y - 12}px`;
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1200);
+    }
+
+    // Add Custom Memory Modal Logic
+    function openAddMemoryModal() {
+      playTone(550, 0.2);
+      const modal = document.getElementById('addMemoryModal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeAddMemoryModal() {
+      const modal = document.getElementById('addMemoryModal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function saveCustomMemory(e) {
+      e.preventDefault();
+      const title = document.getElementById('newMemTitle').value;
+      const date = document.getElementById('newMemDate').value;
+      const icon = document.getElementById('newMemIcon').value;
+      const quote = document.getElementById('newMemQuote').value;
+      const desc = document.getElementById('newMemDesc').value;
+
+      const stage = STAGE_DATA[currentStageId];
+      if (stage) {
+        const newPhoto = {
+          id: Date.now(),
+          title: title,
+          date: date,
+          tag: `Memory #${stage.photos.length + 1}`,
+          tilt: `${(Math.random() * 4 - 2).toFixed(1)}deg`,
+          quote: quote.startsWith('“') ? quote : `“${quote}”`,
+          desc: desc,
+          gradient: 'from-pink-200 via-rose-100 to-teal-100',
+          icon: icon,
+          audioSrc: ""
+        };
+        stage.photos.unshift(newPhoto);
+
+        stage.timeline.unshift({
+          date: date,
+          title: title,
+          msg: desc,
+          joke: quote,
+          icon: icon
+        });
+
+        populateStageMemoryPage(stage);
+        closeAddMemoryModal();
+        playHeartChime();
+        spawnHeartEffect(window.innerWidth / 2, window.innerHeight / 2);
+        
+        e.target.reset();
+      }
+    }
+  </script>
+</body>
+</html>        recordTimerInterval = setInterval(() => {
           recordSeconds++;
           document.getElementById('recordTimer').innerText = formatTime(recordSeconds);
         }, 1000);
