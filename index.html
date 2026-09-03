@@ -2377,7 +2377,42 @@
     // Keep memories in true chronological order: earliest first, newest last.
     // This makes newly added memories appear after older ones instead of
     // accidentally placing a later memory before an earlier one.
-    function getMemoryTimestamp(item) {
+    
+function parseHistoricalMemoryDateTime(value) {
+  if (!value) return null;
+  const raw = String(value).trim();
+
+  // ISO / Supabase timestamp: preserve the instant represented by the value.
+  if (/^\d{4}-\d{2}-\d{2}T/.test(raw)) {
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  // Try native parsing for entries such as "September 3, 2026 11:30 PM".
+  const d = new Date(raw.replace(/\s*:\s*/g, " "));
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function formatHistoricalMemoryDateTime(value) {
+  if (!value) return "";
+  const raw = String(value).trim();
+
+  // If the user supplied a friendly historical date/time, keep its wording.
+  if (!/^\d{4}-\d{2}-\d{2}(T|\s)/.test(raw)) return raw;
+
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return raw;
+
+  return d.toLocaleString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+function getMemoryTimestamp(item) {
       if (!item) return Number.POSITIVE_INFINITY;
       const raw = item.memory_date || item.date || item.created_at || '';
       if (!raw) return Number.POSITIVE_INFINITY;
