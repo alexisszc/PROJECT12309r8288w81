@@ -1193,6 +1193,9 @@
           <span class="hidden sm:inline">Previous</span>
         </button>
         <div class="flex items-center gap-2">
+          <button type="button" id="btnEditMemory" onclick="openEditMemoryModal()" class="hidden px-3 py-2 rounded-xl text-xs font-extrabold text-slateBlue bg-white/90 border border-white hover:bg-pink-50 transition" title="Edit this memory">
+            ✏️ <span class="hidden sm:inline">Edit</span>
+          </button>
           <button type="button" id="btnDeleteMemory" onclick="deleteCurrentMemory()" class="hidden px-3 py-2 rounded-xl text-xs font-extrabold text-red-700 bg-red-50/90 border border-red-100 hover:bg-red-100 transition" title="Delete this memory">
             🗑️ <span class="hidden sm:inline">Delete</span>
           </button>
@@ -1341,6 +1344,78 @@
   </div>
 
   <!-- SUPABASE LOGIN MODAL -->
+  <!-- ==================================================== -->
+  <!-- EDIT EXISTING MEMORY MODAL                           -->
+  <!-- ==================================================== -->
+  <div id="editMemoryModal" class="fixed inset-0 z-[55] flex items-center justify-center p-4 bg-slateBlue/25 backdrop-blur-md opacity-0 pointer-events-none hidden transition-all duration-300">
+    <div class="glass-panel max-w-lg w-full rounded-3xl p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+      <button type="button" onclick="closeEditMemoryModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-xs font-extrabold text-slateBlue flex items-center justify-center">
+        ✕
+      </button>
+
+      <div class="text-center mb-4">
+        <span class="text-3xl">✏️</span>
+        <h3 class="text-xl font-extrabold text-slateBlue font-display mt-1">Edit This Memory</h3>
+        <p class="text-[11px] text-darkPlum/80 font-medium">Update the keepsake and save the changes to your Cloud Nine sky.</p>
+      </div>
+
+      <form onsubmit="saveEditedMemory(event)" class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Memory Title</label>
+          <input id="editMemTitle" type="text" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Date / Time</label>
+          <input id="editMemDate" type="text" placeholder="e.g. June 15, 2026 : 11:11 PM" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+          <p class="text-[10px] text-darkPlum/55 font-semibold mt-1">The database keeps the calendar date; your full text is shown immediately on the memory.</p>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Stamp Icon</label>
+          <select id="editMemIcon" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-semibold">
+            <option value="💌">💌 Love Letter</option>
+            <option value="🌸">🌸 Flower Bloom</option>
+            <option value="🌙">🌙 Midnight Moon</option>
+            <option value="✨">✨ Star Sparkle</option>
+            <option value="🎙️">🎙️ Voice Note</option>
+            <option value="🍨">🍨 Sweet Treats</option>
+            <option value="💍">💍 Promise Ring</option>
+            <option value="☕">☕ Cozy Cafe</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Heartfelt Quote</label>
+          <input id="editMemQuote" type="text" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Full Notes &amp; Thoughts</label>
+          <textarea id="editMemDesc" rows="5" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium resize-y" required></textarea>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Photo URLs</label>
+          <textarea id="editMemPhotoUrls" rows="4" placeholder="One photo URL per line. Remove a line to remove that photo." class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-[11px] text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium resize-y"></textarea>
+          <p class="text-[10px] text-darkPlum/60 font-semibold mt-1">You can remove existing photos by deleting their URL here.</p>
+        </div>
+
+        <label class="flex items-center justify-center gap-2 cursor-pointer px-3 py-2 rounded-xl bg-white/90 border border-white text-xs font-extrabold text-slateBlue hover:bg-pink-50 transition">
+          <span>📸</span><span>Add more photos from this device</span>
+          <input id="editMemFiles" type="file" accept="image/*" multiple class="hidden" onchange="handleEditMemoryFiles(event)" />
+        </label>
+        <div id="editMemFilesHint" class="text-[10px] text-darkPlum/60 font-semibold">No new photos selected.</div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeEditMemoryModal()" class="flex-1 py-2.5 bg-white/90 border border-white text-slateBlue text-xs font-extrabold rounded-xl shadow-sm hover:bg-pink-50 transition">Cancel</button>
+          <button type="submit" id="btnSaveEditedMemory" class="flex-1 py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-slateBlue text-xs font-extrabold rounded-xl shadow-md hover:opacity-95 transition">Save Changes ✨</button>
+        </div>
+        <p id="editMemoryStatus" class="hidden text-[10px] text-center font-extrabold text-teal-700"></p>
+      </form>
+    </div>
+  </div>
+
   <div id="supabaseLoginModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slateBlue/25 backdrop-blur-md opacity-0 pointer-events-none hidden transition-all duration-300">
     <div class="glass-panel max-w-sm w-full rounded-3xl p-6 relative shadow-2xl">
       <button type="button" onclick="closeSupabaseLogin()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-xs font-extrabold text-slateBlue flex items-center justify-center">✕</button>
@@ -2513,8 +2588,12 @@
       // Only database-backed memories can be deleted. The button also checks
       // for an active Supabase session before performing the deletion.
       const deleteBtn = document.getElementById('btnDeleteMemory');
+      const editBtn = document.getElementById('btnEditMemory');
       if (deleteBtn) {
         deleteBtn.classList.toggle('hidden', !photo.dbMemory);
+      }
+      if (editBtn) {
+        editBtn.classList.toggle('hidden', !photo.dbMemory);
       }
 
       initVoicePlayerForPhoto(photo);
@@ -3110,6 +3189,216 @@
         if (STAGE_DATA[currentStageId]) populateStageMemoryPage(STAGE_DATA[currentStageId]);
       } catch (err) {
         console.error('Supabase memory load failed:', err);
+      }
+    }
+
+    // ====================================================
+    // EDIT EXISTING SUPABASE MEMORY
+    // ====================================================
+    let selectedEditMemoryFiles = [];
+
+    function openEditMemoryModal() {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo || !photo.dbMemory) return;
+      supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+          openSupabaseLogin();
+          return;
+        }
+
+        document.getElementById('editMemTitle').value = photo.title || '';
+        document.getElementById('editMemDate').value = photo.date || '';
+        document.getElementById('editMemIcon').value = photo.icon || '💌';
+        document.getElementById('editMemQuote').value = String(photo.quote || '').replace(/[“”]/g, '').trim();
+        document.getElementById('editMemDesc').value = photo.desc || '';
+        document.getElementById('editMemPhotoUrls').value = getMemoryImages(photo).join('\n');
+        selectedEditMemoryFiles = [];
+        syncEditMemoryFileInput();
+        updateEditMemoryFilesHint();
+
+        const status = document.getElementById('editMemoryStatus');
+        if (status) status.classList.add('hidden');
+        const btn = document.getElementById('btnSaveEditedMemory');
+        if (btn) { btn.disabled = false; btn.innerText = 'Save Changes ✨'; }
+
+        const modal = document.getElementById('editMemoryModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          setTimeout(() => modal.classList.remove('opacity-0', 'pointer-events-none'), 20);
+        }
+      });
+    }
+
+    function closeEditMemoryModal() {
+      const modal = document.getElementById('editMemoryModal');
+      if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => modal.classList.add('hidden'), 250);
+      }
+      selectedEditMemoryFiles = [];
+      syncEditMemoryFileInput();
+    }
+
+    function syncEditMemoryFileInput() {
+      const input = document.getElementById('editMemFiles');
+      if (!input) return;
+      const dt = new DataTransfer();
+      selectedEditMemoryFiles.forEach(file => dt.items.add(file));
+      input.files = dt.files;
+    }
+
+    function updateEditMemoryFilesHint() {
+      const hint = document.getElementById('editMemFilesHint');
+      if (hint) {
+        hint.innerText = selectedEditMemoryFiles.length
+          ? `${selectedEditMemoryFiles.length} new photo${selectedEditMemoryFiles.length === 1 ? '' : 's'} ready to upload.`
+          : 'No new photos selected.';
+      }
+    }
+
+    function handleEditMemoryFiles(e) {
+      const incoming = Array.from(e.target.files || []);
+      const existing = new Set(selectedEditMemoryFiles.map(file => `${file.name}|${file.size}|${file.lastModified}`));
+      incoming.forEach(file => {
+        const key = `${file.name}|${file.size}|${file.lastModified}`;
+        if (!existing.has(key)) selectedEditMemoryFiles.push(file);
+      });
+      syncEditMemoryFileInput();
+      updateEditMemoryFilesHint();
+    }
+
+    function getStoragePathFromPublicUrl(url) {
+      try {
+        const marker = '/storage/v1/object/public/memory-photos/';
+        const idx = String(url || '').indexOf(marker);
+        return idx >= 0 ? decodeURIComponent(String(url).slice(idx + marker.length)) : null;
+      } catch (_) { return null; }
+    }
+
+    async function saveEditedMemory(e) {
+      e.preventDefault();
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo || !photo.dbMemory) return;
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        closeEditMemoryModal();
+        openSupabaseLogin();
+        return;
+      }
+
+      const title = document.getElementById('editMemTitle').value.trim();
+      const date = document.getElementById('editMemDate').value.trim();
+      const icon = document.getElementById('editMemIcon').value;
+      const quote = document.getElementById('editMemQuote').value.trim();
+      const desc = document.getElementById('editMemDesc').value.trim();
+      const editedUrls = document.getElementById('editMemPhotoUrls').value
+        .split(/\r?\n/)
+        .map(url => url.trim())
+        .filter(Boolean);
+
+      if (!title || !date || !quote || !desc) return;
+
+      const btn = document.getElementById('btnSaveEditedMemory');
+      const status = document.getElementById('editMemoryStatus');
+      if (btn) { btn.disabled = true; btn.innerText = 'Saving…'; }
+      if (status) { status.innerText = 'Updating your memory…'; status.classList.remove('hidden'); }
+
+      try {
+        const parsedDate = new Date(date);
+        const memoryDate = Number.isNaN(parsedDate.getTime()) ? null : parsedDate.toISOString().slice(0, 10);
+        const memoryId = photo.id;
+        const { error: memoryError } = await supabaseClient
+          .from('memories')
+          .update({ title, memory_date: memoryDate, description: desc, quote, icon })
+          .eq('id', memoryId);
+
+        if (memoryError) throw memoryError;
+
+        const { data: existingRows, error: existingError } = await supabaseClient
+          .from('memory_photos')
+          .select('id,image_url,display_order')
+          .eq('memory_id', memoryId)
+          .order('display_order', { ascending: true });
+        if (existingError) throw existingError;
+
+        const existingByUrl = new Map((existingRows || []).map(row => [String(row.image_url), row]));
+        const editedSet = new Set(editedUrls);
+        const rowsToRemove = (existingRows || []).filter(row => !editedSet.has(String(row.image_url)));
+
+        const idsToRemove = rowsToRemove.map(row => row.id);
+        if (idsToRemove.length) {
+          const storagePaths = rowsToRemove.map(row => getStoragePathFromPublicUrl(row.image_url)).filter(Boolean);
+          if (storagePaths.length) {
+            const { error: storageError } = await supabaseClient.storage.from('memory-photos').remove(storagePaths);
+            if (storageError) console.warn('Some removed photo files could not be deleted:', storageError);
+          }
+          const { error: removeRowsError } = await supabaseClient
+            .from('memory_photos')
+            .delete()
+            .in('id', idsToRemove);
+          if (removeRowsError) throw removeRowsError;
+        }
+
+        const finalUrls = editedUrls.slice();
+        let nextOrder = finalUrls.length;
+        for (const file of selectedEditMemoryFiles) {
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const path = `${session.user.id}/${memoryId}/${Date.now()}-${safeName}`;
+          const { error: uploadError } = await supabaseClient.storage
+            .from('memory-photos')
+            .upload(path, file, { upsert: false, contentType: file.type || 'image/jpeg' });
+          if (uploadError) {
+            console.warn('Photo upload failed:', uploadError);
+            continue;
+          }
+          const { data: publicData } = supabaseClient.storage.from('memory-photos').getPublicUrl(path);
+          if (publicData?.publicUrl) finalUrls.push(publicData.publicUrl);
+        }
+
+        const newRows = finalUrls
+          .filter(url => !existingByUrl.has(url))
+          .map((url, index) => ({ memory_id: memoryId, image_url: url, display_order: index }));
+        if (newRows.length) {
+          const { error: insertPhotoError } = await supabaseClient.from('memory_photos').insert(newRows);
+          if (insertPhotoError) throw insertPhotoError;
+        }
+
+        // Update the visible scrapbook immediately.
+        photo.title = title;
+        photo.date = date;
+        photo.icon = icon;
+        photo.quote = quote.startsWith('“') ? quote : `“${quote}”`;
+        photo.desc = desc;
+        photo.images = finalUrls;
+        photo.imageSrc = finalUrls[0] || '';
+
+        const stage = STAGE_DATA[currentStageId];
+        if (stage) {
+          const timelineNode = stage.timeline.find(node => String(node.dbId || '') === String(memoryId));
+          if (timelineNode) {
+            timelineNode.date = date;
+            timelineNode.title = title;
+            timelineNode.msg = desc;
+            timelineNode.joke = quote;
+            timelineNode.icon = icon;
+          }
+          sortStageChronologically(stage);
+          populateStageMemoryPage(stage);
+        }
+
+        selectedEditMemoryFiles = [];
+        syncEditMemoryFileInput();
+        updateEditMemoryFilesHint();
+        renderLightboxMemory();
+        closeEditMemoryModal();
+        playHeartChime();
+      } catch (err) {
+        console.error('Edit memory failed:', err);
+        if (status) { status.innerText = 'Could not save the changes. Please try again.'; status.classList.remove('hidden'); }
+        alert('Could not update this memory.\n\n' + (err?.message || err));
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerText = 'Save Changes ✨'; }
       }
     }
 
