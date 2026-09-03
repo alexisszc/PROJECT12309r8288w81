@@ -1,0 +1,3591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23fff8fc'/%3E%3Cstop offset='1' stop-color='%23ffdff0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='%23cfe9ff'/%3E%3Cpath d='M25 67h50a15 15 0 0 0 2-29 22 22 0 0 0-41-3A16 16 0 0 0 25 67Z' fill='url(%23g)' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M50 46c-5-9-18-4-18 5 0 8 9 13 18 20 9-7 18-12 18-20 0-9-13-14-18-5Z' fill='%23f7a9c8' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='19' cy='22' r='3' fill='%23fff'/%3E%3Ccircle cx='81' cy='19' r='2.5' fill='%23fff'/%3E%3C/svg%3E" />
+  <title>Cloud Nine | Dreamscape Journal</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            babyPink: '#FAD2E1',
+            softAqua: '#BEE1E6',
+            lightAqua: '#A0E7E5',
+            pureWhite: '#FFFFFF',
+            slateBlue: '#1E293B',
+            darkPlum: '#382233',
+            cloudLavender: '#E4DCF1',
+            starGold: '#FFF1C5',
+            cozyRain: '#94A3B8',
+            nightIndigo: '#1E1B4B'
+          },
+          fontFamily: {
+            hand: ['Caveat', 'cursive'],
+            sans: ['Nunito', 'sans-serif'],
+            display: ['Quicksand', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --baby-pink: #FAD2E1;
+      --soft-aqua: #BEE1E6;
+      --light-aqua: #A0E7E5;
+      --pure-white: #FFFFFF;
+      --slate-blue: #1E293B;
+      --dark-plum: #382233;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--slate-blue);
+      background-color: #FAD2E1;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Glassmorphic Surfaces */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 16px 36px rgba(43, 58, 74, 0.08), 0 4px 14px rgba(160, 231, 229, 0.25);
+    }
+
+    .glass-dock {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 14px 34px rgba(56, 34, 51, 0.12), 0 2px 10px rgba(250, 210, 225, 0.4);
+    }
+
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 6px 18px rgba(43, 58, 74, 0.06);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .glass-pill:hover {
+      background: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(250, 210, 225, 0.7);
+    }
+
+
+    /* Add-memory photo preview */
+    .memory-upload-preview {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(255,255,255,.95);
+    }
+    .memory-upload-preview.show { display: block; }
+    .memory-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .memory-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .memory-preview-item {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #f7f3f7;
+      border: 1px solid rgba(255,255,255,.95);
+      box-shadow: 0 4px 12px rgba(56,34,51,.08);
+    }
+    .memory-preview-item img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .memory-preview-remove {
+      position: absolute; top: 5px; right: 5px;
+      width: 25px; height: 25px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.95);
+      background: rgba(255,255,255,.94); color: #334155;
+      font-weight: 900; line-height: 1; cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,.12);
+    }
+    .memory-preview-more {
+      position: absolute; inset: auto 6px 6px auto;
+      padding: 3px 7px; border-radius: 999px;
+      background: rgba(255,255,255,.92); color: #334155;
+      font-size: 9px; font-weight: 800;
+    }
+    @media (max-width: 420px) {
+      .memory-preview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    /* Multi-photo gallery controls */
+    .gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,255,255,.98);
+      box-shadow: 0 6px 18px rgba(56,34,51,.15);
+      color: #334155;
+      font-size: 30px;
+      line-height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      cursor: pointer;
+    }
+    .gallery-arrow:hover { transform: translateY(-50%) scale(1.06); }
+    .gallery-arrow-left { left: 10px; }
+    .gallery-arrow-right { right: 10px; }
+    .gallery-counter {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.92);
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #334155;
+      box-shadow: 0 4px 12px rgba(56,34,51,.12);
+      z-index: 5;
+    }
+    .gallery-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.86);
+      z-index: 5;
+    }
+    .gallery-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 0;
+      padding: 0;
+      background: rgba(51,65,85,.28);
+      cursor: pointer;
+    }
+    .gallery-dot.active { transform: scale(1.25); background: #334155; }
+
+    /* Lightbox: automatically sizes to its content while staying inside the viewport */
+    .lightbox-card {
+      width: fit-content;
+      max-width: min(92vw, 720px);
+      height: fit-content;
+      max-height: 92vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .lightbox-card #lightboxMediaContainer {
+      width: fit-content;
+      max-width: 100%;
+      min-height: 0;
+      height: auto;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .lightbox-card #lightboxMediaContainer img {
+      display: block;
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: 58vh;
+      object-fit: contain;
+    }
+
+    /* Scrapbook Polaroid Card — hugs each image's natural aspect ratio */
+    .polaroid-card {
+      width: fit-content;
+      max-width: 100%;
+      height: fit-content;
+      background-color: #FFFFFF;
+      background-image: radial-gradient(rgba(220, 210, 200, 0.18) 1px, transparent 0);
+      background-size: 8px 8px;
+      padding: 14px 14px 20px 14px;
+      border-radius: 20px;
+      box-shadow: 0 12px 28px rgba(56, 34, 51, 0.09), 0 2px 8px rgba(160, 231, 229, 0.3);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s ease;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-self: start;
+    }
+
+    /* The media frame has no forced height: its dimensions follow the image. */
+    .memory-frame {
+      width: fit-content;
+      max-width: 100%;
+      height: auto;
+      min-height: 0;
+    }
+
+    .memory-media {
+      width: fit-content;
+      max-width: 100%;
+      height: auto;
+      min-width: 0;
+    }
+
+    .memory-media img {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 380px;
+      object-fit: contain;
+    }
+
+    .polaroid-card:hover {
+      transform: translateY(-6px) rotate(0deg) scale(1.02) !important;
+      box-shadow: 0 24px 44px rgba(56, 34, 51, 0.18), 0 0 24px rgba(255, 255, 255, 0.9);
+      z-index: 20;
+    }
+
+    /* Decorative Washi Tapes */
+    .washi-strip {
+      position: absolute;
+      top: -9px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 76px;
+      height: 20px;
+      background: rgba(250, 210, 225, 0.85);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      clip-path: polygon(4% 0%, 96% 0%, 100% 50%, 96% 100%, 4% 100%, 0% 50%);
+      border-left: 2px dashed rgba(255, 255, 255, 0.8);
+      border-right: 2px dashed rgba(255, 255, 255, 0.8);
+      z-index: 10;
+    }
+
+    .washi-mint { background: rgba(190, 225, 230, 0.85); }
+    .washi-lavender { background: rgba(228, 220, 241, 0.85); }
+    .washi-gold { background: rgba(255, 241, 197, 0.9); }
+    .washi-rain { background: rgba(203, 213, 225, 0.85); }
+
+    /* Timeline Constellation Track */
+    .constellation-track {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 24px;
+      width: 3px;
+      background-image: linear-gradient(to bottom, #FAD2E1 0%, #A0E7E5 50%, #E4DCF1 100%);
+      border-left: 2px dotted rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 10px rgba(160, 231, 229, 0.85);
+    }
+
+    @media (min-width: 768px) {
+      .constellation-track {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes checkpointPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(250, 210, 225, 0.7), 0 0 12px rgba(160, 231, 229, 0.6);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(250, 210, 225, 0), 0 0 20px rgba(160, 231, 229, 0.9);
+        transform: scale(1.08);
+      }
+    }
+
+    .star-checkpoint {
+      animation: checkpointPulse 3s infinite ease-in-out;
+    }
+
+    /* Floating Cloud Button on Entry Screen */
+    @keyframes dreamyFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes gentlePulseGlow {
+      0%, 100% {
+        box-shadow: 0 14px 40px rgba(250, 210, 225, 0.6), 0 0 24px rgba(255, 255, 255, 0.9);
+      }
+      50% {
+        box-shadow: 0 20px 50px rgba(160, 231, 229, 0.7), 0 0 36px rgba(255, 241, 197, 0.95);
+      }
+    }
+
+    .dream-cloud-btn {
+      animation: dreamyFloat 3.8s infinite ease-in-out, gentlePulseGlow 3.5s infinite ease-in-out;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dream-cloud-btn:hover {
+      transform: translateY(-6px) scale(1.03) !important;
+    }
+
+    /* Ambient Floating Particles */
+    @keyframes particleBurst {
+      0% {
+        transform: translate(0, 0) scale(0.6) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx, 0px), var(--ty, -70px)) scale(1.2) rotate(var(--tr, 20deg));
+        opacity: 0;
+      }
+    }
+
+    .burst-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 18px;
+      animation: particleBurst 0.9s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    /* Portal Zoom In Transition */
+    #cloudPortal {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.35s ease-in-out;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.98) 0%, rgba(250, 210, 225, 0.95) 45%, rgba(190, 225, 230, 0.92) 100%);
+    }
+
+    #cloudPortal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Soundwave Audio Bars */
+    @keyframes wavePulse {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+
+    .audio-bar { animation: wavePulse 1.1s infinite ease-in-out; }
+    .audio-bar:nth-child(2) { animation-delay: 0.15s; }
+    .audio-bar:nth-child(3) { animation-delay: 0.3s; }
+    .audio-bar:nth-child(4) { animation-delay: 0.45s; }
+    .audio-bar:nth-child(5) { animation-delay: 0.2s; }
+
+    /* Theme Stage Gradients */
+    .theme-stage-1 { background: linear-gradient(180deg, #FDE8E9 0%, #FAD2E1 30%, #F4E8EE 70%, #E8F0FE 100%); }
+    .theme-stage-2 { background: linear-gradient(180deg, #E0F7FA 0%, #BEE1E6 35%, #D6F1F1 70%, #FAD2E1 100%); }
+    .theme-stage-3 { background: linear-gradient(180deg, #FAD2E1 0%, #E2E4F6 40%, #BEE1E6 75%, #A0E7E5 100%); }
+    .theme-stage-4 { background: linear-gradient(180deg, #FFF9E6 0%, #FAD2E1 35%, #A0E7E5 75%, #FFFFFF 100%); }
+
+    /* Rainy Atmosphere Overrides */
+    body.is-raining {
+      color: #1E293B;
+    }
+
+    body.is-raining .glass-panel,
+    body.is-raining .glass-dock {
+      background: rgba(240, 245, 250, 0.92);
+      border-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(148, 163, 184, 0.2);
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(160, 231, 229, 0.8); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(250, 210, 225, 0.95); }
+
+
+    .film-strip {
+      display:flex; gap:8px; overflow-x:auto; padding:10px 6px 14px;
+      scrollbar-width:none;
+    }
+    .film-strip::-webkit-scrollbar { display:none; }
+    .film-frame {
+      flex:0 0 92px; height:70px; border-radius:10px; padding:5px;
+      background:rgba(35,29,34,.92); border:2px solid rgba(255,255,255,.8);
+      box-shadow:0 8px 16px rgba(56,34,51,.12); position:relative; cursor:pointer;
+    }
+    .film-frame::before,.film-frame::after { content:'••••••'; position:absolute; left:4px; right:4px; color:rgba(255,255,255,.5); letter-spacing:11px; font-size:7px; line-height:5px; }
+    .film-frame::before { top:1px; }.film-frame::after { bottom:0; }
+    .film-frame > div { width:100%; height:100%; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:linear-gradient(135deg,#fad2e1,#bee1e6); }
+    .film-frame img { width:100%; height:100%; object-fit:cover; }
+    .growth-flower { position:relative; z-index:2; font-size:22px; animation:flowerSway 4s ease-in-out infinite; transform-origin:50% 100%; }
+    @keyframes flowerSway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(4deg)} } 100%{opacity:1;transform:perspective(900px) rotateY(0) translateX(0)} }
+    .type-photo .memory-frame { border-radius:18px; }
+    .type-chat .memory-frame { border-radius:14px; box-shadow:inset 0 0 0 1px rgba(56,34,51,.06), 0 8px 18px rgba(56,34,51,.08); }
+    .type-voice .memory-frame { border:2px dashed rgba(157,40,94,.18); }
+    .type-note .memory-frame { background-image:linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)); }
+
+    @media (max-width: 640px) {
+      .lightbox-card {
+        max-width: calc(100vw - 1rem);
+        max-height: calc(100vh - 1rem);
+        padding: 12px;
+      }
+
+      .lightbox-card #lightboxMediaContainer img {
+        max-height: 52vh;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  
+
+    /* =====================================================
+       DREAM SCRAPBOOK ENHANCEMENTS
+       ===================================================== */
+
+    /* =====================================================
+       CLOUD SKY DESIGN LAYER
+       ===================================================== */
+    .memory-sky-decor { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:-5; }
+    .sky-cloud { position:absolute; width:170px; height:58px; border-radius:999px; background:rgba(255,255,255,.52); filter:blur(.2px); box-shadow:38px -18px 0 2px rgba(255,255,255,.48),78px -8px 0 -2px rgba(255,255,255,.42),112px 4px 0 3px rgba(255,255,255,.40),0 18px 30px rgba(86,72,104,.05); opacity:.65; animation:cloudDrift 32s ease-in-out infinite alternate; }
+    .sky-cloud::after { content:""; position:absolute; left:28px; top:-17px; width:58px; height:58px; border-radius:50%; background:rgba(255,255,255,.5); box-shadow:55px 8px 0 3px rgba(255,255,255,.42); }
+    .sky-cloud.cloud-1 { top:9%; left:-55px; transform:scale(.82); } .sky-cloud.cloud-2 { top:23%; right:-90px; transform:scale(1.05); animation-delay:-8s; } .sky-cloud.cloud-3 { top:48%; left:-110px; transform:scale(.62); opacity:.38; animation-delay:-16s; } .sky-cloud.cloud-4 { top:67%; right:-80px; transform:scale(.76); opacity:.34; animation-delay:-21s; } .sky-cloud.cloud-5 { top:82%; left:16%; transform:scale(.5); opacity:.25; animation-delay:-5s; }
+    @keyframes cloudDrift { 0%{margin-left:-10px; transform:translateY(0) scale(var(--cloud-scale,1));} 50%{transform:translateY(-8px) scale(var(--cloud-scale,1));} 100%{margin-left:26px; transform:translateY(5px) scale(var(--cloud-scale,1));} }
+    .memory-sky-star { position:absolute; color:rgba(255,255,255,.86); text-shadow:0 0 10px rgba(255,255,255,.9); font-size:13px; animation:skyStarTwinkle 3.5s ease-in-out infinite; }
+    @keyframes skyStarTwinkle { 0%,100%{opacity:.25; transform:scale(.8) rotate(0deg);} 50%{opacity:.95; transform:scale(1.2) rotate(12deg);} }
+    .memory-cloud-count { display:inline-flex; align-items:center; gap:6px; padding:7px 12px; margin-top:8px; border-radius:999px; background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.72); box-shadow:0 7px 18px rgba(56,34,51,.06); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+    .timeline-node-card::before { content:'☁️'; position:absolute; left:5px; top:4px; width:38px; height:30px; display:flex; align-items:center; justify-content:center; font-size:19px; opacity:.88; filter:drop-shadow(0 4px 6px rgba(56,34,51,.10)); z-index:4; }
+    .timeline-node-card:nth-child(2n)::before { left:8px; transform:scale(.86); } .timeline-node-card:nth-child(3n)::before { transform:scale(1.08); }
+    .timeline-node-card .star-checkpoint { box-shadow:0 0 0 5px rgba(255,255,255,.38),0 0 18px rgba(255,255,255,.72); }
+    .memory-page-shell[data-stage="1"] .sky-cloud { background:rgba(255,255,255,.56); } .memory-page-shell[data-stage="1"] .memory-sky-star { color:rgba(255,241,197,.95); }
+    .memory-page-shell[data-stage="2"] .sky-cloud { background:rgba(244,255,255,.58); } .memory-page-shell[data-stage="2"] .memory-sky-star { color:rgba(255,255,255,.92); }
+    .memory-page-shell[data-stage="3"] .sky-cloud { background:rgba(255,248,253,.55); } .memory-page-shell[data-stage="3"] .memory-sky-star { color:rgba(255,241,197,.98); }
+    .memory-page-shell[data-stage="4"] .sky-cloud { background:rgba(255,250,232,.62); } .memory-page-shell[data-stage="4"] .memory-sky-star { color:rgba(255,255,255,.98); }
+    @media (max-width:640px) { .sky-cloud{transform:scale(.68)!important;} .sky-cloud.cloud-2{right:-130px;} .sky-cloud.cloud-3{left:-135px;} .timeline-node-card::before{left:0;opacity:.62;} }
+    /* =====================================================
+       ALL 12 CLOUD DESIGN DETAILS
+       ===================================================== */
+    .cloud-chapter-header {
+      position: relative;
+      padding: 28px 24px 24px;
+      border-radius: 48% 52% 45% 55% / 44% 42% 58% 56%;
+      background: rgba(255,255,255,.42);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: 0 18px 45px rgba(86,72,104,.07), inset 0 1px 0 rgba(255,255,255,.8);
+      backdrop-filter: blur(13px); -webkit-backdrop-filter: blur(13px);
+      overflow: visible;
+    }
+    .cloud-chapter-header::before,
+    .cloud-chapter-header::after {
+      content:''; position:absolute; border-radius:50%; background:rgba(255,255,255,.48);
+      border:1px solid rgba(255,255,255,.58); z-index:-1;
+    }
+    .cloud-chapter-header::before { width:110px; height:110px; left:8%; bottom:-22px; }
+    .cloud-chapter-header::after { width:135px; height:135px; right:9%; bottom:-28px; }
+    .cloud-chapter-label { display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border-radius:999px; background:rgba(255,255,255,.72); border:1px solid rgba(255,255,255,.9); box-shadow:0 7px 18px rgba(56,34,51,.05); font-size:9px; font-weight:900; letter-spacing:.13em; text-transform:uppercase; color:#382233; }
+    .sky-mood-badge { display:inline-flex; align-items:center; gap:6px; margin-top:10px; padding:6px 11px; border-radius:999px; background:rgba(255,255,255,.48); border:1px solid rgba(255,255,255,.72); font-size:10px; font-weight:800; color:rgba(56,34,51,.75); }
+    .cloud-memory-bed { position:relative; margin:-8px -18px -10px; min-height:70px; pointer-events:none; z-index:0; }
+    .cloud-memory-bed::before, .cloud-memory-bed::after { content:''; position:absolute; border-radius:999px; background:rgba(255,255,255,.33); filter:blur(.3px); box-shadow:40px -14px 0 4px rgba(255,255,255,.29), 82px -4px 0 -2px rgba(255,255,255,.25), 122px 7px 0 2px rgba(255,255,255,.22); }
+    .cloud-memory-bed::before { width:190px; height:54px; left:2%; bottom:5px; }
+    .cloud-memory-bed::after { width:230px; height:62px; right:3%; bottom:0; opacity:.65; }
+    #scrapbookGrid { position:relative; z-index:2; }
+    #scrapbookGrid .memory-polaroid { position:relative; }
+    #scrapbookGrid .memory-polaroid::after { content:'☁'; position:absolute; bottom:-25px; left:50%; transform:translateX(-50%); font-size:48px; line-height:1; opacity:.18; filter:blur(.1px); z-index:-1; }
+    .cloud-timeline-wrap { position:relative; padding:12px 8px 30px; }
+    .cloud-timeline-wrap::before { content:'☁️  ·  ☁️  ·  ☁️  ·  ☁️'; position:absolute; top:-8px; left:50%; transform:translateX(-50%); white-space:nowrap; font-size:13px; letter-spacing:7px; opacity:.34; pointer-events:none; }
+    .timeline-node-card::before { content:'☁️'; }
+    .timeline-node-card::after { content:'· · ·'; position:absolute; left:37px; top:28px; color:rgba(255,255,255,.9); font-size:14px; letter-spacing:5px; z-index:2; }
+    @media (min-width:768px) { .timeline-node-card::after { left:calc(50% + 17px); } }
+    .thought-clouds { display:flex; flex-wrap:wrap; gap:7px; margin:8px 0 0; justify-content:center; }
+    .thought-cloud { position:relative; display:inline-flex; align-items:center; gap:5px; padding:7px 11px; border-radius:999px; background:rgba(255,255,255,.78); border:1px solid rgba(255,255,255,.95); color:#382233; font-size:10px; font-weight:700; box-shadow:0 7px 18px rgba(56,34,51,.07); animation:thoughtFloat 4.5s ease-in-out infinite; }
+    .thought-cloud:nth-child(2){animation-delay:-1.2s}.thought-cloud:nth-child(3){animation-delay:-2.4s}
+    .thought-cloud::after { content:''; position:absolute; left:18px; bottom:-5px; width:9px; height:9px; background:rgba(255,255,255,.78); border-right:1px solid rgba(255,255,255,.95); border-bottom:1px solid rgba(255,255,255,.95); transform:rotate(45deg); }
+    @keyframes thoughtFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+    .memory-rainbow-burst { position:fixed; left:50%; top:48%; transform:translate(-50%,-50%) scale(.72); z-index:100; pointer-events:none; opacity:0; font-size:82px; filter:drop-shadow(0 12px 20px rgba(86,72,104,.12)); }
+    .memory-rainbow-burst.active { animation:rainbowPop 1.25s ease-out forwards; }
+    @keyframes rainbowPop { 0%{opacity:0; transform:translate(-50%,-50%) scale(.5) rotate(-8deg)} 18%{opacity:1; transform:translate(-50%,-50%) scale(1.08) rotate(2deg)} 100%{opacity:0; transform:translate(-50%,-58%) scale(1.3) rotate(6deg)} }
+    .chapter-sky-orb { position:absolute; right:4%; top:4%; font-size:30px; opacity:.55; filter:drop-shadow(0 7px 10px rgba(56,34,51,.08)); animation:orbFloat 6s ease-in-out infinite; }
+    @keyframes orbFloat { 0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-7px) rotate(4deg)} }
+    .memory-page-shell[data-stage="1"] .chapter-sky-orb::before { content:'🌤️'; }
+    .memory-page-shell[data-stage="2"] .chapter-sky-orb::before { content:'🌅'; }
+    .memory-page-shell[data-stage="3"] .chapter-sky-orb::before { content:'🌙'; }
+    .memory-page-shell[data-stage="4"] .chapter-sky-orb::before { content:'✨'; }
+    .memory-page-shell[data-stage="1"] .cloud-memory-bed { opacity:.92; }
+    .memory-page-shell[data-stage="2"] .cloud-memory-bed { opacity:.82; filter:saturate(1.05) hue-rotate(8deg); }
+    .memory-page-shell[data-stage="3"] .cloud-memory-bed { opacity:.78; filter:hue-rotate(20deg); }
+    .memory-page-shell[data-stage="4"] .cloud-memory-bed { opacity:.96; filter:saturate(1.12); }
+    .memory-page-shell[data-stage="2"] #stageAtmosphere { filter:saturate(1.04); }
+    .memory-page-shell[data-stage="3"] #stageAtmosphere { filter:saturate(.96); }
+    .memory-page-shell[data-stage="4"] #stageAtmosphere { filter:saturate(1.08); }
+
+    .memory-page-shell {
+      position: relative;
+      isolation: isolate;
+    }
+    .memory-page-shell::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -8;
+      background-image:
+        radial-gradient(rgba(255,255,255,.65) 1px, transparent 1px),
+        radial-gradient(rgba(56,34,51,.06) 1px, transparent 1px);
+      background-size: 22px 22px, 31px 31px;
+      background-position: 0 0, 11px 13px;
+      opacity: .28;
+    }
+    .scrapbook-tools {
+      position: sticky;
+      top: 72px;
+      z-index: 35;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .memory-frame {
+      width: fit-content;
+      max-width: 100%;
+      min-width: 0;
+      height: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .memory-media {
+      width: fit-content;
+      max-width: 100%;
+      height: auto;
+    }
+    .memory-media img {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: 380px;
+    }
+    .memory-type-stamp {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 25;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.84);
+      border: 1px solid rgba(255,255,255,.9);
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #382233;
+      backdrop-filter: blur(8px);
+    }
+    .memory-sticker {
+      position: absolute;
+      pointer-events: none;
+      filter: drop-shadow(0 5px 5px rgba(56,34,51,.08));
+      user-select: none;
+    }
+    .scrapbook-float { animation: scrapbookFloat 5s ease-in-out infinite; }
+    @keyframes scrapbookFloat {
+      0%,100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+    .memory-object-card { transition: transform .25s ease, box-shadow .25s ease; }
+    .memory-object-card:hover { transform: translateY(-4px) rotate(.3deg); box-shadow: 0 18px 34px rgba(56,34,51,.13); }
+    .story-path {
+      position: relative;
+      height: 22px;
+      margin: 8px auto 18px;
+      max-width: 520px;
+    }
+    .story-path::before {
+      content: '';
+      position: absolute;
+      left: 5%; right: 5%; top: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(157,40,94,.35), rgba(160,231,229,.55), transparent);
+    }
+    .story-path span { position: relative; display: inline-flex; margin: 0 10px; }
+    .bottom-memory-nav { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+    @media (min-width: 768px) {
+      #scrapbookGrid { align-items: start; }
+    }
+
+  
+    /* Small corner music player */
+    .main-music-player {
+      position: fixed;
+      bottom: 14px;
+      right: 14px;
+      z-index: 70;
+      width: 145px;
+      padding: 7px 9px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 14px;
+      background: rgba(255,255,255,.68);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 6px 18px rgba(91, 74, 128, .12);
+    }
+    .main-music-title {
+      font-family: Caveat, cursive;
+      font-size: 13px;
+      font-weight: 700;
+      color: #67527d;
+      line-height: 1.05;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .main-music-artist {
+      font-size: 8px;
+      color: #8d7c9d;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .main-music-player audio {
+      width: 100%;
+      height: 28px;
+    }
+    @media (max-width: 640px) {
+      .main-music-player {
+        bottom: 10px;
+        right: 10px;
+        width: 132px;
+        padding: 6px 8px;
+      }
+    }
+</style>
+</head>
+<body class="relative text-slateBlue">
+
+  <div class="main-music-player" aria-label="Main music player">
+    <div class="main-music-title">♪ Perfect</div>
+    <div class="main-music-artist">Ed Sheeran · Our soundtrack</div>
+    <audio id="mainMusicPlayer" controls preload="metadata">
+      <source src="https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/3ce7352d671d099412b1af5b23ff2029cd2cad9e/Edd_Sheeran_-_Perfect_%28mp3.pm%29.mp3" type="audio/mpeg">
+      Your browser does not support the audio player.
+    </audio>
+  </div>
+
+
+
+  <!-- ==================================================== -->
+  <!-- AUDIO SYNTHESIZER & SOUND ENGINE                     -->
+  <!-- ==================================================== -->
+  <script>
+    let audioCtx = null;
+    let soundEnabled = true;
+    let rainNoiseNode = null;
+    let rainGainNode = null;
+    let isRainPlaying = false;
+    let isTransitioning = false;
+    let transitionWatchdogTimer = null;
+
+    function safeStartTransition(duration = 450) {
+      isTransitioning = true;
+      clearTimeout(transitionWatchdogTimer);
+      transitionWatchdogTimer = setTimeout(() => {
+        isTransitioning = false;
+        const portal = document.getElementById('cloudPortal');
+        if (portal) portal.classList.remove('active');
+      }, duration + 300);
+    }
+
+    function safeEndTransition() {
+      isTransitioning = false;
+      const portal = document.getElementById('cloudPortal');
+      if (portal) portal.classList.remove('active');
+    }
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq = 520, duration = 0.8, type = 'sine') {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.08, audioCtx.currentTime + duration * 0.4);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playDreamChime() {
+      const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+      notes.forEach((n, idx) => setTimeout(() => playTone(n, 1.1, 'sine'), idx * 70));
+    }
+
+    function playHeartChime() {
+      const notes = [440, 554.37, 659.25, 880];
+      notes.forEach((n, idx) => setTimeout(() => playTone(n, 0.55, 'triangle'), idx * 55));
+    }
+
+    function toggleRainAudio(enable) {
+      try {
+        initAudio();
+        if (enable && !rainNoiseNode) {
+          const bufferSize = 2 * audioCtx.sampleRate;
+          const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          let lastOut = 0.0;
+          for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            output[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = output[i];
+            output[i] *= 3.5;
+          }
+
+          rainNoiseNode = audioCtx.createBufferSource();
+          rainNoiseNode.buffer = noiseBuffer;
+          rainNoiseNode.loop = true;
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(650, audioCtx.currentTime);
+
+          rainGainNode = audioCtx.createGain();
+          rainGainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
+          rainGainNode.gain.exponentialRampToValueAtTime(0.05, audioCtx.currentTime + 1.5);
+
+          rainNoiseNode.connect(filter);
+          filter.connect(rainGainNode);
+          rainGainNode.connect(audioCtx.destination);
+          rainNoiseNode.start();
+          isRainPlaying = true;
+        } else if (!enable && rainNoiseNode) {
+          if (rainGainNode) {
+            rainGainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+            setTimeout(() => {
+              if (rainNoiseNode) {
+                try {
+                  rainNoiseNode.stop();
+                  rainNoiseNode.disconnect();
+                } catch(e) {}
+                rainNoiseNode = null;
+                isRainPlaying = false;
+              }
+            }, 850);
+          }
+        }
+      } catch (e) {}
+    }
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- 1. IMMERSIVE HOME SCREEN : DREAM ENTRY PORTAL        -->
+  <!-- ==================================================== -->
+  <div id="dreamEntryScreen" class="fixed inset-0 z-40 flex flex-col items-center justify-between p-6 transition-all duration-700 pointer-events-auto">
+    
+    <!-- Background Dream Aura -->
+    <div id="entrySkyBackdrop" class="absolute inset-0 -z-20 transition-all duration-1000"></div>
+
+    <!-- Floating Background Cloud Sprites -->
+    <div class="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+      <div class="absolute top-[8%] left-[5%] w-72 h-36 bg-white/50 rounded-full blur-2xl animate-pulse"></div>
+      <div class="absolute top-[35%] right-[8%] w-80 h-44 bg-babyPink/60 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-[15%] left-[12%] w-96 h-48 bg-softAqua/60 rounded-full blur-3xl"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[34rem] h-[34rem] bg-white/40 rounded-full blur-[90px]"></div>
+    </div>
+
+    <!-- Top Time of Day Badge on Home Screen -->
+    <div class="w-full max-w-4xl flex items-center justify-between pt-2">
+      <div class="glass-panel px-4 py-1.5 rounded-full flex items-center space-x-2 text-xs font-extrabold text-slateBlue shadow-sm">
+        <span id="homeSkyIcon">🌅</span>
+        <span id="homeSkyTimeText" class="font-display">Sky Clock : Live</span>
+      </div>
+
+      <!-- Quick Rain Toggle on Home -->
+      <button type="button" onclick="toggleRainMode(event)" id="btnHomeRainToggle" class="glass-pill px-3.5 py-1.5 rounded-full text-xs font-extrabold text-slateBlue flex items-center space-x-1.5 shadow-sm">
+        <span>☂️</span>
+        <span id="homeRainLabel">Rainy Day</span>
+      </button>
+    </div>
+
+    <!-- Center Hero: Title, Subtitle, & Fluffy Cloud Button -->
+    <div class="flex flex-col items-center text-center my-auto px-4 max-w-xl">
+      
+      <!-- Sparkle Emblem -->
+      <div class="inline-flex items-center space-x-2 glass-pill px-4 py-1 rounded-full mb-5 shadow-sm">
+        <span class="text-sm">✨</span>
+        <span class="text-[11px] uppercase tracking-widest font-extrabold text-darkPlum font-display">A Sanctuary for Two</span>
+        <span class="text-sm">✨</span>
+      </div>
+
+      <!-- Main Prominent Title -->
+      <h1 class="text-5xl sm:text-7xl font-extrabold font-display text-slateBlue tracking-tight drop-shadow-sm">
+        Cloud Nine
+      </h1>
+
+      <!-- Heartfelt Subtitle -->
+      <p class="font-hand text-2xl sm:text-4xl text-pink-800 mt-2 font-semibold">
+        “Our little corner of the sky.”
+      </p>
+
+      <p class="text-xs sm:text-sm text-slateBlue/80 font-medium max-w-md mt-3 leading-relaxed">
+        Where memories drift like soft pastel clouds, whispered jokes live forever, and every heartbeat has a home.
+      </p>
+
+      <!-- Large Fluffy Floating Cloud Button -->
+      <div class="mt-8 relative group">
+        <button type="button" onclick="enterDreamscapeFromHome(event)" class="dream-cloud-btn relative px-8 py-5 rounded-[40px] bg-white/95 text-slateBlue border-2 border-white flex items-center space-x-3 shadow-xl hover:scale-105 active:scale-95 transition">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-babyPink to-softAqua flex items-center justify-center text-lg shadow-inner">
+            ☁️
+          </div>
+          <div class="text-left">
+            <span class="block text-base sm:text-lg font-extrabold font-display tracking-wide text-slateBlue leading-tight">Start Dreaming</span>
+            <span class="block text-[10px] text-pink-700 font-bold uppercase tracking-wider font-sans">Open our sky journal</span>
+          </div>
+          <span class="text-pink-400 text-lg transform group-hover:translate-x-1 transition">✨</span>
+        </button>
+      </div>
+
+      <!-- Small Footer Quote -->
+      <div class="mt-8 flex items-center space-x-2 text-[11px] text-darkPlum/70 font-semibold">
+        <span>🌙</span>
+        <span>Every chapter was written just for you</span>
+        <span>🌸</span>
+      </div>
+    </div>
+
+    <!-- Bottom Atmospheric Info -->
+    <div class="text-center text-[10px] font-bold text-darkPlum/60 pb-2">
+      <p>Tap Start Dreaming to drift into the journal</p>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- 2. MAIN MAP VIEW (CANVAS & FLOATING DOCK)            -->
+  <!-- ==================================================== -->
+  <div id="mainMapView" class="fixed inset-0 w-full h-full transition-opacity duration-700 opacity-0 pointer-events-none hidden">
+    
+    <!-- Interactive Canvas with High-DPI Sharpness -->
+    <canvas id="worldCanvas" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-0"></canvas>
+
+    <!-- Top Navigation Header -->
+    <header class="absolute top-4 left-4 right-4 md:left-8 md:right-8 z-30 flex items-center justify-between pointer-events-none">
+      
+      <!-- Logo & Return to Home Screen -->
+      <div onclick="returnToHomeScreen()" class="glass-panel rounded-full px-4 md:px-5 py-2 flex items-center space-x-3 pointer-events-auto cursor-pointer hover:scale-105 active:scale-95 transition shadow-md" title="Return to Dream Entry Portal">
+        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-lg shadow-sm">
+          ☁️
+        </div>
+        <div>
+          <h1 class="text-xs md:text-sm font-extrabold text-slateBlue leading-tight tracking-wide font-display">Cloud Nine</h1>
+          <p class="text-[9px] md:text-[10px] text-darkPlum/75 font-bold tracking-wider uppercase">Our corner of the sky</p>
+        </div>
+      </div>
+
+      <!-- Top Right Actions: Sky Mood Selector + Rainy Mode + Audio Toggle -->
+      <div class="pointer-events-auto flex items-center space-x-2">
+        
+        <!-- Sky Atmosphere Indicator & Mood Changer -->
+        <div class="glass-panel px-3 py-1.5 rounded-full flex items-center space-x-1.5 text-xs font-extrabold text-slateBlue shadow-sm">
+          <span id="skyMoodIcon">🌅</span>
+          <select id="skyMoodSelector" onchange="changeSkyAtmosphere(this.value)" class="bg-transparent text-[11px] font-bold text-slateBlue outline-none cursor-pointer">
+            <option value="auto">Auto Time</option>
+            <option value="day">Day Sky</option>
+            <option value="sunset">Sunset Glow</option>
+            <option value="night">Night Moon</option>
+          </select>
+        </div>
+
+        <!-- Rainy Day Mode Button -->
+        <button type="button" onclick="toggleRainMode(event)" id="btnRainMode" class="glass-pill px-3 py-1.5 rounded-full text-xs font-extrabold text-slateBlue flex items-center space-x-1 shadow-sm transition hover:scale-105" title="Toggle Rainy Day Atmosphere">
+          <span>☂️</span>
+          <span id="rainBtnText" class="hidden sm:inline">Rainy Day</span>
+        </button>
+
+        <!-- Toggle Sound Effects -->
+        <button type="button" onclick="toggleSoundFx()" id="btnSoundFx" class="glass-pill w-9 h-9 rounded-full flex items-center justify-center text-sm text-slateBlue shadow-sm" title="Toggle Chimes">
+          🔔
+        </button>
+      </div>
+    </header>
+
+    <!-- Bottom Compact Floating Chapter Dock -->
+    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 pointer-events-auto max-w-[95vw]">
+      <div class="glass-dock px-3 py-2 rounded-full flex items-center space-x-1.5 md:space-x-2 shadow-xl border border-white/90 overflow-x-auto">
+        <span class="text-[10px] font-extrabold px-2 text-darkPlum/70 uppercase tracking-widest hidden lg:inline font-display">Chapters</span>
+        
+        <button type="button" onclick="enterStage(1)" class="px-3.5 py-2 rounded-full bg-white/85 hover:bg-white text-xs font-bold text-slateBlue shadow-sm transition hover:scale-105 active:scale-95 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+          <span class="w-2 h-2 rounded-full bg-pink-400"></span>
+          <span>01 First Glimpse</span>
+        </button>
+
+        <button type="button" onclick="enterStage(2)" class="px-3.5 py-2 rounded-full bg-white/85 hover:bg-white text-xs font-bold text-slateBlue shadow-sm transition hover:scale-105 active:scale-95 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+          <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+          <span>02 Drifting Closer</span>
+        </button>
+
+        <button type="button" onclick="enterStage(3)" class="px-3.5 py-2 rounded-full bg-white/85 hover:bg-white text-xs font-bold text-slateBlue shadow-sm transition hover:scale-105 active:scale-95 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+          <span>03 Hearts Aligned</span>
+        </button>
+
+        <button type="button" onclick="enterStage(4)" class="px-3.5 py-2 rounded-full bg-white/85 hover:bg-white text-xs font-bold text-slateBlue shadow-sm transition hover:scale-105 active:scale-95 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+          <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+          <span>04 Forever Sky</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- 3. DEDICATED CLOUD MEMORY PAGE (EXPLORER VIEW)       -->
+  <!-- ==================================================== -->
+  <div id="memoryPageView" class="memory-page-shell fixed inset-0 z-40 overflow-y-auto overflow-x-hidden transition-opacity duration-700 opacity-0 pointer-events-none hidden">
+    
+    <!-- Stage Atmospheric Overlay -->
+    <div id="stageAtmosphere" class="fixed inset-0 pointer-events-none -z-10 theme-stage-1 transition-all duration-1000"></div>
+    <!-- Layered clouds + stars: the chapter itself feels like a little sky -->
+    <div id="memorySkyDecor" class="memory-sky-decor" aria-hidden="true">
+      <div class="sky-cloud cloud-1"></div><div class="sky-cloud cloud-2"></div><div class="sky-cloud cloud-3"></div><div class="sky-cloud cloud-4"></div><div class="sky-cloud cloud-5"></div>
+    </div>
+
+    <!-- Drifting Ambient Mist Sprites -->
+    <div class="fixed top-12 left-0 w-80 h-36 bg-white/40 rounded-full blur-2xl pointer-events-none -z-10 animate-pulse"></div>
+    <div class="fixed top-1/2 right-0 w-96 h-44 bg-babyPink/50 rounded-full blur-3xl pointer-events-none -z-10"></div>
+    <div class="fixed bottom-10 left-10 w-96 h-44 bg-lightAqua/40 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+    <!-- Floating Top Bar with Reliable Back to Clouds Button -->
+    <header class="sticky top-4 z-50 px-4 md:px-10 max-w-5xl mx-auto flex items-center justify-between gap-2 pointer-events-auto">
+      <!-- Back to Clouds Button -->
+      <button type="button" onclick="exitMemoryPage()" class="glass-pill px-4 md:px-5 py-2.5 rounded-full flex items-center space-x-2 text-xs md:text-sm font-extrabold text-slateBlue shadow-md hover:bg-white active:scale-95 transition">
+        <span class="text-base">☁️</span>
+        <span>Back to Clouds</span>
+      </button>
+
+      <!-- Stage Indicator Badge -->
+      <div class="glass-panel px-4 py-2 rounded-full flex items-center space-x-2 shadow-sm">
+        <span id="pageStageBadge" class="text-[11px] md:text-xs font-extrabold text-slateBlue uppercase tracking-wider font-display">Chapter 01 : First Glimpse</span>
+        <span class="text-slateBlue/40 hidden sm:inline">•</span>
+        <span id="pageStageDate" class="text-[11px] md:text-xs text-darkPlum/80 font-bold hidden sm:inline font-sans">May 1, 2026</span>
+      </div>
+
+      <!-- Add Memory Quick Button -->
+      <button type="button" onclick="openAddMemoryModal()" class="glass-pill px-3.5 md:px-4 py-2.5 rounded-full bg-pink-100/90 text-xs font-extrabold text-pink-800 flex items-center space-x-1 shadow-sm hover:bg-pink-100">
+        <span>➕</span>
+        <span class="hidden md:inline">Add Memory</span>
+      </button>
+    </header>
+
+    <!-- Main Memory Page Body -->
+    <main class="max-w-5xl mx-auto px-4 md:px-8 pt-8 pb-28 relative pointer-events-auto">
+      
+      <!-- Stage Header Hero -->
+      <div class="text-center max-w-2xl mx-auto mb-10 cloud-chapter-header">
+        <div class="chapter-sky-orb" aria-hidden="true"></div>
+        <div class="cloud-chapter-label mx-auto"><span>☁️</span><span>Memory Cloud</span><span>☁️</span></div>
+        <div class="inline-flex items-center space-x-2 glass-panel px-4 py-1 rounded-full mb-3 mt-2">
+          <span class="text-xs uppercase tracking-widest font-extrabold text-darkPlum font-display" id="pageStageThemeTag">The Day We Met : Friday, May 1, 2026</span>
+        </div>
+        <h2 id="pageStageTitle" class="text-3xl md:text-5xl font-extrabold font-display text-slateBlue tracking-tight">First Glimpse</h2>
+        <div id="pageStageSkyMood" class="sky-mood-badge"><span>🌤️</span><span>Soft morning clouds</span></div>
+        <p id="pageStageSubtitle" class="font-hand text-2xl md:text-3xl text-pink-700 mt-2 font-semibold">“Inside this cloud are the moments that started it all...”</p>
+        <p id="pageStageNarrative" class="text-xs md:text-sm text-slateBlue font-medium mt-3 leading-relaxed glass-panel p-4 rounded-2xl shadow-sm">
+          That Friday evening at 10:28 PM when a simple hello turned into something unforgettable.
+        </p>
+      </div>
+
+      <!-- Tab Switcher (Scrapbook / Timeline) -->
+      <div class="flex justify-center mb-8">
+        <div class="glass-panel p-1.5 rounded-2xl inline-flex space-x-1.5 shadow-sm">
+          <button type="button" id="tabBtnScrapbook" onclick="switchTab('scrapbook')" class="px-5 py-2 rounded-xl text-xs font-extrabold transition shadow-sm bg-white text-slateBlue font-display">
+            📸 Scrapbook
+          </button>
+          <button type="button" id="tabBtnTimeline" onclick="switchTab('timeline')" class="px-5 py-2 rounded-xl text-xs font-extrabold transition text-darkPlum/70 hover:text-slateBlue font-display">
+            ✨ Dream Timeline
+          </button>
+        </div>
+      </div>
+
+      <!-- SECTION 1: FLOATING SCRAPBOOK GALLERY -->
+      <!-- FILM STRIP -->
+      <section class="mb-8">
+        <div class="glass-panel rounded-3xl p-4 memory-object-card">
+          <div class="flex items-center justify-between mb-2"><div><p class="text-[9px] uppercase tracking-widest font-extrabold text-pink-700">Snapshots</p><h3 class="font-display text-lg font-black">A little film strip</h3></div><span>🎞️</span></div>
+          <div id="memoryFilmStrip" class="film-strip"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 1: FLOATING SCRAPBOOK GALLERY -->
+      <div id="sectionScrapbook" class="transition-opacity duration-300">
+        <div class="text-center mb-6">
+          <p class="text-[11px] uppercase tracking-wider text-darkPlum/75 font-extrabold">Tap any polaroid to open keepsakes and voice notes</p>
+        </div>
+
+        <div class="story-path text-center" aria-hidden="true"><span>☁️</span><span>✦</span><span>☁️</span><span>♡</span><span>☁️</span><span>✨</span></div>
+        <div class="cloud-memory-bed" aria-hidden="true"></div>
+        <div id="scrapbookGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 items-start justify-items-center">
+          <!-- Dynamically populated polaroids -->
+        </div>
+      </div>
+
+      <!-- SECTION 2: VERTICAL DREAM TIMELINE -->
+      <div id="sectionTimeline" class="hidden transition-opacity duration-300 max-w-2xl mx-auto relative pt-4 cloud-timeline-wrap">
+        <!-- Glowing cloud trail track -->
+        <div class="constellation-track"></div>
+        <!-- Dynamic Timeline Items -->
+        <div id="timelineList" class="space-y-10 relative">
+          <!-- Dynamically populated timeline nodes -->
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Mobile scrapbook navigation -->
+    <nav class="bottom-memory-nav md:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-40 glass-dock rounded-full px-2 py-1.5 flex items-center gap-1 shadow-2xl">
+      <button type="button" onclick="scrollMemoryTop()" class="px-3 py-2 rounded-full text-[10px] font-extrabold">☁️ Top</button>
+      <button type="button" onclick="switchTab('scrapbook'); scrollToScrapbook()" class="px-3 py-2 rounded-full text-[10px] font-extrabold">📖 Memories</button>
+      <button type="button" onclick="switchTab('timeline'); scrollToTimeline()" class="px-3 py-2 rounded-full text-[10px] font-extrabold">✨ Timeline</button>
+      <button type="button" onclick="openAddMemoryModal()" class="px-3 py-2 rounded-full text-[10px] font-extrabold">＋ Add</button>
+    </nav>
+
+    <!-- Footer in Memory Page -->
+    <footer class="text-center py-10 text-xs font-semibold text-darkPlum/70">
+      <p>☁️ Floating peacefully inside our private memory cloud ☁️</p>
+      <div id="memoryCloudCount" class="memory-cloud-count"><span>☁️</span><span>0 little memories floating here</span><span>✨</span></div>
+    </footer>
+    <div id="memoryRainbowBurst" class="memory-rainbow-burst" aria-hidden="true">🌈</div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- LIGHTBOX / EXPANDED PHOTO DIALOG WITH VOICE PLAYER   -->
+  <!-- ==================================================== -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateBlue/35 backdrop-blur-md opacity-0 pointer-events-none hidden transition-all duration-300">
+    <div id="lightboxCard" class="glass-panel lightbox-card rounded-3xl p-4 sm:p-5 md:p-7 relative transform scale-90 transition-all duration-300 shadow-2xl max-h-[92vh] overflow-y-auto">
+      <button type="button" onclick="closeLightbox()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slateBlue text-xs font-extrabold flex items-center justify-center shadow-sm z-20">
+        ✕
+      </button>
+
+      <!-- Lightbox Photo Visual Container: Fully Adaptable to Image Aspect Ratios -->
+      <div id="lightboxMediaContainer" class="w-full min-h-[14rem] max-h-[62vh] rounded-2xl overflow-hidden mb-4 border border-white shadow-inner flex items-center justify-center relative bg-slate-900/5 p-1.5">
+        <!-- Dynamically rendered -->
+      </div>
+
+      <div class="flex items-center justify-between">
+        <span id="lightboxTag" class="text-[10px] font-extrabold px-3 py-1 rounded-full bg-babyPink text-darkPlum uppercase tracking-wider border border-white font-display">Memory #01</span>
+        <span id="lightboxDate" class="text-xs font-bold text-darkPlum/80">May 1, 2026</span>
+      </div>
+
+      <h3 id="lightboxTitle" class="text-xl md:text-2xl font-extrabold text-slateBlue mt-2 font-display">Moment Title</h3>
+      <p id="lightboxQuote" class="font-hand text-2xl text-pink-700 mt-1 font-semibold">“Caption quote goes here”</p>
+      
+      <p id="lightboxFullText" class="text-xs md:text-sm text-slateBlue font-medium mt-3 leading-relaxed">
+        Full detail and private notes regarding this memory.
+      </p>
+      <div id="lightboxThoughtClouds" class="thought-clouds" aria-label="Memory thoughts"></div>
+
+      <!-- Voice Keepsake & Player Container -->
+      <div class="mt-5 pt-3 border-t border-white/80 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-extrabold text-darkPlum uppercase tracking-wider flex items-center space-x-1.5 font-display">
+            <span>🎙️</span>
+            <span>Voice Keepsake</span>
+          </span>
+          <div class="flex items-center space-x-1.5">
+            <button type="button" onclick="speakMemoryAloud()" class="glass-pill px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-teal-800 bg-teal-100/70 hover:bg-teal-100 transition flex items-center space-x-1" title="Read reflection aloud">
+              <span>🔊</span>
+              <span>Read Aloud</span>
+            </button>
+            <button type="button" onclick="openRecordVoiceModal()" class="glass-pill px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-pink-800 bg-babyPink/60 hover:bg-babyPink transition flex items-center space-x-1">
+              <span>🎤</span>
+              <span>Record Voice</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Audio Player Card inside Lightbox -->
+        <div class="p-3.5 rounded-2xl bg-white/90 border border-white flex flex-col gap-2.5 shadow-sm">
+          <div class="flex items-center justify-between">
+            <button type="button" id="btnPlayVoice" onclick="toggleVoicePlayback()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-pink-300 via-rose-200 to-teal-200 hover:opacity-95 text-slateBlue font-extrabold text-xs flex items-center space-x-2 shadow-sm transition active:scale-95">
+              <span id="playIcon">▶</span>
+              <span id="playText">Play Voice Note</span>
+            </button>
+
+            <!-- Soundwave bars -->
+            <div id="audioWaveVisual" class="hidden items-center space-x-1 h-6 px-2">
+              <span class="audio-bar w-1 bg-pink-500 rounded-full"></span>
+              <span class="audio-bar w-1 bg-teal-500 rounded-full"></span>
+              <span class="audio-bar w-1 bg-pink-600 rounded-full"></span>
+              <span class="audio-bar w-1 bg-teal-600 rounded-full"></span>
+              <span class="audio-bar w-1 bg-pink-500 rounded-full"></span>
+            </div>
+
+            <span id="audioTimeDisplay" class="text-[11px] font-bold text-darkPlum/80">0:00 / 0:00</span>
+          </div>
+
+          <!-- Scrub Bar -->
+          <div class="w-full bg-slateBlue/15 h-2 rounded-full overflow-hidden cursor-pointer relative" id="audioProgressContainer" onclick="seekVoiceAudio(event)">
+            <div id="audioProgressBar" class="h-full bg-gradient-to-r from-pink-400 to-teal-400 w-0 transition-all duration-100"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation, Delete & Heart Burst Buttons -->
+      <div class="mt-5 flex justify-between items-center gap-2 pt-4 border-t border-white/80">
+        <button type="button" onclick="navigateLightbox(-1)" class="glass-pill px-3.5 py-2 rounded-xl text-xs font-extrabold text-slateBlue flex items-center space-x-1">
+          <span>←</span>
+          <span class="hidden sm:inline">Previous</span>
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnEditMemory" onclick="openEditMemoryModal()" class="hidden px-3 py-2 rounded-xl text-xs font-extrabold text-slateBlue bg-white/90 border border-white hover:bg-pink-50 transition" title="Edit this memory">
+            ✏️ <span class="hidden sm:inline">Edit</span>
+          </button>
+          <button type="button" id="btnDeleteMemory" onclick="deleteCurrentMemory()" class="hidden px-3 py-2 rounded-xl text-xs font-extrabold text-red-700 bg-red-50/90 border border-red-100 hover:bg-red-100 transition" title="Delete this memory">
+            🗑️ <span class="hidden sm:inline">Delete</span>
+          </button>
+          <button type="button" onclick="triggerMultiParticleBurst(event); playHeartChime()" class="text-2xl hover:scale-125 transition transform" title="Send Hearts">
+            💗
+          </button>
+        </div>
+        <button type="button" onclick="navigateLightbox(1)" class="glass-pill px-3.5 py-2 rounded-xl text-xs font-extrabold text-slateBlue flex items-center space-x-1">
+          <span class="hidden sm:inline">Next</span>
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- AUDIO RECORDER & UPLOADER MODAL                      -->
+  <!-- ==================================================== -->
+  <div id="recordVoiceModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateBlue/35 backdrop-blur-md opacity-0 pointer-events-none hidden transition-all duration-300">
+    <div class="glass-panel max-w-md w-full rounded-3xl p-6 relative shadow-2xl">
+      <button type="button" onclick="closeRecordVoiceModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-xs font-extrabold text-slateBlue flex items-center justify-center">
+        ✕
+      </button>
+
+      <div class="text-center mb-4">
+        <span class="text-3xl">🎙️</span>
+        <h3 class="text-lg font-extrabold text-slateBlue font-display mt-1">Voice Keepsake Studio</h3>
+        <p class="text-[11px] text-darkPlum/80 font-medium">Record a personal voice note or upload an audio file.</p>
+      </div>
+
+      <!-- Live Mic Recording Area -->
+      <div class="p-4 rounded-2xl bg-white/90 border border-white text-center space-y-3 shadow-inner">
+        <div id="recordStatusIndicator" class="flex items-center justify-center space-x-2 text-xs font-bold text-darkPlum/80">
+          <span id="recordDot" class="w-3 h-3 rounded-full bg-slate-300"></span>
+          <span id="recordStatusText">Ready to record</span>
+        </div>
+
+        <div id="recordTimer" class="font-display font-extrabold text-2xl text-slateBlue">0:00</div>
+
+        <div class="flex justify-center items-center space-x-3">
+          <button type="button" id="btnStartRecord" onclick="startMicRecording()" class="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-extrabold text-xs shadow-md transition flex items-center space-x-1.5">
+            <span>●</span>
+            <span>Start Mic</span>
+          </button>
+          <button type="button" id="btnStopRecord" onclick="stopMicRecording()" class="hidden px-4 py-2 rounded-xl bg-slateBlue text-white font-extrabold text-xs shadow-md transition flex items-center space-x-1.5">
+            <span>■</span>
+            <span>Stop Recording</span>
+          </button>
+        </div>
+
+        <audio id="recordedAudioPreview" controls class="hidden w-full mt-3"></audio>
+      </div>
+
+      <!-- Upload or Paste Audio Link -->
+      <div class="mt-4 pt-3 border-t border-white/80 space-y-2.5">
+        <div class="text-[11px] font-extrabold text-darkPlum">Or attach an audio file:</div>
+        
+        <input id="customAudioUrlInput" type="text" placeholder="Paste .mp3 audio link (optional)" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" />
+        
+        <div class="flex items-center justify-between gap-2">
+          <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-white hover:bg-pink-50 text-slateBlue font-extrabold text-[11px] border border-white shadow-sm flex items-center space-x-1">
+            <span>📁</span>
+            <span>Upload .mp3 / .wav</span>
+            <input type="file" id="audioFileInput" accept="audio/*" class="hidden" onchange="handleAudioFileUpload(event)" />
+          </label>
+          <span id="audioFileNameDisplay" class="text-[10px] text-darkPlum/70 truncate max-w-[150px] font-semibold">No file selected</span>
+        </div>
+      </div>
+
+      <button type="button" onclick="applyVoiceToMemory()" class="w-full mt-5 py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-slateBlue text-xs font-extrabold rounded-xl shadow-md hover:opacity-95 transition flex items-center justify-center space-x-1">
+        <span>Save Voice to This Memory</span>
+        <span>✨</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- ADD NEW CUSTOM MEMORY MODAL                          -->
+  <!-- ==================================================== -->
+  <div id="addMemoryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slateBlue/25 backdrop-blur-md opacity-0 pointer-events-none hidden transition-all duration-300">
+    <div class="glass-panel max-w-md w-full rounded-3xl p-6 relative shadow-2xl">
+      <button type="button" onclick="closeAddMemoryModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-xs font-extrabold text-slateBlue flex items-center justify-center">
+        ✕
+      </button>
+
+      <div class="text-center mb-4">
+        <span class="text-3xl">🌸</span>
+        <h3 class="text-xl font-extrabold text-slateBlue font-display mt-1">Add Memory to Cloud</h3>
+        <p class="text-[11px] text-darkPlum/80 font-medium">Save a new keepsake into this sky chapter.</p>
+      </div>
+
+      <form onsubmit="saveCustomMemory(event)" class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Memory Title</label>
+          <input id="newMemTitle" type="text" placeholder="e.g. Late Night Dessert & Silly Jokes" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+        </div>
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Image Path / URL (Optional)</label>
+          <input id="newMemImg" type="text" placeholder="e.g. Images/May/photo.jpg" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" />
+          <label class="mt-2 flex items-center justify-center gap-2 cursor-pointer px-3 py-2 rounded-xl bg-white/90 border border-white text-xs font-extrabold text-slateBlue hover:bg-pink-50 transition">
+            <span>📸</span><span>Upload photos from this device</span>
+            <input id="newMemFiles" type="file" accept="image/*" multiple class="hidden" onchange="handleNewMemoryFiles(event)" />
+          </label>
+          <p id="newMemFilesHint" class="text-[10px] text-darkPlum/60 font-semibold mt-1">You can select multiple photos.</p>
+          <div id="newMemPreview" class="memory-upload-preview">
+            <div class="memory-preview-header">
+              <span id="newMemPreviewTitle" class="text-[10px] font-extrabold text-darkPlum">Photo Preview</span>
+              <button type="button" onclick="clearNewMemoryPhotos()" class="text-[10px] font-extrabold text-pink-600 hover:underline">Clear all</button>
+            </div>
+            <div id="newMemPreviewGrid" class="memory-preview-grid"></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Date / Time</label>
+            <input id="newMemDate" type="text" placeholder="e.g. June 15, 2026 : 11:11 PM" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+          </div>
+          <div>
+            <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Stamp Icon</label>
+            <select id="newMemIcon" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-semibold">
+              <option value="💌">💌 Love Letter</option>
+              <option value="🌸">🌸 Flower Bloom</option>
+              <option value="🌙">🌙 Midnight Moon</option>
+              <option value="✨">✨ Star Sparkle</option>
+              <option value="🎙️">🎙️ Voice Note</option>
+              <option value="🍨">🍨 Sweet Treats</option>
+              <option value="💍">💍 Promise Ring</option>
+              <option value="☕">☕ Cozy Cafe</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Heartfelt Quote</label>
+          <input id="newMemQuote" type="text" placeholder="“The exact words we said that made us smile...”" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+        </div>
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Full Notes & Thoughts</label>
+          <textarea id="newMemDesc" rows="2" placeholder="Write down every soft detail..." class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink resize-none font-medium" required></textarea>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-slateBlue text-xs font-extrabold rounded-xl shadow-md hover:opacity-95 transition flex items-center justify-center space-x-1 font-display">
+          <span>Preserve in Stardust</span>
+          <span>✨</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SUPABASE LOGIN MODAL -->
+  <!-- ==================================================== -->
+  <!-- EDIT EXISTING MEMORY MODAL                           -->
+  <!-- ==================================================== -->
+  <div id="editMemoryModal" class="fixed inset-0 z-[55] flex items-center justify-center p-4 bg-slateBlue/25 backdrop-blur-md opacity-0 pointer-events-none hidden transition-all duration-300">
+    <div class="glass-panel max-w-lg w-full rounded-3xl p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+      <button type="button" onclick="closeEditMemoryModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-xs font-extrabold text-slateBlue flex items-center justify-center">
+        ✕
+      </button>
+
+      <div class="text-center mb-4">
+        <span class="text-3xl">✏️</span>
+        <h3 class="text-xl font-extrabold text-slateBlue font-display mt-1">Edit This Memory</h3>
+        <p class="text-[11px] text-darkPlum/80 font-medium">Update the keepsake and save the changes to your Cloud Nine sky.</p>
+      </div>
+
+      <form onsubmit="saveEditedMemory(event)" class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Memory Title</label>
+          <input id="editMemTitle" type="text" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Date / Time</label>
+          <input id="editMemDate" type="text" placeholder="e.g. June 15, 2026 : 11:11 PM" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+          <p class="text-[10px] text-darkPlum/55 font-semibold mt-1">The exact date and time are saved to the memory, separate from when you uploaded it.</p>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Stamp Icon</label>
+          <select id="editMemIcon" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-semibold">
+            <option value="💌">💌 Love Letter</option>
+            <option value="🌸">🌸 Flower Bloom</option>
+            <option value="🌙">🌙 Midnight Moon</option>
+            <option value="✨">✨ Star Sparkle</option>
+            <option value="🎙️">🎙️ Voice Note</option>
+            <option value="🍨">🍨 Sweet Treats</option>
+            <option value="💍">💍 Promise Ring</option>
+            <option value="☕">☕ Cozy Cafe</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Heartfelt Quote</label>
+          <input id="editMemQuote" type="text" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Full Notes &amp; Thoughts</label>
+          <textarea id="editMemDesc" rows="5" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium resize-y" required></textarea>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Photo URLs</label>
+          <textarea id="editMemPhotoUrls" rows="4" placeholder="One photo URL per line. Remove a line to remove that photo." class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-[11px] text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium resize-y"></textarea>
+          <p class="text-[10px] text-darkPlum/60 font-semibold mt-1">You can remove existing photos by deleting their URL here.</p>
+        </div>
+
+        <label class="flex items-center justify-center gap-2 cursor-pointer px-3 py-2 rounded-xl bg-white/90 border border-white text-xs font-extrabold text-slateBlue hover:bg-pink-50 transition">
+          <span>📸</span><span>Add more photos from this device</span>
+          <input id="editMemFiles" type="file" accept="image/*" multiple class="hidden" onchange="handleEditMemoryFiles(event)" />
+        </label>
+        <div id="editMemFilesHint" class="text-[10px] text-darkPlum/60 font-semibold">No new photos selected.</div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeEditMemoryModal()" class="flex-1 py-2.5 bg-white/90 border border-white text-slateBlue text-xs font-extrabold rounded-xl shadow-sm hover:bg-pink-50 transition">Cancel</button>
+          <button type="submit" id="btnSaveEditedMemory" class="flex-1 py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-slateBlue text-xs font-extrabold rounded-xl shadow-md hover:opacity-95 transition">Save Changes ✨</button>
+        </div>
+        <p id="editMemoryStatus" class="hidden text-[10px] text-center font-extrabold text-teal-700"></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="supabaseLoginModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slateBlue/25 backdrop-blur-md opacity-0 pointer-events-none hidden transition-all duration-300">
+    <div class="glass-panel max-w-sm w-full rounded-3xl p-6 relative shadow-2xl">
+      <button type="button" onclick="closeSupabaseLogin()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-xs font-extrabold text-slateBlue flex items-center justify-center">✕</button>
+      <div class="text-center mb-4">
+        <span class="text-3xl">🔐</span>
+        <h3 class="text-xl font-extrabold text-slateBlue font-display mt-1">Memory Keeper Login</h3>
+        <p class="text-[11px] text-darkPlum/80 font-medium">Log in to add memories to Cloud Nine.</p>
+      </div>
+      <form onsubmit="supabaseLogin(event)" class="space-y-3">
+        <input id="supabaseEmail" type="email" autocomplete="email" placeholder="Email" class="w-full bg-white/90 border border-white px-3 py-2.5 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+        <input id="supabasePassword" type="password" autocomplete="current-password" placeholder="Password" class="w-full bg-white/90 border border-white px-3 py-2.5 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
+        <p id="supabaseLoginError" class="hidden text-[10px] text-red-600 font-bold"></p>
+        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-babyPink via-softAqua to-lightAqua text-slateBlue text-xs font-extrabold rounded-xl shadow-md hover:opacity-95 transition">Log In ✨</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Fullscreen Cloud Dive Portal Transition -->
+  <div id="cloudPortal"></div>
+
+  <!-- ==================================================== -->
+  <!-- DATABASE & STATE STORAGE                             -->
+  <!-- ==================================================== -->
+  <script>
+    // Supabase connection (publishable key is safe for browser use when RLS is enabled).
+    const SUPABASE_URL = 'https://qnjlxjoiwrrjkqocqybi.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_GeashEyHuZXxdIhgOgx7-g_XDxcVfEe';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const STAGE_DATA = {
+      1: {
+        id: 1,
+        title: "First Glimpse",
+        date: "Friday, May 1, 2026 : 10:28 PM",
+        badge: "Chapter 01 : First Glimpse",
+        themeTag: "The Day We Met : Friday, May 1, 2026",
+        themeClass: "theme-stage-1",
+        subtitle: "“Friday, May 1, 2026 at 10:28 PM : The exact minute our worlds collided.”",
+        narrative: "A Friday night at 10:28 PM that started out ordinary, until a simple hello blossomed into hours of effortless laughter and quiet comfort.",
+        photos: [],
+        timeline: []
+      },
+
+      2: {
+        id: 2,
+        title: "Drifting Closer",
+        date: "May 1, 2026 10:28 PM to June 4, 2026 9:22 PM",
+        badge: "Chapter 02 : Drifting Closer (MU)",
+        themeTag: "Mutual Understanding : May 1 to June 4",
+        themeClass: "theme-stage-2",
+        subtitle: "“From May 1 at 10:28 PM to June 4 at 9:22 PM : Finding our sweet rhythm.”",
+        narrative: "Our mutual understanding phase where conversations grew deeper every single day. Walking closer, sharing everyday updates, and knowing our feelings matched completely.",
+        photos: [],
+        timeline: []
+      },
+
+      3: {
+        id: 3,
+        title: "Hearts Aligned",
+        date: "June 4, 2026 9:22 PM to August 7, 2026 9:08 PM",
+        badge: "Chapter 03 : Hearts Aligned (Courtship)",
+        themeTag: "Courtship Phase : June 4 to August 7",
+        themeClass: "theme-stage-3",
+        subtitle: "“From Thursday, June 4 at 9:22 PM to Friday, August 7 at 9:08 PM : Loving with intention.”",
+        narrative: "Two months of patient courtship, intentional care, soft blankets, sweet dates, and proving that real love is gentle, supportive, and constant.",
+        photos: [],
+        timeline: []
+      },
+
+      4: {
+        id: 4,
+        title: "Our Forever Sky",
+        date: "Friday, August 7, 2026 : 9:08 PM and Beyond",
+        badge: "Chapter 04 : Our Forever Sky (Official)",
+        themeTag: "Officially Together : Friday, August 7, 2026",
+        themeClass: "theme-stage-4",
+        subtitle: "“Friday, August 7, 2026 at 9:08 PM : The official start to our forever story.”",
+        narrative: "Sealed at 9:08 PM on Friday, August 7, 2026. Two hearts officially united under the golden sky, ready for every tomorrow together.",
+        photos: [],
+        timeline: []
+      }
+    };
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- DYNAMIC SKY ATMOSPHERE ENGINE                        -->
+  <!-- ==================================================== -->
+  <script>
+    let currentSkyMode = 'auto';
+    let isRainMode = false;
+
+    const SKY_PALETTES = {
+      day: {
+        name: "Day Sky",
+        icon: "☀️",
+        homeGrad: "linear-gradient(180deg, #E0F2FE 0%, #BAE6FD 35%, #F0FDF4 70%, #FAD2E1 100%)",
+        canvasTop: "#BAE6FD",
+        canvasMid: "#E0F2FE",
+        canvasBottom: "#FAD2E1",
+        cloudAlpha: 0.55,
+        starAlpha: 0.18,
+        nodeHalo: "rgba(255, 255, 255, 0.8)"
+      },
+      sunset: {
+        name: "Sunset Glow",
+        icon: "🌅",
+        homeGrad: "linear-gradient(180deg, #FED7AA 0%, #F472B6 40%, #C084FC 75%, #818CF8 100%)",
+        canvasTop: "#FED7AA",
+        canvasMid: "#F472B6",
+        canvasBottom: "#C084FC",
+        cloudAlpha: 0.45,
+        starAlpha: 0.7,
+        nodeHalo: "rgba(255, 220, 160, 0.85)"
+      },
+      night: {
+        name: "Night Moon",
+        icon: "🌙",
+        homeGrad: "linear-gradient(180deg, #1E1B4B 0%, #312E81 40%, #4C1D95 75%, #1E293B 100%)",
+        canvasTop: "#1E1B4B",
+        canvasMid: "#312E81",
+        canvasBottom: "#4C1D95",
+        cloudAlpha: 0.25,
+        starAlpha: 0.95,
+        nodeHalo: "rgba(224, 231, 255, 0.9)"
+      },
+      rain: {
+        name: "Rainy Day",
+        icon: "🌧️",
+        homeGrad: "linear-gradient(180deg, #CBD5E1 0%, #94A3B8 40%, #64748B 75%, #E2E8F0 100%)",
+        canvasTop: "#94A3B8",
+        canvasMid: "#CBD5E1",
+        canvasBottom: "#E2E8F0",
+        cloudAlpha: 0.7,
+        starAlpha: 0.15,
+        nodeHalo: "rgba(226, 232, 240, 0.85)"
+      }
+    };
+
+    function determineTimeSky() {
+      const hr = new Date().getHours();
+      if (hr >= 6 && hr < 17) return 'day';
+      if (hr >= 17 && hr < 20) return 'sunset';
+      return 'night';
+    }
+
+    function getActiveSkyPalette() {
+      if (isRainMode) return SKY_PALETTES.rain;
+      const key = (currentSkyMode === 'auto') ? determineTimeSky() : currentSkyMode;
+      return SKY_PALETTES[key] || SKY_PALETTES.day;
+    }
+
+    function updateSkyAtmosphereUI() {
+      const palette = getActiveSkyPalette();
+      
+      const entryBackdrop = document.getElementById('entrySkyBackdrop');
+      if (entryBackdrop) {
+        entryBackdrop.style.background = palette.homeGrad;
+      }
+
+      const skyIcon = document.getElementById('skyMoodIcon');
+      const homeSkyIcon = document.getElementById('homeSkyIcon');
+      const homeSkyText = document.getElementById('homeSkyTimeText');
+
+      if (skyIcon) skyIcon.innerText = palette.icon;
+      if (homeSkyIcon) homeSkyIcon.innerText = palette.icon;
+      if (homeSkyText) {
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        homeSkyText.innerText = `${palette.name} · ${timeStr}`;
+      }
+    }
+
+    function changeSkyAtmosphere(mode) {
+      currentSkyMode = mode;
+      updateSkyAtmosphereUI();
+      playTone(620, 0.25);
+    }
+
+    function toggleRainMode(e) {
+      if (e) triggerMultiParticleBurst(e);
+      isRainMode = !isRainMode;
+      
+      const rainBtn = document.getElementById('btnRainMode');
+      const homeRainLabel = document.getElementById('homeRainLabel');
+      
+      if (isRainMode) {
+        document.body.classList.add('is-raining');
+        if (rainBtn) {
+          rainBtn.classList.add('bg-slate-200', 'text-slate-800');
+        }
+        if (homeRainLabel) homeRainLabel.innerText = 'Rain : Active';
+        toggleRainAudio(true);
+        playTone(400, 0.6, 'sine');
+      } else {
+        document.body.classList.remove('is-raining');
+        if (rainBtn) {
+          rainBtn.classList.remove('bg-slate-200', 'text-slate-800');
+        }
+        if (homeRainLabel) homeRainLabel.innerText = 'Rainy Day';
+        toggleRainAudio(false);
+        playTone(650, 0.3, 'sine');
+      }
+
+      updateSkyAtmosphereUI();
+    }
+
+    setInterval(updateSkyAtmosphereUI, 30000);
+    updateSkyAtmosphereUI();
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- CANVAS SKY ENGINE                                    -->
+  <!-- ==================================================== -->
+  <script>
+    const canvas = document.getElementById('worldCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    const WORLD_WIDTH = 2600;
+    const WORLD_HEIGHT = 1600;
+
+    const camera = {
+      x: 450,
+      y: 850,
+      targetX: 450,
+      targetY: 850,
+      zoom: 1,
+      targetZoom: 1
+    };
+
+    let isDragging = false;
+    let lastPointer = { x: 0, y: 0 };
+    let initialPinchDist = null;
+    let hoverIsland = null;
+
+    // 4 Cloud Nodes
+    const stageNodes = [
+      { 
+        id: 1, 
+        x: 450, 
+        y: 850, 
+        radius: 110, 
+        colorTheme: '#FAD2E1', 
+        imageSrc: 'https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/refs/heads/main/16092-removebg-preview.png',
+        textOffsetY: 0,
+        floatSpeed: 0.0018,
+        floatOffset: 0
+      },
+      { 
+        id: 2, 
+        x: 1050, 
+        y: 500, 
+        radius: 115, 
+        colorTheme: '#BEE1E6', 
+        imageSrc: 'https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/refs/heads/main/16093-removebg-preview.png',
+        textOffsetY: 0,
+        floatSpeed: 0.0014,
+        floatOffset: 1.8
+      },
+      { 
+        id: 3, 
+        x: 1650, 
+        y: 950, 
+        radius: 120, 
+        colorTheme: '#A0E7E5', 
+        imageSrc: 'https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/refs/heads/main/16094-removebg-preview.png',
+        textOffsetY: 24,
+        floatSpeed: 0.002,
+        floatOffset: 3.2
+      },
+      { 
+        id: 4, 
+        x: 2200, 
+        y: 600, 
+        radius: 125, 
+        colorTheme: '#FAD2E1', 
+        imageSrc: 'https://raw.githubusercontent.com/alexisszc/PROJECT12309r8288w81/refs/heads/main/16095-removebg-preview.png',
+        textOffsetY: 26,
+        floatSpeed: 0.0016,
+        floatOffset: 4.5
+      }
+    ];
+
+    stageNodes.forEach(node => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = node.imageSrc;
+      node.imgElement = img;
+    });
+
+    const backgroundClouds = [];
+    const sparkleStars = [];
+    const shootingStars = [];
+    const ripples = [];
+    const rainDrops = [];
+
+    function resizeCanvas() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      width = window.innerWidth;
+      height = window.innerHeight;
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < 28; i++) {
+      backgroundClouds.push({
+        x: Math.random() * WORLD_WIDTH,
+        y: Math.random() * WORLD_HEIGHT,
+        scale: Math.random() * 1.2 + 0.6,
+        speed: Math.random() * 0.22 + 0.08,
+        puffs: [
+          { x: 0, y: 0, r: 40 + Math.random() * 20 },
+          { x: 30, y: -10, r: 45 + Math.random() * 25 },
+          { x: 65, y: 5, r: 35 + Math.random() * 20 },
+          { x: -30, y: 10, r: 30 + Math.random() * 15 }
+        ],
+        alpha: Math.random() * 0.35 + 0.2
+      });
+    }
+
+    for (let i = 0; i < 100; i++) {
+      sparkleStars.push({
+        x: Math.random() * WORLD_WIDTH,
+        y: Math.random() * WORLD_HEIGHT,
+        size: Math.random() * 2.5 + 1,
+        alpha: Math.random(),
+        speed: Math.random() * 0.02 + 0.01,
+        isHeart: Math.random() > 0.65
+      });
+    }
+
+    for (let i = 0; i < 120; i++) {
+      rainDrops.push({
+        x: Math.random() * WORLD_WIDTH,
+        y: Math.random() * WORLD_HEIGHT,
+        length: Math.random() * 25 + 15,
+        speed: Math.random() * 10 + 14,
+        alpha: Math.random() * 0.4 + 0.25
+      });
+    }
+
+    setInterval(() => {
+      if (Math.random() > 0.35 && !isRainMode) {
+        shootingStars.push({
+          x: Math.random() * (WORLD_WIDTH * 0.8),
+          y: Math.random() * (WORLD_HEIGHT * 0.5),
+          len: Math.random() * 80 + 50,
+          speed: Math.random() * 10 + 12,
+          alpha: 1
+        });
+      }
+    }, 4500);
+
+    function screenToWorld(sx, sy) {
+      return {
+        x: (sx - width / 2) / camera.zoom + camera.x,
+        y: (sy - height / 2) / camera.zoom + camera.y
+      };
+    }
+
+    window.addEventListener('mousedown', (e) => {
+      if (e.target !== canvas || isTransitioning) return;
+      isDragging = true;
+      lastPointer = { x: e.clientX, y: e.clientY };
+      initAudio();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isTransitioning) return;
+      const worldPos = screenToWorld(e.clientX, e.clientY);
+
+      if (isDragging) {
+        const dx = (e.clientX - lastPointer.x) / camera.zoom;
+        const dy = (e.clientY - lastPointer.y) / camera.zoom;
+        camera.targetX -= dx;
+        camera.targetY -= dy;
+        lastPointer = { x: e.clientX, y: e.clientY };
+      }
+
+      hoverIsland = null;
+      for (const s of stageNodes) {
+        const dist = Math.hypot(worldPos.x - s.x, worldPos.y - s.y);
+        if (dist < s.radius * 1.25) {
+          hoverIsland = s;
+          break;
+        }
+      }
+      canvas.style.cursor = hoverIsland ? 'pointer' : (isDragging ? 'grabbing' : 'grab');
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    window.addEventListener('touchstart', (e) => {
+      if (e.target !== canvas || isTransitioning) return;
+      initAudio();
+      if (e.touches.length === 1) {
+        isDragging = true;
+        lastPointer = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        initialPinchDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (isTransitioning) return;
+      if (isDragging && e.touches.length === 1) {
+        const t = e.touches[0];
+        const dx = (t.clientX - lastPointer.x) / camera.zoom;
+        const dy = (t.clientY - lastPointer.y) / camera.zoom;
+        camera.targetX -= dx;
+        camera.targetY -= dy;
+        lastPointer = { x: t.clientX, y: t.clientY };
+      } else if (e.touches.length === 2 && initialPinchDist) {
+        const curDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const factor = curDist / initialPinchDist;
+        camera.targetZoom = Math.max(0.65, Math.min(1.7, camera.targetZoom * (1 + (factor - 1) * 0.1)));
+        initialPinchDist = curDist;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      isDragging = false;
+      initialPinchDist = null;
+    });
+
+    window.addEventListener('wheel', (e) => {
+      if (e.target !== canvas) return;
+      camera.targetZoom = Math.max(0.65, Math.min(1.8, camera.targetZoom - e.deltaY * 0.001));
+    }, { passive: true });
+
+    canvas.addEventListener('click', (e) => {
+      if (isTransitioning) return;
+      const worldPos = screenToWorld(e.clientX, e.clientY);
+      let clickedStage = null;
+
+      for (const s of stageNodes) {
+        const dist = Math.hypot(worldPos.x - s.x, worldPos.y - s.y);
+        if (dist < s.radius * 1.3) {
+          clickedStage = s;
+          break;
+        }
+      }
+
+      if (clickedStage) {
+        triggerMultiParticleBurst(e);
+        enterStage(clickedStage.id);
+      } else {
+        ripples.push({ x: worldPos.x, y: worldPos.y, radius: 5, alpha: 0.85 });
+        playTone(600, 0.35);
+      }
+    });
+
+    function render(timestamp) {
+      const time = timestamp || 0;
+      const pal = getActiveSkyPalette();
+
+      camera.x += (camera.targetX - camera.x) * 0.08;
+      camera.y += (camera.targetY - camera.y) * 0.08;
+      camera.zoom += (camera.targetZoom - camera.zoom) * 0.08;
+
+      camera.targetX = Math.max(200, Math.min(WORLD_WIDTH - 200, camera.targetX));
+      camera.targetY = Math.max(200, Math.min(WORLD_HEIGHT - 200, camera.targetY));
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      // Sky Gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+      skyGrad.addColorStop(0, pal.canvasTop);
+      skyGrad.addColorStop(0.5, pal.canvasMid);
+      skyGrad.addColorStop(1, pal.canvasBottom);
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.save();
+      ctx.translate(width / 2, height / 2);
+      ctx.scale(camera.zoom, camera.zoom);
+      ctx.translate(-camera.x, -camera.y);
+
+      // Background Clouds
+      backgroundClouds.forEach(c => {
+        c.x += isRainMode ? c.speed * 0.6 : c.speed;
+        if (c.x > WORLD_WIDTH + 150) c.x = -150;
+        ctx.fillStyle = isRainMode ? `rgba(226, 232, 240, ${c.alpha * 1.3})` : `rgba(255, 255, 255, ${c.alpha * pal.cloudAlpha * 1.8})`;
+        ctx.beginPath();
+        c.puffs.forEach(p => {
+          ctx.arc(c.x + p.x * c.scale, c.y + p.y * c.scale, p.r * c.scale, 0, Math.PI * 2);
+        });
+        ctx.fill();
+      });
+
+      // Ribbon Connector Path
+      ctx.beginPath();
+      ctx.moveTo(stageNodes[0].x, stageNodes[0].y);
+      for (let i = 0; i < stageNodes.length - 1; i++) {
+        const p1 = stageNodes[i];
+        const p2 = stageNodes[i + 1];
+        const cx = (p1.x + p2.x) / 2;
+        const cy = (p1.y + p2.y) / 2 + (i % 2 === 0 ? -120 : 120);
+        ctx.quadraticCurveTo(cx, cy, p2.x, p2.y);
+      }
+      ctx.strokeStyle = isRainMode ? 'rgba(241, 245, 249, 0.8)' : 'rgba(255, 255, 255, 0.9)';
+      ctx.lineWidth = 6;
+      ctx.setLineDash([14, 14]);
+      ctx.lineDashOffset = -time * 0.02;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Stars
+      sparkleStars.forEach(s => {
+        s.alpha += s.speed;
+        const currentAlpha = ((Math.sin(s.alpha) + 1) / 2) * pal.starAlpha;
+        ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha})`;
+        if (s.isHeart && !isRainMode) {
+          ctx.font = `${10 * s.size}px sans-serif`;
+          ctx.fillText('✨', s.x, s.y);
+        } else {
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      // Shooting Stars
+      if (!isRainMode) {
+        for (let i = shootingStars.length - 1; i >= 0; i--) {
+          const st = shootingStars[i];
+          st.x += st.speed;
+          st.y += st.speed * 0.55;
+          st.alpha -= 0.015;
+
+          const grad = ctx.createLinearGradient(st.x, st.y, st.x - st.len, st.y - st.len * 0.55);
+          grad.addColorStop(0, `rgba(255, 255, 255, ${st.alpha})`);
+          grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
+
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(st.x, st.y);
+          ctx.lineTo(st.x - st.len, st.y - st.len * 0.55);
+          ctx.stroke();
+
+          if (st.alpha <= 0) shootingStars.splice(i, 1);
+        }
+      }
+
+      // Rain Particles in Rainy Day Mode
+      if (isRainMode) {
+        ctx.strokeStyle = 'rgba(240, 249, 255, 0.55)';
+        ctx.lineWidth = 1.6;
+        rainDrops.forEach(r => {
+          r.y += r.speed;
+          r.x += 1.8;
+          if (r.y > WORLD_HEIGHT) {
+            r.y = -20;
+            r.x = Math.random() * WORLD_WIDTH;
+          }
+          ctx.beginPath();
+          ctx.moveTo(r.x, r.y);
+          ctx.lineTo(r.x + 3, r.y + r.length);
+          ctx.stroke();
+        });
+      }
+
+      // Sky Ripples
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const r = ripples[i];
+        r.radius += 1.5;
+        r.alpha -= 0.015;
+        if (r.alpha <= 0) { ripples.splice(i, 1); continue; }
+        ctx.strokeStyle = `rgba(255, 255, 255, ${r.alpha})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Stage Cloud Islands
+      stageNodes.forEach((s) => {
+        const data = STAGE_DATA[s.id];
+        const floatY = Math.sin(time * s.floatSpeed + s.floatOffset) * 6;
+        const posX = s.x;
+        const posY = s.y + floatY;
+        const isHovered = hoverIsland && hoverIsland.id === s.id;
+
+        const haloAura = ctx.createRadialGradient(posX, posY, s.radius * 0.5, posX, posY, s.radius * 1.7);
+        if (isHovered) {
+          haloAura.addColorStop(0, 'rgba(255, 241, 197, 0.95)');
+          haloAura.addColorStop(0.6, 'rgba(255, 215, 0, 0.45)');
+          haloAura.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        } else {
+          haloAura.addColorStop(0, pal.nodeHalo);
+          haloAura.addColorStop(0.7, 'rgba(250, 210, 225, 0.35)');
+          haloAura.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        }
+        ctx.fillStyle = haloAura;
+        ctx.beginPath();
+        ctx.arc(posX, posY, s.radius * 1.7, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (s.imgElement && s.imgElement.complete && s.imgElement.naturalWidth > 0) {
+          const naturalAspect = s.imgElement.naturalWidth / s.imgElement.naturalHeight;
+          const imgW = s.radius * 3.4;
+          const imgH = imgW / naturalAspect;
+          
+          ctx.shadowColor = isHovered ? '#FFD700' : s.colorTheme;
+          ctx.shadowBlur = isHovered ? 36 : 18;
+
+          ctx.drawImage(
+            s.imgElement,
+            posX - imgW / 2,
+            posY - imgH / 2,
+            imgW,
+            imgH
+          );
+
+          ctx.shadowBlur = 0;
+        } else {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+          ctx.shadowColor = s.colorTheme;
+          ctx.shadowBlur = isHovered ? 36 : 18;
+          ctx.beginPath();
+          ctx.arc(posX, posY, s.radius * 0.8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+        ctx.shadowBlur = 10;
+
+        const baseOffsetY = s.textOffsetY;
+
+        ctx.fillStyle = '#4A2E35';
+        ctx.font = 'bold 11px Quicksand, sans-serif';
+        ctx.fillText(`CHAPTER 0${s.id}`, posX, posY + baseOffsetY - 6);
+
+        ctx.fillStyle = '#1E293B';
+        ctx.font = '800 15px Quicksand, sans-serif';
+        ctx.fillText(data.title, posX, posY + baseOffsetY + 13);
+
+        ctx.fillStyle = '#382233';
+        ctx.font = 'bold 10.5px Nunito, sans-serif';
+        ctx.fillText(data.date, posX, posY + baseOffsetY + 30);
+
+        ctx.restore();
+      });
+
+      ctx.restore();
+      ctx.restore();
+
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+  </script>
+
+  <!-- ==================================================== -->
+  <!-- NAVIGATION CONTROLLERS                               -->
+  <!-- ==================================================== -->
+  <script>
+    let currentStageId = 1;
+    let currentPhotoIndex = 0;
+    let currentGalleryIndex = 0;
+    let currentStagePhotos = [];
+
+    let voiceAudio = new Audio();
+    let isVoicePlaying = false;
+
+    let mediaRecorder = null;
+    let recordedAudioChunks = [];
+    let recordTimerInterval = null;
+    let recordSeconds = 0;
+    let currentRecordedBlobUrl = null;
+    let uploadedFileBlobUrl = null;
+
+    // Start Dreaming Transition from Home Screen
+    function enterDreamscapeFromHome(e) {
+      if (isTransitioning) return;
+      safeStartTransition(400);
+      initAudio();
+      playDreamChime();
+      if (e) triggerMultiParticleBurst(e);
+
+      const portal = document.getElementById('cloudPortal');
+      if (portal) portal.classList.add('active');
+
+      setTimeout(() => {
+        const homeScreen = document.getElementById('dreamEntryScreen');
+        const mainMapView = document.getElementById('mainMapView');
+
+        if (homeScreen) {
+          homeScreen.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(() => homeScreen.classList.add('hidden'), 350);
+        }
+
+        if (mainMapView) {
+          mainMapView.classList.remove('hidden');
+          setTimeout(() => {
+            mainMapView.classList.remove('opacity-0', 'pointer-events-none');
+            mainMapView.classList.add('opacity-100');
+          }, 20);
+        }
+
+        camera.targetZoom = 1.0;
+
+        setTimeout(() => {
+          safeEndTransition();
+        }, 300);
+      }, 350);
+    }
+
+    // Return to Opening Home Screen
+    function returnToHomeScreen() {
+      if (isTransitioning) return;
+      safeStartTransition(400);
+      playDreamChime();
+
+      const portal = document.getElementById('cloudPortal');
+      if (portal) portal.classList.add('active');
+
+      setTimeout(() => {
+        const homeScreen = document.getElementById('dreamEntryScreen');
+        const mainMapView = document.getElementById('mainMapView');
+        const memoryView = document.getElementById('memoryPageView');
+
+        if (memoryView) {
+          memoryView.classList.add('opacity-0', 'pointer-events-none', 'hidden');
+          memoryView.classList.remove('opacity-100');
+        }
+
+        if (mainMapView) {
+          mainMapView.classList.add('opacity-0', 'pointer-events-none');
+          mainMapView.classList.remove('opacity-100');
+          setTimeout(() => mainMapView.classList.add('hidden'), 350);
+        }
+
+        if (homeScreen) {
+          homeScreen.classList.remove('hidden');
+          setTimeout(() => {
+            homeScreen.classList.remove('opacity-0', 'pointer-events-none');
+            homeScreen.classList.add('opacity-100');
+          }, 20);
+        }
+
+        setTimeout(() => {
+          safeEndTransition();
+        }, 300);
+      }, 350);
+    }
+
+    // Enter Stage Memory Page
+    function enterStage(stageId) {
+      if (isTransitioning) return;
+      safeStartTransition(400);
+      currentStageId = stageId;
+      const stage = STAGE_DATA[stageId];
+      if (!stage) {
+        safeEndTransition();
+        return;
+      }
+
+      playDreamChime();
+
+      const node = stageNodes.find(s => s.id === stageId);
+      if (node) {
+        camera.targetX = node.x;
+        camera.targetY = node.y;
+        camera.targetZoom = 1.4;
+      }
+
+      const portal = document.getElementById('cloudPortal');
+      if (portal) portal.classList.add('active');
+
+      setTimeout(() => {
+        populateStageMemoryPage(stage);
+
+        const mapView = document.getElementById('mainMapView');
+        const memoryView = document.getElementById('memoryPageView');
+
+        if (mapView) {
+          mapView.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(() => mapView.classList.add('hidden'), 350);
+        }
+
+        if (memoryView) {
+          memoryView.classList.remove('hidden');
+          setTimeout(() => {
+            memoryView.classList.remove('opacity-0', 'pointer-events-none');
+            memoryView.classList.add('opacity-100');
+            memoryView.scrollTop = 0;
+          }, 20);
+        }
+
+        setTimeout(() => {
+          safeEndTransition();
+        }, 300);
+      }, 350);
+    }
+
+    // Exit Memory Page back to Clouds
+    function exitMemoryPage() {
+      try {
+        if (voiceAudio) {
+          voiceAudio.pause();
+          isVoicePlaying = false;
+        }
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+      } catch (err) {}
+
+      updateVoicePlayerUI();
+      playDreamChime();
+      safeStartTransition(400);
+
+      const portal = document.getElementById('cloudPortal');
+      if (portal) portal.classList.add('active');
+
+      setTimeout(() => {
+        const memoryView = document.getElementById('memoryPageView');
+        const mapView = document.getElementById('mainMapView');
+
+        if (memoryView) {
+          memoryView.classList.add('opacity-0', 'pointer-events-none');
+          memoryView.classList.remove('opacity-100');
+          setTimeout(() => memoryView.classList.add('hidden'), 350);
+        }
+
+        if (mapView) {
+          mapView.classList.remove('hidden');
+          setTimeout(() => {
+            mapView.classList.remove('opacity-0', 'pointer-events-none');
+            mapView.classList.add('opacity-100');
+          }, 20);
+        }
+
+        camera.targetZoom = 1.0;
+
+        setTimeout(() => {
+          safeEndTransition();
+        }, 250);
+      }, 350);
+    }
+
+    const STAGE_SKY_MOODS = {
+      1: { icon:'🌤️', text:'Soft morning clouds' },
+      2: { icon:'🌅', text:'Peach sunset drift' },
+      3: { icon:'🌙', text:'Quiet moonlit clouds' },
+      4: { icon:'✨', text:'Forever starlight' }
+    };
+
+    function renderMemorySkyDetails(stage) {
+      const mood = STAGE_SKY_MOODS[stage.id] || STAGE_SKY_MOODS[1];
+      const moodEl = document.getElementById('pageStageSkyMood');
+      if (moodEl) moodEl.innerHTML = `<span>${mood.icon}</span><span>${mood.text}</span>`;
+      const decor = document.getElementById('memorySkyDecor');
+      if (decor) {
+        decor.querySelectorAll('.memory-sky-star').forEach(el => el.remove());
+        const count = Math.min(18, Math.max(4, stage.photos.length * 2 + 4));
+        for (let i = 0; i < count; i++) {
+          const star = document.createElement('span');
+          star.className = 'memory-sky-star';
+          star.textContent = i % 5 === 0 ? '✦' : (i % 3 === 0 ? '✧' : '·');
+          star.style.left = `${5 + ((i * 37 + stage.id * 13) % 90)}%`;
+          star.style.top = `${12 + ((i * 23 + stage.id * 17) % 78)}%`;
+          star.style.animationDelay = `${(i % 7) * 0.35}s`;
+          star.style.fontSize = `${9 + (i % 5) * 2}px`;
+          decor.appendChild(star);
+        }
+      }
+      const countEl = document.getElementById('memoryCloudCount');
+      if (countEl) {
+        const n = stage.photos.length;
+        countEl.innerHTML = `<span>☁️</span><span>${n === 0 ? 'A quiet little cloud, waiting for memories' : `${n} ${n === 1 ? 'little memory' : 'little memories'} floating here`}</span><span>✨</span>`;
+      }
+    }
+
+    function populateStageMemoryPage(stage) {
+      document.getElementById('pageStageBadge').innerText = stage.badge;
+      document.getElementById('pageStageDate').innerText = stage.date;
+      document.getElementById('pageStageThemeTag').innerText = stage.themeTag;
+      document.getElementById('pageStageTitle').innerText = stage.title;
+      document.getElementById('pageStageSubtitle').innerText = stage.subtitle;
+      document.getElementById('pageStageNarrative').innerText = stage.narrative;
+
+      const atmo = document.getElementById('stageAtmosphere');
+      if (atmo) {
+        atmo.className = `fixed inset-0 pointer-events-none -z-10 transition-all duration-1000 ${stage.themeClass}`;
+      }
+
+      const memoryPage = document.getElementById('memoryPageView');
+      if (memoryPage) memoryPage.dataset.stage = String(stage.id);
+
+      sortStageChronologically(stage);
+      renderMemorySkyDetails(stage);
+      currentStagePhotos = stage.photos;
+      renderScrapbookGrid();
+      renderFilmStrip(stage);
+
+      const timeline = document.getElementById('timelineList');
+      if (timeline) {
+        timeline.innerHTML = '';
+        stage.timeline.forEach((node, idx) => {
+          const item = document.createElement('div');
+          item.className = 'relative flex items-start space-x-4 pl-12 md:pl-0 md:flex-row md:items-center md:justify-between timeline-node-card';
+          item.style.animationDelay = `${idx * 120}ms`;
+
+          const isEven = idx % 2 === 0;
+          
+          item.innerHTML = `
+            <div class="md:w-[46%] ${isEven ? 'md:text-right md:pr-6' : 'md:text-left md:pl-6 md:order-last'}">
+              <div class="glass-panel p-4 md:p-5 rounded-3xl shadow-sm hover:scale-[1.02] transition">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-pink-700 font-display">${formatHistoricalMemoryDateTime(node.date)}</span>
+                <h4 class="text-base font-extrabold text-slateBlue mt-0.5 font-display">${node.title}</h4>
+                <p class="text-xs text-slateBlue font-medium mt-1.5 leading-relaxed font-sans">${node.msg}</p>
+                <div class="mt-2.5 text-[12px] font-hand text-teal-900 bg-white/80 border border-white px-3 py-1 rounded-xl inline-block font-semibold">
+                  ${node.joke}
+                </div>
+              </div>
+            </div>
+            <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center text-sm z-10 border-2 border-babyPink star-checkpoint">
+              ${node.icon || '✨'}
+            </div>
+            <div class="hidden md:block md:w-[46%]"></div>
+          `;
+          timeline.appendChild(item);
+        });
+      }
+
+      switchTab('scrapbook');
+    }
+
+    // Multi-photo memory helpers: a memory can use either imageSrc or images[].
+    function getMemoryImages(photo) {
+      if (!photo) return [];
+      if (Array.isArray(photo.images) && photo.images.length) return photo.images.filter(Boolean);
+      return photo.imageSrc ? [photo.imageSrc] : [];
+    }
+
+    function getPrimaryMemoryImage(photo) {
+      return getMemoryImages(photo)[0] || '';
+    }
+
+    // Historical memory date/time helpers. We intentionally keep the event time
+    // separate from Supabase created_at so uploading/editing a memory never
+    // changes when the memory happened.
+    function parseHistoricalMemoryDateTime(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return null;
+
+      // Accept the scrapbook's format, including a weekday and the " : " separator:
+      // "Friday, May 1, 2026 : 10:28 PM"
+      const match = raw.match(/(?:^[A-Za-z]+,\s*)?([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})\s*(?:at|:)\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+      if (match) {
+        const monthName = match[1];
+        const day = Number(match[2]);
+        const year = Number(match[3]);
+        let hour = Number(match[4]);
+        const minute = Number(match[5] || 0);
+        const meridiem = (match[6] || '').toUpperCase();
+
+        const months = { january:0, february:1, march:2, april:3, may:4, june:5,
+          july:6, august:7, september:8, october:9, november:10, december:11 };
+        const month = months[monthName.toLowerCase()];
+        if (month === undefined || day < 1 || day > 31 || hour < 1 || hour > 12 || minute > 59) return null;
+
+        if (meridiem === 'AM') hour = hour === 12 ? 0 : hour;
+        if (meridiem === 'PM') hour = hour === 12 ? 12 : hour + 12;
+
+        const d = new Date(year, month, day, hour, minute, 0, 0);
+        if (d.getFullYear() !== year || d.getMonth() !== month || d.getDate() !== day) return null;
+        return d;
+      }
+
+      const parsed = new Date(raw);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function formatHistoricalMemoryDateTime(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return 'A new day';
+      const d = parseHistoricalMemoryDateTime(raw);
+      if (!d) return raw;
+      return d.toLocaleString(undefined, {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    function getHistoricalMemoryISO(value) {
+      const d = parseHistoricalMemoryDateTime(value);
+      return d ? d.toISOString() : null;
+    }
+
+    function getHistoricalMemoryDateOnly(value) {
+      const d = parseHistoricalMemoryDateTime(value);
+      if (!d) return null;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    // Keep memories in true chronological order: earliest first, newest last.
+    // This makes newly added memories appear after older ones instead of
+    // accidentally placing a later memory before an earlier one.
+    function getMemoryTimestamp(item) {
+      if (!item) return Number.POSITIVE_INFINITY;
+      const raw = item.memoryDatetime || item.memory_datetime || item.date || item.memory_date || '';
+      if (!raw) return Number.POSITIVE_INFINITY;
+      const parsed = parseHistoricalMemoryDateTime(raw);
+      return parsed ? parsed.getTime() : Number.POSITIVE_INFINITY;
+    }
+
+    function sortStageChronologically(stage) {
+      if (!stage) return;
+      stage.photos.sort((a, b) => {
+        const diff = getMemoryTimestamp(a) - getMemoryTimestamp(b);
+        return diff || 0;
+      });
+      stage.timeline.sort((a, b) => {
+        const diff = getMemoryTimestamp(a) - getMemoryTimestamp(b);
+        return diff || 0;
+      });
+    }
+
+    // Auto-fitting Polaroid Grid
+    function getMemoryType(photo) {
+      const title = `${photo.title} ${photo.desc || ''}`.toLowerCase();
+      if (photo.audioSrc) return 'voice';
+      if (photo.imageSrc && /screenshot|discord|chat|message|conversation/i.test(title + ' ' + photo.imageSrc)) return 'chat';
+      if (photo.imageSrc) return 'photo';
+      if (/letter|note|thought|lie|spark|smile/i.test(title)) return 'note';
+      return 'note';
+    }
+
+    function getMemoryTypeLabel(type) {
+      return ({photo:'📸 Photo',chat:'💬 Chat',voice:'🎙️ Voice',note:'💌 Note'}[type]) || '💌 Note';
+    }
+
+    function renderScrapbookGrid() {
+      const grid = document.getElementById('scrapbookGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      currentStagePhotos.forEach((photo, idx) => {
+        const randomTilt = (Math.random() * 4 - 2).toFixed(1);
+        const card = document.createElement('div');
+        card.className = 'polaroid-card max-w-full memory-polaroid group';
+        card.dataset.memoryId = String(photo.id);
+        card.dataset.memoryType = getMemoryType(photo);
+        card.style.transform = `rotate(${randomTilt}deg)`;
+        card.onclick = (e) => {
+          triggerMultiParticleBurst(e);
+          openLightbox(idx);
+        };
+
+        const type = getMemoryType(photo);
+        const memoryImages = getMemoryImages(photo);
+        const primaryImage = memoryImages[0] || '';
+        const photoCountBadge = memoryImages.length > 1
+          ? `<span class="absolute top-2 left-2 text-[9.5px] font-extrabold px-2 py-0.5 rounded-full bg-white/95 text-slateBlue border border-white shadow-sm z-10">📸 ${memoryImages.length} photos</span>`
+          : '';
+        const visualContent = primaryImage
+          ? `<div class="memory-media flex items-center justify-center p-1 relative"><img src="${primaryImage}" alt="${photo.title}" class="block max-w-full h-auto object-contain rounded-lg shadow-sm transition duration-300 group-hover:scale-[1.01]" onerror="this.style.display='none'; this.parentElement.nextElementSibling.classList.remove('hidden');" /><span class="hidden text-4xl filter drop-shadow-md my-8">${photo.icon || '🌸'}</span></div>`
+          : `<div class="py-12 px-8 flex items-center justify-center"><span class="text-4xl filter drop-shadow-md transform hover:scale-125 transition">${photo.icon || '🌸'}</span></div>`;
+
+        card.innerHTML = `
+          <div class="${photo.washiClass || 'washi-strip'}"></div>
+          <div class="memory-type-stamp">${getMemoryTypeLabel(type)}</div>
+          <div class="memory-frame rounded-xl bg-gradient-to-br ${photo.gradient || 'from-pink-100 to-teal-100'} flex flex-col items-center justify-center relative overflow-hidden shadow-inner group">
+            ${visualContent}
+            ${photoCountBadge}
+            <span class="absolute bottom-2 right-2 text-[9.5px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-white/95 text-slateBlue tracking-wider border border-white shadow-sm font-display z-10">${photo.tag}</span>
+          </div>
+          <div class="mt-3 text-center px-1">
+            <p class="font-display text-base text-slateBlue font-extrabold tracking-tight">${photo.title}</p>
+            <p class="text-base text-pink-700 font-hand leading-tight font-semibold mt-0.5">${photo.quote}</p>
+            <div class="flex items-center justify-between mt-2 pt-2 border-t border-slateBlue/10 text-[10px] font-bold text-darkPlum/75">
+              <span>${formatHistoricalMemoryDateTime(photo.date)}</span>
+              <span class="text-pink-700 font-extrabold">${photo.audioSrc ? '🎵 Voice' : '✨ Keepsake'}</span>
+            </div>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderFilmStrip(stage) {
+      const el = document.getElementById('memoryFilmStrip');
+      if (!el) return;
+      el.innerHTML = stage.photos.map((p, i) => `
+        <button type="button" class="film-frame" title="${p.title}" onclick="openLightbox(${i})">
+          <div>${getPrimaryMemoryImage(p) ? `<img src="${getPrimaryMemoryImage(p)}" alt="">` : `<span class="text-2xl">${p.icon || '✨'}</span>`}</div>
+        </button>`).join('');
+    }
+
+    function jumpToMemoryDay(year, month, day) {
+      const photo = currentStagePhotos.find(p => {
+        const d = new Date(p.date.replace(/\s*:.*$/, ''));
+        return !isNaN(d) && d.getFullYear()===year && d.getMonth()===month && d.getDate()===day;
+      });
+      if (photo) openLightbox(currentStagePhotos.indexOf(photo));
+    }
+
+    function scrollMemoryTop(){ document.getElementById('memoryPageView')?.scrollTo({top:0,behavior:'smooth'}); }
+    function scrollToScrapbook(){ document.getElementById('sectionScrapbook')?.scrollIntoView({behavior:'smooth',block:'start'}); }
+    function scrollToTimeline(){ document.getElementById('sectionTimeline')?.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+    function switchTab(tabName) {
+      playTone(580, 0.2);
+      const tabScrap = document.getElementById('sectionScrapbook');
+      const tabTime = document.getElementById('sectionTimeline');
+
+      const btnScrap = document.getElementById('tabBtnScrapbook');
+      const btnTime = document.getElementById('tabBtnTimeline');
+
+      if (tabScrap) tabScrap.classList.add('hidden');
+      if (tabTime) tabTime.classList.add('hidden');
+
+      if (btnScrap) btnScrap.className = 'px-5 py-2 rounded-xl text-xs font-extrabold transition text-darkPlum/70 hover:text-slateBlue font-display cursor-pointer';
+      if (btnTime) btnTime.className = 'px-5 py-2 rounded-xl text-xs font-extrabold transition text-darkPlum/70 hover:text-slateBlue font-display cursor-pointer';
+
+      if (tabName === 'scrapbook') {
+        if (tabScrap) tabScrap.classList.remove('hidden');
+        if (btnScrap) btnScrap.className = 'px-5 py-2 rounded-xl text-xs font-extrabold transition shadow-sm bg-white text-slateBlue font-display cursor-pointer';
+      } else if (tabName === 'timeline') {
+        if (tabTime) tabTime.classList.remove('hidden');
+        if (btnTime) btnTime.className = 'px-5 py-2 rounded-xl text-xs font-extrabold transition shadow-sm bg-white text-slateBlue font-display cursor-pointer';
+      }
+    }
+
+    function toggleSoundFx() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('btnSoundFx');
+      if (btn) {
+        btn.innerText = soundEnabled ? '🔔' : '🔕';
+      }
+    }
+
+    // ============================================
+    // LIGHTBOX & VOICE PLAYER CONTROLLERS
+    // ============================================
+    function openLightbox(index, galleryIndex = 0) {
+      currentPhotoIndex = index;
+      currentGalleryIndex = galleryIndex;
+      const photo = currentStagePhotos[index];
+      if (!photo) return;
+
+      playTone(680, 0.3);
+      renderLightboxMemory();
+
+      const modal = document.getElementById('lightboxModal');
+      const card = document.getElementById('lightboxCard');
+      if (modal) {
+        clearNewMemoryPhotos();
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          modal.classList.remove('opacity-0', 'pointer-events-none');
+          if (card) {
+            card.classList.remove('scale-90');
+            card.classList.add('scale-100');
+          }
+        }, 20);
+      }
+    }
+
+    function renderLightboxMemory() {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo) return;
+      const images = getMemoryImages(photo);
+      if (!images.length) currentGalleryIndex = 0;
+      else currentGalleryIndex = Math.max(0, Math.min(currentGalleryIndex, images.length - 1));
+
+      const media = document.getElementById('lightboxMediaContainer');
+      if (media) {
+        if (images.length) {
+          const src = images[currentGalleryIndex];
+          const controls = images.length > 1 ? `
+            <button type="button" onclick="navigateMemoryImage(-1)" class="gallery-arrow gallery-arrow-left" aria-label="Previous photo">‹</button>
+            <button type="button" onclick="navigateMemoryImage(1)" class="gallery-arrow gallery-arrow-right" aria-label="Next photo">›</button>
+            <div class="gallery-counter">${currentGalleryIndex + 1} / ${images.length}</div>
+            <div class="gallery-dots">${images.map((_, i) => `<button type="button" class="gallery-dot ${i === currentGalleryIndex ? 'active' : ''}" onclick="openMemoryImage(${i})" aria-label="Photo ${i + 1}"></button>`).join('')}</div>
+          ` : '';
+          media.className = "lightbox-media rounded-2xl overflow-hidden mb-4 border border-white shadow-inner flex items-center justify-center relative bg-slate-900/5 p-1";
+          media.innerHTML = `<img src="${src}" alt="${photo.title} — photo ${currentGalleryIndex + 1}" class="block w-auto max-w-full h-auto max-h-[58vh] object-contain rounded-xl" />${controls}`;
+        } else {
+          media.className = `w-full h-56 rounded-2xl overflow-hidden mb-4 border border-white shadow-inner flex flex-col items-center justify-center relative bg-gradient-to-tr ${photo.gradient || 'from-pink-200 to-teal-100'}`;
+          media.innerHTML = `<span class="text-6xl mb-1 filter drop-shadow">${photo.icon || '🌸'}</span><span class="text-xs font-extrabold text-slateBlue px-3 py-1 bg-white/80 rounded-full font-display">${photo.title}</span>`;
+        }
+      }
+
+      document.getElementById('lightboxTag').innerText = photo.tag;
+      document.getElementById('lightboxDate').innerText = formatHistoricalMemoryDateTime(photo.date);
+      document.getElementById('lightboxTitle').innerText = photo.title;
+      document.getElementById('lightboxQuote').innerText = photo.quote;
+      document.getElementById('lightboxFullText').innerText = photo.desc;
+      const thoughtClouds = document.getElementById('lightboxThoughtClouds');
+      if (thoughtClouds) {
+        const quoteText = String(photo.quote || '').replace(/[“”"]/g,'').trim();
+        const descText = String(photo.desc || '').trim();
+        const thoughts = [
+          quoteText ? `💭 ${quoteText}` : '',
+          descText ? `☁️ ${descText.length > 55 ? descText.slice(0,55).trim() + '…' : descText}` : '',
+          '✨ A little piece of our sky'
+        ].filter(Boolean);
+        thoughtClouds.innerHTML = thoughts.map(t => `<span class="thought-cloud">${t}</span>`).join('');
+      }
+
+      // Only database-backed memories can be deleted. The button also checks
+      // for an active Supabase session before performing the deletion.
+      const deleteBtn = document.getElementById('btnDeleteMemory');
+      const editBtn = document.getElementById('btnEditMemory');
+      if (deleteBtn) {
+        deleteBtn.classList.toggle('hidden', !photo.dbMemory);
+      }
+      if (editBtn) {
+        editBtn.classList.toggle('hidden', !photo.dbMemory);
+      }
+
+      initVoicePlayerForPhoto(photo);
+    }
+
+    function openMemoryImage(index) {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      const images = getMemoryImages(photo);
+      if (!images.length) return;
+      currentGalleryIndex = (index + images.length) % images.length;
+      renderLightboxMemory();
+    }
+
+    function navigateMemoryImage(delta) {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      const images = getMemoryImages(photo);
+      if (images.length < 2) return;
+      currentGalleryIndex = (currentGalleryIndex + delta + images.length) % images.length;
+      renderLightboxMemory();
+      playTone(580, 0.15);
+    }
+
+    function closeLightbox() {
+      if (voiceAudio) {
+        voiceAudio.pause();
+        isVoicePlaying = false;
+        updateVoicePlayerUI();
+      }
+
+      const modal = document.getElementById('lightboxModal');
+      const card = document.getElementById('lightboxCard');
+      if (card) {
+        card.classList.remove('scale-100');
+        card.classList.add('scale-90');
+      }
+      if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+      }
+    }
+
+    function navigateLightbox(delta) {
+      if (!currentStagePhotos.length) return;
+      currentPhotoIndex = (currentPhotoIndex + delta + currentStagePhotos.length) % currentStagePhotos.length;
+      currentGalleryIndex = 0;
+      openLightbox(currentPhotoIndex, 0);
+    }
+
+    function speakMemoryAloud() {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const text = `${photo.title}. ${photo.quote}. ${photo.desc}`;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 0.95;
+      utter.pitch = 1.05;
+      window.speechSynthesis.speak(utter);
+      playHeartChime();
+    }
+
+    function initVoicePlayerForPhoto(photo) {
+      if (voiceAudio) {
+        voiceAudio.pause();
+        voiceAudio.currentTime = 0;
+      }
+      isVoicePlaying = false;
+      updateVoicePlayerUI();
+
+      const timeDisplay = document.getElementById('audioTimeDisplay');
+      const progBar = document.getElementById('audioProgressBar');
+      if (progBar) progBar.style.width = '0%';
+
+      if (photo.audioSrc) {
+        voiceAudio.src = photo.audioSrc;
+        voiceAudio.load();
+
+        voiceAudio.onloadedmetadata = () => {
+          if (timeDisplay) timeDisplay.innerText = `0:00 / ${formatTime(voiceAudio.duration)}`;
+        };
+        voiceAudio.ontimeupdate = () => {
+          if (!voiceAudio.duration) return;
+          if (timeDisplay) timeDisplay.innerText = `${formatTime(voiceAudio.currentTime)} / ${formatTime(voiceAudio.duration)}`;
+          const pct = (voiceAudio.currentTime / voiceAudio.duration) * 100;
+          if (progBar) progBar.style.width = `${pct}%`;
+        };
+        voiceAudio.onended = () => {
+          isVoicePlaying = false;
+          updateVoicePlayerUI();
+          if (progBar) progBar.style.width = '0%';
+        };
+      } else {
+        voiceAudio.removeAttribute('src');
+        if (timeDisplay) timeDisplay.innerText = 'Tap Record to add voice';
+      }
+    }
+
+    function toggleVoicePlayback() {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo) return;
+
+      if (!photo.audioSrc) {
+        openRecordVoiceModal();
+        return;
+      }
+
+      if (isVoicePlaying) {
+        voiceAudio.pause();
+        isVoicePlaying = false;
+      } else {
+        voiceAudio.play().then(() => {
+          isVoicePlaying = true;
+          updateVoicePlayerUI();
+        }).catch(() => {
+          isVoicePlaying = false;
+          updateVoicePlayerUI();
+        });
+      }
+      updateVoicePlayerUI();
+    }
+
+    function updateVoicePlayerUI() {
+      const playIcon = document.getElementById('playIcon');
+      const playText = document.getElementById('playText');
+      const waveVisual = document.getElementById('audioWaveVisual');
+
+      if (!playIcon || !playText) return;
+
+      if (isVoicePlaying) {
+        playIcon.innerText = '⏸';
+        playText.innerText = 'Pause Voice';
+        if (waveVisual) {
+          waveVisual.classList.remove('hidden');
+          waveVisual.classList.add('flex');
+        }
+      } else {
+        playIcon.innerText = '▶';
+        playText.innerText = 'Play Voice Note';
+        if (waveVisual) {
+          waveVisual.classList.add('hidden');
+          waveVisual.classList.remove('flex');
+        }
+      }
+    }
+
+    function seekVoiceAudio(e) {
+      if (!voiceAudio || !voiceAudio.duration) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      voiceAudio.currentTime = pct * voiceAudio.duration;
+    }
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || seconds === Infinity) return '0:00';
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    // ============================================
+    // VOICE RECORDER & UPLOADER MODAL LOGIC
+    // ============================================
+    function openRecordVoiceModal() {
+      playTone(550, 0.2);
+      const photo = currentStagePhotos[currentPhotoIndex];
+      
+      document.getElementById('customAudioUrlInput').value = (photo && photo.audioSrc && !photo.audioSrc.startsWith('blob:')) ? photo.audioSrc : '';
+      document.getElementById('audioFileNameDisplay').innerText = 'No file selected';
+      document.getElementById('recordedAudioPreview').classList.add('hidden');
+      document.getElementById('recordTimer').innerText = '0:00';
+      document.getElementById('recordStatusText').innerText = 'Ready to record';
+      document.getElementById('recordDot').className = 'w-3 h-3 rounded-full bg-slate-300';
+      
+      document.getElementById('btnStartRecord').classList.remove('hidden');
+      document.getElementById('btnStopRecord').classList.add('hidden');
+
+      currentRecordedBlobUrl = null;
+      uploadedFileBlobUrl = null;
+
+      const modal = document.getElementById('recordVoiceModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.remove('opacity-0', 'pointer-events-none'), 20);
+      }
+    }
+
+    function closeRecordVoiceModal() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+      clearInterval(recordTimerInterval);
+
+      const modal = document.getElementById('recordVoiceModal');
+      if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+      }
+    }
+
+    async function startMicRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        recordedAudioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) recordedAudioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(recordedAudioChunks, { type: 'audio/webm' });
+          currentRecordedBlobUrl = URL.createObjectURL(audioBlob);
+          const preview = document.getElementById('recordedAudioPreview');
+          if (preview) {
+            preview.src = currentRecordedBlobUrl;
+            preview.classList.remove('hidden');
+            preview.load();
+          }
+
+          stream.getTracks().forEach(t => t.stop());
+        };
+
+        mediaRecorder.start();
+        recordSeconds = 0;
+        document.getElementById('recordTimer').innerText = '0:00';
+        document.getElementById('recordStatusText').innerText = 'Recording live voice...';
+        document.getElementById('recordDot').className = 'w-3 h-3 rounded-full bg-red-500 animate-ping';
+
+        document.getElementById('btnStartRecord').classList.add('hidden');
+        document.getElementById('btnStopRecord').classList.remove('hidden');
+
+        recordTimerInterval = setInterval(() => {
+          recordSeconds++;
+          document.getElementById('recordTimer').innerText = formatTime(recordSeconds);
+        }, 1000);
+
+      } catch (err) {
+        document.getElementById('recordStatusText').innerText = 'Microphone permission required';
+      }
+    }
+
+    function stopMicRecording() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+      clearInterval(recordTimerInterval);
+      document.getElementById('recordStatusText').innerText = 'Recording saved in preview!';
+      document.getElementById('recordDot').className = 'w-3 h-3 rounded-full bg-teal-400';
+      document.getElementById('btnStartRecord').classList.remove('hidden');
+      document.getElementById('btnStopRecord').classList.add('hidden');
+    }
+
+    function handleAudioFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      uploadedFileBlobUrl = URL.createObjectURL(file);
+      document.getElementById('audioFileNameDisplay').innerText = file.name;
+      
+      const preview = document.getElementById('recordedAudioPreview');
+      if (preview) {
+        preview.src = uploadedFileBlobUrl;
+        preview.classList.remove('hidden');
+        preview.load();
+      }
+    }
+
+    function applyVoiceToMemory() {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo) return;
+
+      const urlInput = document.getElementById('customAudioUrlInput').value.trim();
+
+      if (currentRecordedBlobUrl) {
+        photo.audioSrc = currentRecordedBlobUrl;
+      } else if (uploadedFileBlobUrl) {
+        photo.audioSrc = uploadedFileBlobUrl;
+      } else if (urlInput) {
+        photo.audioSrc = urlInput;
+      }
+
+      initVoicePlayerForPhoto(photo);
+      closeRecordVoiceModal();
+      playHeartChime();
+    }
+
+    // ============================================
+    // TACTILE PARTICLES & MICRO-INTERACTIONS
+    // ============================================
+    function triggerMultiParticleBurst(e) {
+      const x = e && e.clientX ? e.clientX : window.innerWidth / 2;
+      const y = e && e.clientY ? e.clientY : window.innerHeight / 2;
+      const icons = ['💗', '💖', '✨', '🌸', '💫', '🤍', '☁️'];
+
+      for (let i = 0; i < 7; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'burst-particle';
+        particle.innerText = icons[Math.floor(Math.random() * icons.length)];
+        
+        const tx = (Math.random() * 140 - 70) + 'px';
+        const ty = (Math.random() * -100 - 30) + 'px';
+        const tr = (Math.random() * 60 - 30) + 'deg';
+        
+        particle.style.setProperty('--tx', tx);
+        particle.style.setProperty('--ty', ty);
+        particle.style.setProperty('--tr', tr);
+        
+        particle.style.left = `${x - 10}px`;
+        particle.style.top = `${y - 10}px`;
+        
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 900);
+      }
+    }
+
+    let selectedNewMemoryFiles = [];
+
+    function syncNewMemoryFileInput() {
+      const input = document.getElementById('newMemFiles');
+      if (!input || typeof DataTransfer === 'undefined') return;
+      const dt = new DataTransfer();
+      selectedNewMemoryFiles.forEach(file => dt.items.add(file));
+      input.files = dt.files;
+    }
+
+    function renderNewMemoryPhotoPreview() {
+      const preview = document.getElementById('newMemPreview');
+      const grid = document.getElementById('newMemPreviewGrid');
+      const title = document.getElementById('newMemPreviewTitle');
+      const hint = document.getElementById('newMemFilesHint');
+      if (!preview || !grid) return;
+
+      grid.innerHTML = '';
+      if (!selectedNewMemoryFiles.length) {
+        preview.classList.remove('show');
+        if (hint) hint.innerText = 'You can select multiple photos.';
+        return;
+      }
+
+      preview.classList.add('show');
+      if (title) title.innerText = `Photo Preview · ${selectedNewMemoryFiles.length} photo${selectedNewMemoryFiles.length === 1 ? '' : 's'} selected`;
+      if (hint) hint.innerText = 'Tap × on a photo to remove it before saving.';
+
+      selectedNewMemoryFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'memory-preview-item';
+        const img = document.createElement('img');
+        img.alt = file.name;
+        const url = URL.createObjectURL(file);
+        img.src = url;
+        img.onload = () => URL.revokeObjectURL(url);
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'memory-preview-remove';
+        remove.innerText = '×';
+        remove.setAttribute('aria-label', `Remove ${file.name}`);
+        remove.onclick = () => {
+          selectedNewMemoryFiles.splice(index, 1);
+          syncNewMemoryFileInput();
+          renderNewMemoryPhotoPreview();
+        };
+
+        item.appendChild(img);
+        item.appendChild(remove);
+        grid.appendChild(item);
+      });
+    }
+
+    function handleNewMemoryFiles(event) {
+      const incoming = Array.from(event.target.files || []).filter(file => file.type.startsWith('image/'));
+      const existing = new Set(selectedNewMemoryFiles.map(file => `${file.name}|${file.size}|${file.lastModified}`));
+      incoming.forEach(file => {
+        const key = `${file.name}|${file.size}|${file.lastModified}`;
+        if (!existing.has(key)) {
+          selectedNewMemoryFiles.push(file);
+          existing.add(key);
+        }
+      });
+      syncNewMemoryFileInput();
+      renderNewMemoryPhotoPreview();
+    }
+
+    function clearNewMemoryPhotos() {
+      selectedNewMemoryFiles = [];
+      const input = document.getElementById('newMemFiles');
+      if (input) input.value = '';
+      renderNewMemoryPhotoPreview();
+    }
+
+    function showMemoryRainbowBurst() {
+      const el = document.getElementById('memoryRainbowBurst');
+      if (!el) return;
+      el.classList.remove('active');
+      void el.offsetWidth;
+      el.classList.add('active');
+      setTimeout(() => el.classList.remove('active'), 1300);
+    }
+
+    // Add Custom Memory Modal Logic
+    async function openAddMemoryModal() {
+      playTone(550, 0.2);
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { openSupabaseLogin(); return; }
+      const modal = document.getElementById('addMemoryModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.remove('opacity-0', 'pointer-events-none'), 20);
+      }
+    }
+
+    function closeAddMemoryModal() {
+      const modal = document.getElementById('addMemoryModal');
+      if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+      }
+    }
+
+    async function saveCustomMemory(e) {
+      e.preventDefault();
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        closeAddMemoryModal();
+        openSupabaseLogin();
+        return;
+      }
+
+      const title = document.getElementById('newMemTitle').value.trim();
+      const imgPath = document.getElementById('newMemImg').value.trim();
+      const date = document.getElementById('newMemDate').value.trim();
+      const icon = document.getElementById('newMemIcon').value;
+      const quote = document.getElementById('newMemQuote').value.trim();
+      const desc = document.getElementById('newMemDesc').value.trim();
+      const files = selectedNewMemoryFiles.slice();
+
+      if (!title || !date || !quote || !desc) return;
+
+      const stage = STAGE_DATA[currentStageId];
+      if (!stage) return;
+
+      const memoryDateTime = getHistoricalMemoryISO(date);
+      const memoryDate = getHistoricalMemoryDateOnly(date);
+      if (!memoryDateTime) {
+        alert('Please enter the date/time like: June 15, 2026 : 11:11 PM');
+        return;
+      }
+      const { data: memory, error: memoryError } = await supabaseClient
+        .from('memories')
+        .insert({
+          title,
+          memory_date: memoryDate,
+          memory_datetime: memoryDateTime,
+          description: desc,
+          location: '',
+          memory_type: 'memory',
+          stage_id: currentStageId,
+          quote,
+          icon
+        })
+        .select()
+        .single();
+
+      if (memoryError) {
+        alert('Could not save this memory yet. Make sure the database columns from the setup guide have been added.\n\n' + memoryError.message);
+        return;
+      }
+
+      const imageUrls = [];
+      if (imgPath) imageUrls.push(imgPath);
+
+      for (const file of files) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const path = `${session.user.id}/${memory.id}/${Date.now()}-${safeName}`;
+        const { error: uploadError } = await supabaseClient.storage
+          .from('memory-photos')
+          .upload(path, file, { upsert: false, contentType: file.type || 'image/jpeg' });
+        if (uploadError) {
+          console.error('Photo upload failed:', uploadError);
+          continue;
+        }
+        const { data: publicData } = supabaseClient.storage.from('memory-photos').getPublicUrl(path);
+        if (publicData?.publicUrl) imageUrls.push(publicData.publicUrl);
+      }
+
+      if (imageUrls.length) {
+        const rows = imageUrls.map((url, index) => ({
+          memory_id: memory.id,
+          image_url: url,
+          display_order: index
+        }));
+        const { error: photoError } = await supabaseClient.from('memory_photos').insert(rows);
+        if (photoError) console.error('Photo record save failed:', photoError);
+      }
+
+      const newPhoto = {
+        id: memory.id,
+        title,
+        date: formatHistoricalMemoryDateTime(date),
+        memoryDatetime: memoryDateTime,
+        tag: `Memory #${stage.photos.length + 1}`,
+        washiClass: ['washi-strip', 'washi-strip washi-mint', 'washi-strip washi-lavender', 'washi-strip washi-gold'][Math.floor(Math.random() * 4)],
+        quote: quote.startsWith('“') ? quote : `“${quote}”`,
+        desc,
+        gradient: 'from-pink-200 via-rose-100 to-teal-100',
+        icon,
+        imageSrc: imageUrls[0] || '',
+        images: imageUrls,
+        audioSrc: '',
+        dbMemory: true
+      };
+
+      stage.photos.push(newPhoto);
+      stage.timeline.push({ date, title, msg: desc, joke: quote, icon, dbId: memory.id });
+      sortStageChronologically(stage);
+      persistCustomMemories();
+      populateStageMemoryPage(stage);
+      closeAddMemoryModal();
+      showMemoryRainbowBurst();
+      playHeartChime();
+      triggerMultiParticleBurst(e);
+      e.target.reset();
+      selectedNewMemoryFiles = [];
+      renderNewMemoryPhotoPreview();
+      const hint = document.getElementById('newMemFilesHint');
+      if (hint) hint.innerText = 'You can select multiple photos.';
+    }
+
+    function openSupabaseLogin() {
+      const modal = document.getElementById('supabaseLoginModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0', 'pointer-events-none'), 20);
+    }
+
+    function closeSupabaseLogin() {
+      const modal = document.getElementById('supabaseLoginModal');
+      if (!modal) return;
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    async function supabaseLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('supabaseEmail').value.trim();
+      const password = document.getElementById('supabasePassword').value;
+      const errorEl = document.getElementById('supabaseLoginError');
+      errorEl.classList.add('hidden');
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        errorEl.innerText = error.message;
+        errorEl.classList.remove('hidden');
+        return;
+      }
+      closeSupabaseLogin();
+      openAddMemoryModal();
+    }
+
+    async function loadSupabaseMemories() {
+      try {
+        const { data: rows, error } = await supabaseClient
+          .from('memories')
+          .select('id,title,memory_date,memory_datetime,description,location,memory_type,stage_id,quote,icon,created_at')
+          .order('created_at', { ascending: true });
+        if (error) throw error;
+        if (!Array.isArray(rows)) return;
+
+        const { data: photoRows, error: photoError } = await supabaseClient
+          .from('memory_photos')
+          .select('id,memory_id,image_url,display_order')
+          .order('display_order', { ascending: true });
+        if (photoError) throw photoError;
+
+        rows.forEach(row => {
+          const stage = STAGE_DATA[row.stage_id];
+          if (!stage) return;
+          if (stage.photos.some(p => String(p.id) === String(row.id))) return;
+          const urls = (photoRows || []).filter(p => String(p.memory_id) === String(row.id)).sort((a,b) => (a.display_order || 0) - (b.display_order || 0)).map(p => p.image_url);
+          const displayDate = row.memory_datetime || row.memory_date || '';
+          const formattedDate = row.memory_datetime ? formatHistoricalMemoryDateTime(row.memory_datetime) : (row.memory_date ? formatHistoricalMemoryDateTime(row.memory_date) : 'A new day');
+          const quote = row.quote || '';
+          stage.photos.push({
+            id: row.id,
+            title: row.title,
+            date: formattedDate,
+            memoryDatetime: row.memory_datetime || null,
+            tag: 'Memory',
+            washiClass: 'washi-strip washi-mint',
+            quote: quote.startsWith('“') ? quote : `“${quote}”`,
+            desc: row.description || '',
+            gradient: 'from-pink-200 via-rose-100 to-teal-100',
+            icon: row.icon || '💌',
+            imageSrc: urls[0] || '',
+            images: urls,
+            audioSrc: '',
+            dbMemory: true
+          });
+          stage.timeline.push({ date: formattedDate, memoryDatetime: row.memory_datetime || null, title: row.title, msg: row.description || '', joke: quote, icon: row.icon || '💌', dbId: row.id });
+        });
+
+        Object.values(STAGE_DATA).forEach(sortStageChronologically);
+        if (STAGE_DATA[currentStageId]) populateStageMemoryPage(STAGE_DATA[currentStageId]);
+      } catch (err) {
+        console.error('Supabase memory load failed:', err);
+      }
+    }
+
+    // ====================================================
+    // EDIT EXISTING SUPABASE MEMORY
+    // ====================================================
+    let selectedEditMemoryFiles = [];
+
+    function openEditMemoryModal() {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo || !photo.dbMemory) return;
+      supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+          openSupabaseLogin();
+          return;
+        }
+
+        document.getElementById('editMemTitle').value = photo.title || '';
+        document.getElementById('editMemDate').value = photo.date || '';
+        document.getElementById('editMemIcon').value = photo.icon || '💌';
+        document.getElementById('editMemQuote').value = String(photo.quote || '').replace(/[“”]/g, '').trim();
+        document.getElementById('editMemDesc').value = photo.desc || '';
+        document.getElementById('editMemPhotoUrls').value = getMemoryImages(photo).join('\n');
+        selectedEditMemoryFiles = [];
+        syncEditMemoryFileInput();
+        updateEditMemoryFilesHint();
+
+        const status = document.getElementById('editMemoryStatus');
+        if (status) status.classList.add('hidden');
+        const btn = document.getElementById('btnSaveEditedMemory');
+        if (btn) { btn.disabled = false; btn.innerText = 'Save Changes ✨'; }
+
+        const modal = document.getElementById('editMemoryModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          setTimeout(() => modal.classList.remove('opacity-0', 'pointer-events-none'), 20);
+        }
+      });
+    }
+
+    function closeEditMemoryModal() {
+      const modal = document.getElementById('editMemoryModal');
+      if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => modal.classList.add('hidden'), 250);
+      }
+      selectedEditMemoryFiles = [];
+      syncEditMemoryFileInput();
+    }
+
+    function syncEditMemoryFileInput() {
+      const input = document.getElementById('editMemFiles');
+      if (!input) return;
+      const dt = new DataTransfer();
+      selectedEditMemoryFiles.forEach(file => dt.items.add(file));
+      input.files = dt.files;
+    }
+
+    function updateEditMemoryFilesHint() {
+      const hint = document.getElementById('editMemFilesHint');
+      if (hint) {
+        hint.innerText = selectedEditMemoryFiles.length
+          ? `${selectedEditMemoryFiles.length} new photo${selectedEditMemoryFiles.length === 1 ? '' : 's'} ready to upload.`
+          : 'No new photos selected.';
+      }
+    }
+
+    function handleEditMemoryFiles(e) {
+      const incoming = Array.from(e.target.files || []);
+      const existing = new Set(selectedEditMemoryFiles.map(file => `${file.name}|${file.size}|${file.lastModified}`));
+      incoming.forEach(file => {
+        const key = `${file.name}|${file.size}|${file.lastModified}`;
+        if (!existing.has(key)) selectedEditMemoryFiles.push(file);
+      });
+      syncEditMemoryFileInput();
+      updateEditMemoryFilesHint();
+    }
+
+    function getStoragePathFromPublicUrl(url) {
+      try {
+        const marker = '/storage/v1/object/public/memory-photos/';
+        const idx = String(url || '').indexOf(marker);
+        return idx >= 0 ? decodeURIComponent(String(url).slice(idx + marker.length)) : null;
+      } catch (_) { return null; }
+    }
+
+    async function saveEditedMemory(e) {
+      e.preventDefault();
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo || !photo.dbMemory) return;
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        closeEditMemoryModal();
+        openSupabaseLogin();
+        return;
+      }
+
+      const title = document.getElementById('editMemTitle').value.trim();
+      const date = document.getElementById('editMemDate').value.trim();
+      const icon = document.getElementById('editMemIcon').value;
+      const quote = document.getElementById('editMemQuote').value.trim();
+      const desc = document.getElementById('editMemDesc').value.trim();
+      const editedUrls = document.getElementById('editMemPhotoUrls').value
+        .split(/\r?\n/)
+        .map(url => url.trim())
+        .filter(Boolean);
+
+      if (!title || !date || !quote || !desc) return;
+
+      const btn = document.getElementById('btnSaveEditedMemory');
+      const status = document.getElementById('editMemoryStatus');
+      if (btn) { btn.disabled = true; btn.innerText = 'Saving…'; }
+      if (status) { status.innerText = 'Updating your memory…'; status.classList.remove('hidden'); }
+
+      try {
+        const memoryDateTime = getHistoricalMemoryISO(date);
+        const memoryDate = getHistoricalMemoryDateOnly(date);
+        if (!memoryDateTime) {
+          alert('Please enter the date/time like: June 15, 2026 : 11:11 PM');
+          return;
+        }
+        const memoryId = photo.id;
+        const { error: memoryError } = await supabaseClient
+          .from('memories')
+          .update({ title, memory_date: memoryDate, memory_datetime: memoryDateTime, description: desc, quote, icon })
+          .eq('id', memoryId);
+
+        if (memoryError) throw memoryError;
+
+        const { data: existingRows, error: existingError } = await supabaseClient
+          .from('memory_photos')
+          .select('id,image_url,display_order')
+          .eq('memory_id', memoryId)
+          .order('display_order', { ascending: true });
+        if (existingError) throw existingError;
+
+        const existingByUrl = new Map((existingRows || []).map(row => [String(row.image_url), row]));
+        const editedSet = new Set(editedUrls);
+        const rowsToRemove = (existingRows || []).filter(row => !editedSet.has(String(row.image_url)));
+
+        const idsToRemove = rowsToRemove.map(row => row.id);
+        if (idsToRemove.length) {
+          const storagePaths = rowsToRemove.map(row => getStoragePathFromPublicUrl(row.image_url)).filter(Boolean);
+          if (storagePaths.length) {
+            const { error: storageError } = await supabaseClient.storage.from('memory-photos').remove(storagePaths);
+            if (storageError) console.warn('Some removed photo files could not be deleted:', storageError);
+          }
+          const { error: removeRowsError } = await supabaseClient
+            .from('memory_photos')
+            .delete()
+            .in('id', idsToRemove);
+          if (removeRowsError) throw removeRowsError;
+        }
+
+        const finalUrls = editedUrls.slice();
+        let nextOrder = finalUrls.length;
+        for (const file of selectedEditMemoryFiles) {
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const path = `${session.user.id}/${memoryId}/${Date.now()}-${safeName}`;
+          const { error: uploadError } = await supabaseClient.storage
+            .from('memory-photos')
+            .upload(path, file, { upsert: false, contentType: file.type || 'image/jpeg' });
+          if (uploadError) {
+            console.warn('Photo upload failed:', uploadError);
+            continue;
+          }
+          const { data: publicData } = supabaseClient.storage.from('memory-photos').getPublicUrl(path);
+          if (publicData?.publicUrl) finalUrls.push(publicData.publicUrl);
+        }
+
+        const newRows = finalUrls
+          .filter(url => !existingByUrl.has(url))
+          .map((url, index) => ({ memory_id: memoryId, image_url: url, display_order: index }));
+        if (newRows.length) {
+          const { error: insertPhotoError } = await supabaseClient.from('memory_photos').insert(newRows);
+          if (insertPhotoError) throw insertPhotoError;
+        }
+
+        // Update the visible scrapbook immediately.
+        photo.title = title;
+        photo.date = formatHistoricalMemoryDateTime(date);
+        photo.memoryDatetime = memoryDateTime;
+        photo.icon = icon;
+        photo.quote = quote.startsWith('“') ? quote : `“${quote}”`;
+        photo.desc = desc;
+        photo.images = finalUrls;
+        photo.imageSrc = finalUrls[0] || '';
+
+        const stage = STAGE_DATA[currentStageId];
+        if (stage) {
+          const timelineNode = stage.timeline.find(node => String(node.dbId || '') === String(memoryId));
+          if (timelineNode) {
+            timelineNode.date = formatHistoricalMemoryDateTime(date);
+            timelineNode.memoryDatetime = memoryDateTime;
+            timelineNode.title = title;
+            timelineNode.msg = desc;
+            timelineNode.joke = quote;
+            timelineNode.icon = icon;
+          }
+          sortStageChronologically(stage);
+          populateStageMemoryPage(stage);
+        }
+
+        selectedEditMemoryFiles = [];
+        syncEditMemoryFileInput();
+        updateEditMemoryFilesHint();
+        renderLightboxMemory();
+        closeEditMemoryModal();
+        playHeartChime();
+      } catch (err) {
+        console.error('Edit memory failed:', err);
+        if (status) { status.innerText = 'Could not save the changes. Please try again.'; status.classList.remove('hidden'); }
+        alert('Could not update this memory.\n\n' + (err?.message || err));
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerText = 'Save Changes ✨'; }
+      }
+    }
+
+    async function deleteCurrentMemory() {
+      const photo = currentStagePhotos[currentPhotoIndex];
+      if (!photo || !photo.dbMemory) return;
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        openSupabaseLogin();
+        return;
+      }
+
+      const confirmed = window.confirm(`Delete “${photo.title}” and all of its photos?\n\nThis cannot be undone.`);
+      if (!confirmed) return;
+
+      const memoryId = photo.id;
+      const stage = STAGE_DATA[currentStageId];
+      if (!stage) return;
+
+      // Get the stored photo URLs first so we can remove the actual files
+      // from Supabase Storage as well as their database rows.
+      const { data: photoRows, error: photoLookupError } = await supabaseClient
+        .from('memory_photos')
+        .select('image_url')
+        .eq('memory_id', memoryId);
+
+      if (photoLookupError) {
+        alert('Could not prepare the photos for deletion.\n\n' + photoLookupError.message);
+        return;
+      }
+
+      const storagePaths = (photoRows || []).map(row => {
+        try {
+          const marker = '/storage/v1/object/public/memory-photos/';
+          const idx = String(row.image_url || '').indexOf(marker);
+          return idx >= 0 ? decodeURIComponent(String(row.image_url).slice(idx + marker.length)) : null;
+        } catch (_) { return null; }
+      }).filter(Boolean);
+
+      if (storagePaths.length) {
+        const { error: storageError } = await supabaseClient.storage
+          .from('memory-photos')
+          .remove(storagePaths);
+        if (storageError) {
+          console.warn('Some stored photo files could not be removed:', storageError);
+        }
+      }
+
+      const { error: deleteError } = await supabaseClient
+        .from('memories')
+        .delete()
+        .eq('id', memoryId);
+
+      if (deleteError) {
+        alert('Could not delete this memory.\n\n' + deleteError.message);
+        return;
+      }
+
+      // Remove it from the current in-memory scrapbook and timeline.
+      stage.photos = stage.photos.filter(p => String(p.id) !== String(memoryId));
+      stage.timeline = stage.timeline.filter(node => String(node.dbId || '') !== String(memoryId));
+      currentStagePhotos = stage.photos;
+      persistCustomMemories();
+      closeLightbox();
+      populateStageMemoryPage(stage);
+      playHeartChime();
+    }
+
+    function persistCustomMemories() {
+      try {
+        const payload = {};
+        Object.keys(STAGE_DATA).forEach(k => {
+          payload[k] = STAGE_DATA[k].photos.filter(p => p.id > 1000 || String(p.id).length > 10).map(p => ({...p}));
+        });
+        localStorage.setItem('dreamscapeCustomMemories', JSON.stringify(payload));
+      } catch (err) {}
+    }
+
+    function restoreCustomMemories() {
+      try {
+        localStorage.removeItem('dreamscapeCustomMemories');
+        const raw = null;
+        if (!raw) return;
+        const payload = JSON.parse(raw);
+        Object.keys(payload || {}).forEach(k => {
+          if (STAGE_DATA[k] && Array.isArray(payload[k])) {
+            const existing = new Set(STAGE_DATA[k].photos.map(p => String(p.id)));
+            payload[k].forEach(p => { if (!existing.has(String(p.id))) STAGE_DATA[k].photos.push(p); });
+          }
+        });
+      } catch (err) {}
+    }
+
+    // Make the first chapter the default after restoring local additions.
+    restoreCustomMemories();
+    // Load shared memories from Supabase after the static scrapbook is ready.
+    loadSupabaseMemories();
+
+  
+    // Swipe between photos on touch devices.
+    let galleryTouchStartX = null;
+    document.addEventListener('touchstart', (e) => {
+      if (!document.getElementById('lightboxModal')?.classList.contains('hidden')) {
+        galleryTouchStartX = e.changedTouches[0]?.clientX ?? null;
+      }
+    }, {passive:true});
+    document.addEventListener('touchend', (e) => {
+      if (galleryTouchStartX === null) return;
+      const endX = e.changedTouches[0]?.clientX ?? galleryTouchStartX;
+      const diff = endX - galleryTouchStartX;
+      galleryTouchStartX = null;
+      if (Math.abs(diff) < 45) return;
+      navigateMemoryImage(diff < 0 ? 1 : -1);
+    }, {passive:true});
+</script>
+</body>
+</html>
