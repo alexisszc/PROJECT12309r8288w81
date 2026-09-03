@@ -1368,7 +1368,7 @@
         <div>
           <label class="block text-[11px] font-extrabold text-darkPlum mb-1 font-display">Date / Time</label>
           <input id="editMemDate" type="text" placeholder="e.g. June 15, 2026 : 11:11 PM" class="w-full bg-white/90 border border-white px-3 py-2 rounded-xl text-xs text-slateBlue focus:outline-none focus:ring-2 focus:ring-babyPink font-medium" required />
-          <p class="text-[10px] text-darkPlum/55 font-semibold mt-1">The database keeps the calendar date; your full text is shown immediately on the memory.</p>
+          <p class="text-[10px] text-darkPlum/55 font-semibold mt-1">The database keeps the full historical date and time, so it stays available after reload.</p>
         </div>
 
         <div>
@@ -2343,7 +2343,7 @@
           item.innerHTML = `
             <div class="md:w-[46%] ${isEven ? 'md:text-right md:pr-6' : 'md:text-left md:pl-6 md:order-last'}">
               <div class="glass-panel p-4 md:p-5 rounded-3xl shadow-sm hover:scale-[1.02] transition">
-                <span class="text-[10px] font-extrabold uppercase tracking-wider text-pink-700 font-display">${node.date}</span>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-pink-700 font-display">${formatMemoryDateTime(node.memoryDatetime || node.date)}</span>
                 <h4 class="text-base font-extrabold text-slateBlue mt-0.5 font-display">${node.title}</h4>
                 <p class="text-xs text-slateBlue font-medium mt-1.5 leading-relaxed font-sans">${node.msg}</p>
                 <div class="mt-2.5 text-[12px] font-hand text-teal-900 bg-white/80 border border-white px-3 py-1 rounded-xl inline-block font-semibold">
@@ -2374,56 +2374,62 @@
       return getMemoryImages(photo)[0] || '';
     }
 
-    // Keep memories in true chronological order: earliest first, newest last.
-    // This makes newly added memories appear after older ones instead of
-    // accidentally placing a later memory before an earlier one.
-    
-function parseHistoricalMemoryDateTime(value) {
-  if (!value) return null;
-  const raw = String(value).trim();
+    // Historical memory date/time helpers.
+    // Supabase stores the real event time in memories.memory_datetime.
+    // We format ISO timestamps for humans instead of showing raw values like
+    // 2026-09-03T04:46:01.923463+00:00.
+    function parseMemoryDateTime(value) {
+      if (!value) return null;
+      const raw = String(value).trim();
+      if (!raw) return null;
 
-  // ISO / Supabase timestamp: preserve the instant represented by the value.
-  if (/^\d{4}-\d{2}-\d{2}T/.test(raw)) {
-    const d = new Date(raw);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
+      // ISO/timestamptz values from Supabase parse directly.
+      if (/^\d{4}-\d{2}-\d{2}T/.test(raw)) {
+        const isoDate = new Date(raw);
+        return Number.isNaN(isoDate.getTime()) ? null : isoDate;
+      }
 
-  // Try native parsing for entries such as "September 3, 2026 11:30 PM".
-  const d = new Date(raw.replace(/\s*:\s*/g, " "));
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function formatHistoricalMemoryDateTime(value) {
-  if (!value) return "";
-  const raw = String(value).trim();
-
-  // If the user supplied a friendly historical date/time, keep its wording.
-  if (!/^\d{4}-\d{2}-\d{2}(T|\s)/.test(raw)) return raw;
-
-  const d = new Date(raw);
-  if (Number.isNaN(d.getTime())) return raw;
-
-  return d.toLocaleString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  });
-}
-
-function getMemoryTimestamp(item) {
-      if (!item) return Number.POSITIVE_INFINITY;
-      const raw = item.memory_date || item.date || item.created_at || '';
-      if (!raw) return Number.POSITIVE_INFINITY;
-
-      const normalized = String(raw)
+      // Normalize the scrapbook's friendly input such as:
+      // "June 15, 2026 : 11:11 PM"
+      const normalized = raw
         .replace(/\bat\b/gi, ' ')
         .replace(/\s*:\s*/g, ':')
         .replace(/\s+/g, ' ')
         .trim();
-      const parsed = Date.parse(normalized);
-      return Number.isNaN(parsed) ? Number.POSITIVE_INFINITY : parsed;
+      const parsed = new Date(normalized);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function formatMemoryDateTime(value) {
+      if (!value) return '';
+      const raw = String(value).trim();
+      if (!raw) return '';
+
+      const parsed = parseMemoryDateTime(raw);
+      if (!parsed) return raw;
+
+      const datePart = parsed.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      const timePart = parsed.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+      return `${datePart} : ${timePart}`;
+    }
+
+    // Keep memories in true chronological order: earliest first, newest last.
+    // This makes newly added memories appear after older ones instead of
+    // accidentally placing a later memory before an earlier one.
+    function getMemoryTimestamp(item) {
+      if (!item) return Number.POSITIVE_INFINITY;
+      const raw = item.memoryDatetime || item.memory_datetime || item.date || '';
+      if (!raw) return Number.POSITIVE_INFINITY;
+
+      const parsed = parseMemoryDateTime(raw);
+      return parsed ? parsed.getTime() : Number.POSITIVE_INFINITY;
     }
 
     function sortStageChronologically(stage) {
@@ -2491,7 +2497,7 @@ function getMemoryTimestamp(item) {
             <p class="font-display text-base text-slateBlue font-extrabold tracking-tight">${photo.title}</p>
             <p class="text-base text-pink-700 font-hand leading-tight font-semibold mt-0.5">${photo.quote}</p>
             <div class="flex items-center justify-between mt-2 pt-2 border-t border-slateBlue/10 text-[10px] font-bold text-darkPlum/75">
-              <span>${photo.date}</span>
+              <span>${formatMemoryDateTime(photo.memoryDatetime || photo.date)}</span>
               <span class="text-pink-700 font-extrabold">${photo.audioSrc ? '🎵 Voice' : '✨ Keepsake'}</span>
             </div>
           </div>`;
@@ -2510,8 +2516,8 @@ function getMemoryTimestamp(item) {
 
     function jumpToMemoryDay(year, month, day) {
       const photo = currentStagePhotos.find(p => {
-        const d = new Date(p.date.replace(/\s*:.*$/, ''));
-        return !isNaN(d) && d.getFullYear()===year && d.getMonth()===month && d.getDate()===day;
+        const d = parseMemoryDateTime(p.memoryDatetime || p.date);
+        return d && d.getFullYear()===year && d.getMonth()===month && d.getDate()===day;
       });
       if (photo) openLightbox(currentStagePhotos.indexOf(photo));
     }
@@ -2604,7 +2610,7 @@ function getMemoryTimestamp(item) {
       }
 
       document.getElementById('lightboxTag').innerText = photo.tag;
-      document.getElementById('lightboxDate').innerText = photo.date;
+      document.getElementById('lightboxDate').innerText = formatMemoryDateTime(photo.memoryDatetime || photo.date);
       document.getElementById('lightboxTitle').innerText = photo.title;
       document.getElementById('lightboxQuote').innerText = photo.quote;
       document.getElementById('lightboxFullText').innerText = photo.desc;
@@ -3069,13 +3075,15 @@ function getMemoryTimestamp(item) {
       const stage = STAGE_DATA[currentStageId];
       if (!stage) return;
 
-      const parsedDate = new Date(date);
-      const memoryDate = Number.isNaN(parsedDate.getTime()) ? null : parsedDate.toISOString().slice(0, 10);
+      const parsedDate = parseMemoryDateTime(date);
+      const memoryDate = parsedDate ? parsedDate.toISOString().slice(0, 10) : null;
+      const memoryDateTime = parsedDate ? parsedDate.toISOString() : null;
       const { data: memory, error: memoryError } = await supabaseClient
         .from('memories')
         .insert({
           title,
           memory_date: memoryDate,
+          memory_datetime: memoryDateTime,
           description: desc,
           location: '',
           memory_type: 'memory',
@@ -3121,7 +3129,8 @@ function getMemoryTimestamp(item) {
       const newPhoto = {
         id: memory.id,
         title,
-        date,
+        date: date,
+        memoryDatetime: memoryDateTime || date,
         tag: `Memory #${stage.photos.length + 1}`,
         washiClass: ['washi-strip', 'washi-strip washi-mint', 'washi-strip washi-lavender', 'washi-strip washi-gold'][Math.floor(Math.random() * 4)],
         quote: quote.startsWith('“') ? quote : `“${quote}”`,
@@ -3184,7 +3193,7 @@ function getMemoryTimestamp(item) {
       try {
         const { data: rows, error } = await supabaseClient
           .from('memories')
-          .select('id,title,memory_date,description,location,memory_type,stage_id,quote,icon,created_at')
+          .select('id,title,memory_date,memory_datetime,description,location,memory_type,stage_id,quote,icon,created_at')
           .order('created_at', { ascending: true });
         if (error) throw error;
         if (!Array.isArray(rows)) return;
@@ -3200,12 +3209,16 @@ function getMemoryTimestamp(item) {
           if (!stage) return;
           if (stage.photos.some(p => String(p.id) === String(row.id))) return;
           const urls = (photoRows || []).filter(p => String(p.memory_id) === String(row.id)).sort((a,b) => (a.display_order || 0) - (b.display_order || 0)).map(p => p.image_url);
-          const displayDate = row.memory_date || row.created_at || 'A new day';
+          const rawMemoryDateTime = row.memory_datetime || '';
+          const displayDate = rawMemoryDateTime
+            ? formatMemoryDateTime(rawMemoryDateTime)
+            : (row.memory_date || 'A new day');
           const quote = row.quote || '';
           stage.photos.push({
             id: row.id,
             title: row.title,
             date: displayDate,
+            memoryDatetime: rawMemoryDateTime || row.memory_date || '',
             tag: 'Memory',
             washiClass: 'washi-strip washi-mint',
             quote: quote.startsWith('“') ? quote : `“${quote}”`,
@@ -3242,7 +3255,7 @@ function getMemoryTimestamp(item) {
         }
 
         document.getElementById('editMemTitle').value = photo.title || '';
-        document.getElementById('editMemDate').value = photo.date || '';
+        document.getElementById('editMemDate').value = formatMemoryDateTime(photo.memoryDatetime || photo.date) || photo.date || '';
         document.getElementById('editMemIcon').value = photo.icon || '💌';
         document.getElementById('editMemQuote').value = String(photo.quote || '').replace(/[“”]/g, '').trim();
         document.getElementById('editMemDesc').value = photo.desc || '';
@@ -3340,12 +3353,13 @@ function getMemoryTimestamp(item) {
       if (status) { status.innerText = 'Updating your memory…'; status.classList.remove('hidden'); }
 
       try {
-        const parsedDate = new Date(date);
-        const memoryDate = Number.isNaN(parsedDate.getTime()) ? null : parsedDate.toISOString().slice(0, 10);
+        const parsedDate = parseMemoryDateTime(date);
+        const memoryDate = parsedDate ? parsedDate.toISOString().slice(0, 10) : null;
+        const memoryDateTime = parsedDate ? parsedDate.toISOString() : null;
         const memoryId = photo.id;
         const { error: memoryError } = await supabaseClient
           .from('memories')
-          .update({ title, memory_date: memoryDate, description: desc, quote, icon })
+          .update({ title, memory_date: memoryDate, memory_datetime: memoryDateTime, description: desc, quote, icon })
           .eq('id', memoryId);
 
         if (memoryError) throw memoryError;
@@ -3401,7 +3415,8 @@ function getMemoryTimestamp(item) {
 
         // Update the visible scrapbook immediately.
         photo.title = title;
-        photo.date = date;
+        photo.date = formatMemoryDateTime(memoryDateTime) || date;
+        photo.memoryDatetime = memoryDateTime || date;
         photo.icon = icon;
         photo.quote = quote.startsWith('“') ? quote : `“${quote}”`;
         photo.desc = desc;
@@ -3412,7 +3427,8 @@ function getMemoryTimestamp(item) {
         if (stage) {
           const timelineNode = stage.timeline.find(node => String(node.dbId || '') === String(memoryId));
           if (timelineNode) {
-            timelineNode.date = date;
+            timelineNode.date = formatMemoryDateTime(memoryDateTime) || date;
+            timelineNode.memoryDatetime = memoryDateTime || date;
             timelineNode.title = title;
             timelineNode.msg = desc;
             timelineNode.joke = quote;
